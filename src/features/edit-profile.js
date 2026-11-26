@@ -51,7 +51,7 @@ export class EditProfileMethods {
 		const mine = ls.get("am-me", {}) || {};
 		const src = info0 || ls.get(`am-prof:${id}`)?.user || {};
 		const acodeAvatar = ls.get("cached-logged-in-user")?.avatar_url || null;
-		const cur = { name: u.name || "", about: String(src.about ?? mine.about ?? ""), avatar: u.avatar_url || null, banner: src.banner || null };
+		const cur = { name: u.name || "", about: String(src.about ?? mine.about ?? ""), avatar: u.avatar_url || null, banner: src.banner || null, visibility: src.visibility || null };
 		const draft = {}; // undefined = unchanged, null = remove, string = new picture
 		const touched = {};
 		const $ban = el("div", { class: "am-ed-ban" });
