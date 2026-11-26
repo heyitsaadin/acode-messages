@@ -147,6 +147,7 @@ export class LauncherMethods {
 			this.cleanups.push(() => commands?.removeCommand?.("acode-messages-open"));
 		} catch {}
 
+		this.initCodeShare();
 		this.warm();
 	}
 
