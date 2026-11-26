@@ -133,10 +133,7 @@ export class SheetsMethods {
 			$go.disabled = true;
 			$e.textContent = "";
 			try {
-				const { group } = await this.api("groups", { method: "POST", body: JSON.stringify(create ? { action: "create", name: v } : { action: "join", code: v }) });
-				this.closeSheet();
-				await this.refreshHome();
-				this.setTab(group.id);
+				await this.joinAndOpen(create ? { action: "create", name: v } : { action: "join", code: v });
 			} catch (e) {
 				$e.textContent = e.message;
 				$go.disabled = false;
