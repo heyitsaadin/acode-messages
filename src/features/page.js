@@ -101,6 +101,59 @@ export class PageMethods {
 			this.$shield = null;
 		}, 700);
 		this.$root = el("div", { class: "am-root" }, home, chat, this.$scrim, this.$sheet, this.$err, this.$shield);
+
+		// Preferred: a tab in Acode's own tab bar, like the Welcome tab. Older Acode builds
+		// without custom tabs get the old full-screen page instead.
+		if (!this.mountTab()) this.mountPage();
+		this.pushBack();
+	}
+
+	// Opens the chat as an editor tab. Returns false if this Acode has no custom tabs.
+	mountTab() {
+		let EditorFile;
+		try {
+			EditorFile = acode.require("EditorFile");
+		} catch {}
+		if (typeof EditorFile !== "function" || typeof EditorFile.prototype?.addStyle !== "function") return false;
+		let tab;
+		try {
+			this.$root.classList.add("tab");
+			// The tab content lives in a shadow root, so the page CSS has to be handed to the tab itself.
+			// (A leading newline keeps the string from being mistaken for a stylesheet URL.)
+			tab = new EditorFile("Acode Messages", {
+				type: "page",
+				content: this.$root,
+				tabIcon: `icon ${ICON_CLASS}`,
+				stylesheets: [`\n${CSS}`],
+				hideQuickTools: true,
+				persistInSession: false,
+				render: true,
+			});
+		} catch (e) {
+			console.warn("Acode Messages: could not open a tab, using a full page", e);
+			this.$root.classList.remove("tab");
+			return false;
+		}
+		tab.setCustomTitle?.(() => "Chat");
+		tab.on("close", () => {
+			if (this.tab === tab) this.close(true);
+		});
+		// Only grab the back button while the chat tab is the one on screen.
+		tab.on("focus", () => {
+			if (this.tab === tab) this.pushBack();
+		});
+		tab.on("blur", () => {
+			if (this.tab === tab) this.actionStack?.remove?.(ID);
+		});
+		this.tab = tab;
+		this.$page = tab;
+		return true;
+	}
+
+	// Fallback for Acode versions without custom tabs: a full-screen page.
+	mountPage() {
+		const $page = this.Page("Acode Messages");
+		this.$page = $page;
 		if (typeof $page.appendBody === "function") $page.appendBody(this.$root);
 		else $page.body = this.$root;
 		app.append($page);
@@ -110,7 +163,6 @@ export class PageMethods {
 		if (hdr) hdr.style.display = "none";
 		this.$root.style.setProperty("--am-top", "0px");
 
-		this.pushBack();
 		$page.onhide = () => this.close(true);
 	}
 
