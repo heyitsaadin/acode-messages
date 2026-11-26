@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.5.0
+
+- New setup screen for first-time users: a short welcome, then choose your name, picture, banner and about me, then pick who can see your profile. You can skip it and change everything later.
+- Public and private profiles. Public shows your banner, about me and activity to everyone. Private shows them only to friends; everyone else sees just your name and picture, and can still message you or send a friend request.
+- Change your privacy any time from Edit profile or the new "Who can see your profile" card on your own profile.
+- Needs the matching server update (migration 012). Without it everything stays public and the setup screen doesn't appear.
+
 ## 1.4.1
 
 - Your encryption key is now set up as soon as Acode Messages loads, so people can message you right after you update, without you opening a DM first.
