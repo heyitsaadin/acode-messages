@@ -141,6 +141,7 @@ export class EditProfileMethods {
 			if (about !== cur.about.trim()) body.about = about;
 			if (draft.avatar !== undefined) body.avatar = draft.avatar;
 			if (draft.banner !== undefined) body.banner = draft.banner;
+			if (draft.visibility && draft.visibility !== cur.visibility) body.visibility = draft.visibility;
 			if (!Object.keys(body).length) {
 				this.closeSheet();
 				return;
