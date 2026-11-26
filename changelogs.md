@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.3.2
+## 1.3.3
 
 - Adds a personal Plugin Admin badge for the Acode Messages plugin owner.
 - Keeps the Acode verified rosette beside your name and displays a separate text-only "Plugin Admin" tag.
