@@ -313,6 +313,7 @@ export class MessageActionsMethods {
 		} catch (e) {
 			this.flash(`${attachment ? "Not sent" : "Message not sent"} (${e.message})`);
 			if (/muted/i.test(e.message)) this.refreshHome().then(() => this.syncMute());
+			return false;
 		} finally {
 			this.sending = false;
 			if (this.$send) this.$send.disabled = false;
