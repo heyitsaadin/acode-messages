@@ -1,9 +1,10 @@
 name: Release
 
-# Push a tag like v1.1.2 (matching "version" in plugin.json) to build the plugin
-# and publish acode-messages.zip as a GitHub Release.
-# You can also run it by hand from the Actions tab to test the build; that only
-# uploads the zip as a workflow artifact and does not publish a release.
+# Publishes acode-messages.zip as a GitHub Release for the version in plugin.json.
+# Two ways to run it:
+#   1. Push a tag like v1.1.2 (must match "version" in plugin.json).
+#   2. Actions tab -> Release -> Run workflow (no git commands needed).
+# If the release already exists, the zip is re-uploaded to it.
 on:
   push:
     tags: ["v*"]
@@ -22,11 +23,11 @@ jobs:
         with:
           node-version: 20
 
-      - name: Check tag matches plugin.json version
-        if: startsWith(github.ref, 'refs/tags/v')
+      - name: Read version
         run: |
           V=$(node -p "require('./plugin.json').version")
-          if [ "v$V" != "$GITHUB_REF_NAME" ]; then
+          echo "TAG=v$V" >> "$GITHUB_ENV"
+          if [ "${GITHUB_REF_TYPE}" = "tag" ] && [ "v$V" != "$GITHUB_REF_NAME" ]; then
             echo "Tag $GITHUB_REF_NAME does not match plugin.json version $V"
             exit 1
           fi
@@ -38,18 +39,14 @@ jobs:
         run: zip -j acode-messages.zip main.js plugin.json readme.md changelogs.md icon.png
 
       - name: Publish release
-        if: startsWith(github.ref, 'refs/tags/v')
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "$GITHUB_REF_NAME" acode-messages.zip \
-            --title "Acode Messages $GITHUB_REF_NAME" \
-            --notes-file changelogs.md \
-            --verify-tag
-
-      - name: Keep the zip from manual runs
-        if: ${{ !startsWith(github.ref, 'refs/tags/v') }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: acode-messages
-          path: acode-messages.zip
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" acode-messages.zip --clobber
+          else
+            gh release create "$TAG" acode-messages.zip \
+              --title "Acode Messages $TAG" \
+              --notes-file changelogs.md \
+              --target "$GITHUB_SHA"
+          fi
