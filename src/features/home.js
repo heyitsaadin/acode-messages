@@ -29,6 +29,9 @@ export class HomeMethods {
 				if (Array.isArray(next.groups)) next.groups.sort((a, b) => Number(!!b.is_default) - Number(!!a.is_default));
 				if (epoch !== (this.homeEpoch || 0)) return;
 				if (me) this.state.user = this.withMine({ ...this.state.user, ...me });
+				// Publish my encryption key right away so people can DM me without me opening a DM first.
+				// Cheap after the first success; retried on the next refresh if it fails.
+				if (this.e2eSupported() && this.state.user?.id) this.e2ePublish().catch(() => {});
 				ls.set("am-home", { uid: this.state.user?.id, home: next, at: Date.now() });
 				const sig = JSON.stringify(next);
 				if (!this.$page) return;
