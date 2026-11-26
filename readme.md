@@ -64,9 +64,9 @@ Community group code: `acode`
 
 ## License
 
-The source is public so you can read it, but it is **not open source**. You can install and use the plugin, but you can't copy the code, republish it, or build another plugin from it. See [LICENSE](LICENSE) for the full terms.
+Acode Messages is open source under the [MIT License](LICENSE). You can use, copy, modify and share the code, as long as the copyright and license notice stay with it.
 
-Copyright (c) 2026 heyitsaadin. All rights reserved.
+Copyright (c) 2026 heyitsaadin
 
 ## Screenshots
 
