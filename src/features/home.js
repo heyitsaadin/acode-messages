@@ -243,11 +243,21 @@ export class HomeMethods {
 
 	dmRow(d) {
 		const t = d.last_at ? new Date(d.last_at) : null;
+		const enc = typeof d.last_content === "string" && d.last_content.startsWith("e2e1:");
+		const $sm = this.el("small", { text: enc ? "🔒 Encrypted message" : this.plainPreview(d.last_content) || "Say hi 👋" });
+		if (enc && this.e2eSupported()) {
+			// The list only has ciphertext; swap in the real text once it's decrypted (only if this device has a key).
+			this.e2eRead(d.peer_id ?? d.id, d.last_content, 600000)
+				.then((txt) => {
+					if (txt != null) $sm.textContent = this.plainPreview(txt) || "🔒 Encrypted message";
+				})
+				.catch(() => {});
+		}
 		return this.el(
 			"div",
 			{ class: "am-dm", onclick: () => this.openChannel({ slug: d.slug, name: d.name, kind: "dm", peer: peerOf(d) }) },
 			this.avw(d, 46, !!d.online),
-			this.el("div", { class: "bd" }, this.el("b", { text: d.name }), this.el("small", { text: this.plainPreview(d.last_content) || "Say hi 👋" })),
+			this.el("div", { class: "bd" }, this.el("b", { text: d.name }), $sm),
 			t ? this.el("time", { text: this.shortTime(t) }) : null,
 		);
 	}

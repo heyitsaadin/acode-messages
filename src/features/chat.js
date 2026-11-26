@@ -29,10 +29,14 @@ export class ChatMethods {
 		this.refreshOnline();
 		this.resetList();
 		// Show the last conversation straight away; only fetch what's new.
-		const cache = ls.get(`am-msgs:${c.slug}`);
+		const cache = c.kind === "dm" ? null : ls.get(`am-msgs:${c.slug}`);
 		const fresh = cache?.list?.length && Date.now() - cache.at < 864e5;
 		if (fresh) this.append(cache.list, true);
 		else this.chatSkeleton();
+		if (c.kind === "dm" && this.e2eSupported()) {
+			// Make sure the other person can write to me, and fetch their key before the first message.
+			this.e2ePublish().then(() => this.peerKey(this.dmPeerId(c), true)).catch(() => {});
+		}
 		this.pushBack();
 		this.poll(true);
 	}
@@ -100,7 +104,7 @@ export class ChatMethods {
 		const el = this.el.bind(this);
 		if (c.kind === "dm") {
 			const p = c.peer;
-			return el("div", { class: "am-intro" }, this.avatar(p), el("h2", {}, p.name, ...this.badges(p)), el("p", { class: "at", text: `@${p.name}` }), el("p", { text: `This is the beginning of your direct message history with @${p.name}.` }));
+			return el("div", { class: "am-intro" }, this.avatar(p), el("h2", {}, p.name, ...this.badges(p)), el("p", { class: "at", text: `@${p.name}` }), el("p", { text: `This is the beginning of your direct message history with @${p.name}.` }), el("p", { text: "🔒 Messages here are end-to-end encrypted." }));
 		}
 		return el("div", { class: "am-intro" }, el("div", { class: "ic" }, this.ico("hash", 40)), el("h2", { text: `Welcome to #${c.name}!` }), el("p", { text: this.chanInfo()?.topic || `This is the start of the #${c.name} channel.` }));
 	}

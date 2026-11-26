@@ -213,6 +213,7 @@ export class MentionsMethods {
 		try {
 			const after = this.lastId;
 			const { messages } = await this.api(`messages?channel=${encodeURIComponent(ch.slug)}&after=${after}`);
+			await this.decryptMessages(ch, messages);
 			if (ch !== this.state.channel) return;
 			if (first && !messages.length) {
 				if (this.lastId) this.$list.querySelectorAll(".am-skwrap").forEach((n) => n.remove());
@@ -232,7 +233,7 @@ export class MentionsMethods {
 
 	saveMsgs() {
 		const ch = this.state.channel;
-		if (!ch) return;
+		if (!ch || ch.kind === "dm") return; // decrypted DMs are never written to storage
 		clearTimeout(this.saveT);
 		this.saveT = setTimeout(() => ls.set(`am-msgs:${ch.slug}`, { at: Date.now(), list: this.msgBuf }), 800);
 	}

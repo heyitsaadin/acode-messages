@@ -77,7 +77,7 @@ export class MessageActionsMethods {
 			"div",
 			{ class: "am-mg" },
 			...[
-				own && kind === "text" ? this.item("edit", "Edit Message", close(() => this.startEdit(m))) : null,
+				own && kind === "text" && !m.locked ? this.item("edit", "Edit Message", close(() => this.startEdit(m))) : null,
 				this.item("reply", "Reply", close(() => this.startReply(m))),
 			].filter(Boolean),
 		);
@@ -141,7 +141,7 @@ export class MessageActionsMethods {
 	}
 
 	startEdit(m) {
-		if (!m || String(m.user_id) !== String(this.me.id) || (m.kind && m.kind !== "text")) return;
+		if (!m || m.locked || String(m.user_id) !== String(this.me.id) || (m.kind && m.kind !== "text")) return;
 		this.replyTo = null;
 		this.editing = m;
 		this.$ta.value = m.content;
@@ -221,9 +221,11 @@ export class MessageActionsMethods {
 		if (this.sending) return;
 		this.sending = true;
 		try {
-			const r = await this.mutate("edit", m, { content });
+			const isDm = this.state.channel?.kind === "dm";
+			const r = await this.mutate("edit", m, { content: await this.e2eWire(this.state.channel, content) });
 			const nm = r?.message || {};
-			this.applyEdit(m.id, nm.content ?? content, nm.edited_at || new Date().toISOString());
+			// In a DM the server only has the ciphertext, so show what was typed.
+			this.applyEdit(m.id, isDm ? content : (nm.content ?? content), nm.edited_at || new Date().toISOString());
 			this.cancelCtx();
 		} catch (e) {
 			this.flash(`Couldn't edit (${e.message})`);
@@ -255,6 +257,8 @@ export class MessageActionsMethods {
 		try {
 			const { messages } = await this.api(`messages?channel=${encodeURIComponent(ch.slug)}&after=0`);
 			if (ch !== this.state.channel || !Array.isArray(messages) || !messages.length) return;
+			await this.decryptMessages(ch, messages);
+			if (ch !== this.state.channel) return;
 			const ids = new Set(messages.map((x) => String(x.id)));
 			const min = Math.min(...messages.map((x) => Number(x.id)));
 			const max = Math.max(...messages.map((x) => Number(x.id)));
@@ -295,10 +299,12 @@ export class MessageActionsMethods {
 		this.$pend?.classList.add("busy");
 		const replied = this.replyTo;
 		try {
+			const wire = await this.e2eWire(ch, content); // DMs go out as an encrypted envelope
 			const { message } = await this.api("messages", {
 				method: "POST",
-				body: JSON.stringify({ channel: ch.slug, content, ...(attachment ? { attachment } : {}), ...(this.replyTo ? { reply_to: this.replyTo.id } : {}) }),
+				body: JSON.stringify({ channel: ch.slug, content: wire, ...(attachment ? { attachment } : {}), ...(this.replyTo ? { reply_to: this.replyTo.id } : {}) }),
 			});
+			await this.decryptMessages(ch, [message]);
 			if (attachment?.type !== "voice") {
 				this.clearCtx();
 				this.$ta.value = "";
