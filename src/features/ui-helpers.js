@@ -77,11 +77,7 @@ export class UiHelpersMethods {
 	}
 
 	pluginAdminMark() {
-		const $badge = this.el("span", { class: "am-badge plugin-admin", title: "Acode Messages plugin administrator" });
-		const $logo = this.el("img", { src: `${this.pluginBaseUrl}project/aadin-plugin-admin.png`, alt: "", "aria-hidden": "true" });
-		$logo.onerror = () => $logo.remove();
-		$badge.append($logo, document.createTextNode("Plugin Admin"));
-		return $badge;
+		return this.el("span", { class: "am-badge plugin-admin", text: "Plugin Admin", title: "Acode Messages plugin administrator" });
 	}
 
 	badges(u) {
