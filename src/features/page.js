@@ -1,11 +1,21 @@
-import { ID, HOME_MS } from "../constants.js";
+import { ID, HOME_MS, ICON_CLASS } from "../constants.js";
 import { EMOJI } from "../icons.js";
 import { ls } from "../util.js";
+import CSS from "../styles.css";
 
 export class PageMethods {
 	/* ---------- page lifecycle ---------- */
 
 	async open() {
+		// Already open as a tab: just bring it to the front.
+		if (this.tab) {
+			try {
+				this.tab.makeActive();
+				return;
+			} catch {
+				this.close(true);
+			}
+		}
 		if (this.$page?.isConnected) return;
 		if (this.$page) this.close(true);
 		try {
