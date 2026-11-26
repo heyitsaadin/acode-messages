@@ -204,6 +204,8 @@ export class PageMethods {
 		this.$page = null;
 		this.tab = null;
 		this.$err = null;
+		this.$ob = null;
+		this.obState = null;
 		this.actionStack?.remove?.(ID);
 		if (tab) {
 			// Closing from inside the chat (X, back): take the tab down. If the user closed the tab itself, it is already going.
