@@ -147,7 +147,10 @@ export class PageMethods {
 			}
 		});
 		tab.on("blur", () => {
-			if (this.tab === tab) this.actionStack?.remove?.(ID);
+			if (this.tab === tab) {
+				this.tabOn = false;
+				this.actionStack?.remove?.(ID);
+			}
 		});
 		this.tab = tab;
 		this.tabOn = true;
