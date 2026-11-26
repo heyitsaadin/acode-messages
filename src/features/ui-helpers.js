@@ -82,7 +82,7 @@ export class UiHelpersMethods {
 
 	badges(u) {
 		const out = [];
-		if (u.verified) out.push(this.verifiedMark());
+		if (u.verified || u.is_plugin_admin) out.push(this.verifiedMark()); // the plugin owner always gets the rosette
 		if (u.is_plugin_admin) out.push(this.pluginAdminMark());
 		if (u.acode_pro) out.push(this.el("span", { class: "am-badge pro", text: "PRO" }));
 		if (u.is_admin) out.push(this.el("span", { class: "am-badge admin", text: "Acode Administrator", title: "Acode platform administrator" }));
