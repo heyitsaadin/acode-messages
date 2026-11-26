@@ -14,7 +14,7 @@ export class MentionsMethods {
 			if (!name || !uid || uid === myId) return;
 			const k = name.toLowerCase();
 			const old = out.get(k);
-			const next = { id: uid, name, avatar_url: u.avatar_url, verified: u.verified, acode_pro: u.acode_pro, is_admin: u.is_admin, online: u.online };
+			const next = { id: uid, name, avatar_url: u.avatar_url, verified: u.verified, acode_pro: u.acode_pro, is_admin: u.is_admin, is_plugin_admin: u.is_plugin_admin, online: u.online };
 			if (!old || (old.online === undefined && u.online !== undefined)) out.set(k, { ...old, ...next });
 		};
 		const c = this.state.channel;
