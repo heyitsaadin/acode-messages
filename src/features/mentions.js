@@ -286,7 +286,7 @@ export class MentionsMethods {
 		const k = m.kind || "text";
 		if (k === "image") return m.content && m.content !== "📷 Photo" ? `📷 ${m.content}` : "📷 Photo";
 		if (k === "voice") return "🎤 Voice message";
-		return String(m.content || "").replace(/\s+/g, " ");
+		return this.plainPreview(m.content).replace(/\s+/g, " ");
 	}
 
 	msgRow(m, t, cont, rp, animate) {
