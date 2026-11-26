@@ -97,6 +97,7 @@ mixin(AcodeMessages, [
 	PageMethods,
 	HomeMethods,
 	SheetsMethods,
+	DiscoverMethods,
 	PermissionsMethods,
 	BannerMethods,
 	GroupIconMethods,
