@@ -141,7 +141,10 @@ export class PageMethods {
 		});
 		// Only grab the back button while the chat tab is the one on screen.
 		tab.on("focus", () => {
-			if (this.tab === tab) this.pushBack();
+			if (this.tab === tab) {
+				this.tabOn = true;
+				this.pushBack();
+			}
 		});
 		tab.on("blur", () => {
 			if (this.tab === tab) this.actionStack?.remove?.(ID);
