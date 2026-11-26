@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.1
+
+- Your encryption key is now set up as soon as Acode Messages loads, so people can message you right after you update, without you opening a DM first.
+- Tidier message headers: the verified badge is smaller and lines up with the name, tags and time.
+
 ## 1.4.0
 
 - Direct messages are now end-to-end encrypted. Only you and the person you're talking to can read them; the server only stores scrambled text.
