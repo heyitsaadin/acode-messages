@@ -148,7 +148,7 @@ export class HomeMethods {
 				}
 				return $s;
 			}),
-			this.el("div", { class: "am-srv add", onclick: () => this.addMenu() }, this.ico("plus", 26)),
+			this.el("div", { class: `am-srv add${t === "add" ? " on" : ""}`, "data-t": "add", onclick: () => this.setTab("add") }, this.ico("plus", 26)),
 		);
 	}
 
