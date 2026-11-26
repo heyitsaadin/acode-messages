@@ -7,7 +7,7 @@ export class HomeMethods {
 		const { groups } = this.state.home;
 		let t = this.state.tab;
 		if (initial) t = ls.get("am-tab", null) ?? (groups.length ? groups[0].id : "dm");
-		if (t !== "dm" && !groups.some((g) => g.id === t)) t = groups.length ? groups[0].id : "dm";
+		if (t !== "dm" && t !== "add" && !groups.some((g) => g.id === t)) t = groups.length ? groups[0].id : "dm";
 		this.state.tab = t;
 	}
 
