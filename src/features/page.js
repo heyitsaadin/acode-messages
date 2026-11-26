@@ -193,10 +193,19 @@ export class PageMethods {
 		clearInterval(this.homeTimer);
 		this.pollTimer = this.homeTimer = null;
 		const $page = this.$page;
+		const tab = this.tab;
 		this.$page = null;
+		this.tab = null;
 		this.$err = null;
 		this.actionStack?.remove?.(ID);
-		if ($page && !fromHide) {
+		if (tab) {
+			// Closing from inside the chat (X, back): take the tab down. If the user closed the tab itself, it is already going.
+			if (!fromHide) {
+				try {
+					tab.remove(true, { ignorePinned: true });
+				} catch {}
+			}
+		} else if ($page && !fromHide) {
 			try {
 				if (typeof $page.hide === "function") $page.hide();
 				else $page.remove();
