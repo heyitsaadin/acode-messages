@@ -33,6 +33,14 @@ Acode Messages adds a full chat app to Acode. Jump into groups and channels, mes
 - Voice chat
 - Profiles
 
+## Install
+
+In Acode open **Plugins → + → Remote** and paste:
+
+```
+https://github.com/heyitsaadin/acode-messages/releases/latest/download/acode-messages.zip
+```
+
 ## Good to know
 
 - **Sign in first.** You need to be logged in to your Acode account (Profile → Login).
