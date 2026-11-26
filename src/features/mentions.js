@@ -47,6 +47,7 @@ export class MentionsMethods {
 		if (this.editing || t.value === this.sugSkip) return this.hideSug();
 		const pos = t.selectionStart ?? t.value.length;
 		const before = t.value.slice(0, pos);
+		if (this.shareSuggest(before)) return; // "/share ap…" lists matching open tabs instead of members
 		const mt = /(^|\s)@([^@\n]{0,32})$/.exec(before);
 		if (!mt) return this.hideSug();
 		const g = this.group;
