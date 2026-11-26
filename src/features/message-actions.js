@@ -280,6 +280,9 @@ export class MessageActionsMethods {
 		if (this.editing) return this.saveEdit();
 		if ((!content && !pend) || !this.state.channel) return;
 		if (this.state.channel.kind !== "dm" && (this.isMuted(this.group) || this.chanInfo()?.can_send === false)) return this.syncMute();
+		// "/share app.py" sends that open tab as a code card instead of the literal text
+		const cmd = !pend && /^\/share(?:\s+([\s\S]*))?$/i.exec(content);
+		if (cmd) return this.shareCommand(cmd[1]);
 		await this.postMessage(content, pend ? { type: "image", data: pend.b64, w: pend.w, h: pend.h } : null);
 	}
 
