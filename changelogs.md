@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.2
+
+- Adds a personal Plugin Admin badge for the Acode Messages plugin owner.
+- Supports an optional custom logo at `project/aadin-plugin-admin.png`.
+
+
 ## 1.3.1
 
 - Replaces the plain verification check with the Acode verified badge image.
