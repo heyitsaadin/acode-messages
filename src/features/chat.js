@@ -6,6 +6,7 @@ export class ChatMethods {
 	openChannel(c) {
 		clearTimeout(this.pollTimer);
 		this.state.channel = c;
+		this.nfSeen(c.slug);
 		this.view = "chat";
 		this.$root.classList.add("chat");
 		this.lastId = 0;
