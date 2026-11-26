@@ -1,84 +1,21 @@
-Acode Messages Source-Available License
-Version 1.0
+MIT License
 
-Copyright (c) 2026 heyitsaadin. All rights reserved.
+Copyright (c) 2026 heyitsaadin
 
-The source code, assets, icons, banners, styles, text and design in this
-repository (together, the "Software") are made public so people can read and
-trust what they install. Publishing the Software does NOT make it open source.
-Except for the limited permissions in section 1, all rights are reserved.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-1. WHAT YOU MAY DO
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-   a. Read and study the source code, including for security review.
-
-   b. Install and use the official Acode Messages plugin, as released by the
-      author, on your own devices for your own personal use.
-
-   c. Report issues and suggest changes to the author. If you send a
-      contribution (a pull request, patch or code snippet), you give the
-      author a perpetual, worldwide, royalty-free right to use, modify and
-      distribute it as part of the Software under any license, and you confirm
-      that you have the right to give it.
-
-   d. Fork the repository on GitHub only as far as GitHub's Terms of Service
-      allow, and only to propose changes back to the author. A fork is not a
-      license to publish, distribute or release anything built from it.
-
-2. WHAT YOU MAY NOT DO
-
-   Without the author's prior written permission, you may not:
-
-   a. Copy, reproduce or reuse the Software, in whole or in part, in any other
-      project, plugin, app, website or service.
-
-   b. Modify, adapt, translate, rebuild or create derivative works of the
-      Software, or publish or distribute any modified version of it.
-
-   c. Publish, upload, host, sell, rent, lease, sublicense or otherwise
-      distribute the Software, the built plugin files (main.js or the plugin
-      zip), or any repackaged or renamed version of them, including to the
-      Acode plugin store or any other plugin registry or marketplace.
-
-   d. Build a plugin, app or service that reproduces the Software's code,
-      structure, user interface design, assets or branding, or that is derived
-      from them.
-
-   e. Use the Software's name, icon, banner or branding to identify any other
-      product, or in a way that suggests the author endorses it.
-
-   f. Remove or change copyright, license or attribution notices.
-
-   g. Use the Software, or the code or assets in it, to train or fine-tune a
-      machine learning model.
-
-   h. Use the author's hosted Acode Messages service with any software other
-      than the official plugin, or attempt to access it in ways it was not
-      meant to be accessed.
-
-3. WHAT THIS LICENSE DOES NOT COVER
-
-   This license protects the Software's code and assets as written. It does not
-   claim ownership of general ideas, concepts or features (for example "a chat
-   plugin for a code editor"). You are free to build your own, original
-   software that does something similar, as long as you do not use anything
-   from the Software to do it.
-
-4. TERMINATION
-
-   Your permissions end automatically if you break any term of this license.
-   When they end you must stop using the Software and delete any copies other
-   than the ones GitHub requires you to keep.
-
-5. NO WARRANTY
-
-   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-   IMPLIED, INCLUDING THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-   PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHOR BE
-   LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY ARISING FROM, OUT OF OR IN
-   CONNECTION WITH THE SOFTWARE OR ITS USE.
-
-6. PERMISSION REQUESTS
-
-   To ask for permission to do anything section 2 forbids, contact the author
-   through GitHub: https://github.com/heyitsaadin
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
