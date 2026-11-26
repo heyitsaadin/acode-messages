@@ -29,8 +29,6 @@ export class PageMethods {
 	}
 
 	build() {
-		const $page = this.Page("Acode Messages");
-		this.$page = $page;
 		this.view = "home";
 		const el = this.el.bind(this);
 
