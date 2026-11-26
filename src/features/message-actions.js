@@ -77,7 +77,7 @@ export class MessageActionsMethods {
 			"div",
 			{ class: "am-mg" },
 			...[
-				own && kind === "text" ? this.item("edit", "Edit Message", close(() => this.startEdit(m))) : null,
+				own && kind === "text" && !m.locked ? this.item("edit", "Edit Message", close(() => this.startEdit(m))) : null,
 				this.item("reply", "Reply", close(() => this.startReply(m))),
 			].filter(Boolean),
 		);
