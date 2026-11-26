@@ -96,7 +96,8 @@ export class LauncherMethods {
 		}
 	}
 
-	async init() {
+	async init(baseUrl) {
+		this.pluginBaseUrl = String(baseUrl || "").endsWith("/") ? String(baseUrl) : `${baseUrl || ""}/`;
 		window.acodeMessages = this;
 		this.cleanups = [];
 		try {
