@@ -1,7 +1,7 @@
 <p align="center"><img src="https://raw.githubusercontent.com/heyitsaadin/acode-messages-images/main/banner.png" width="100%" alt="Acode Messages"></p>
 
 <p align="center">
-<img src="https://img.shields.io/badge/License-Proprietary-red" alt="License">
+<a href="LICENSE"><img src="https://img.shields.io/badge/License-Source%20Available-red" alt="License"></a>
 <img src="https://img.shields.io/badge/Acode-Plugin-blue?logo=android&logoColor=white" alt="Acode Plugin">
 <img src="https://img.shields.io/badge/version-1.1.1-brightgreen" alt="Version">
 </p>
