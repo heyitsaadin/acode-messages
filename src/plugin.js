@@ -107,4 +107,5 @@ mixin(AcodeMessages, [
 	PhotosMethods,
 	VoiceMessagesMethods,
 	VoiceChatMethods,
+	CodeShareMethods,
 ]);
