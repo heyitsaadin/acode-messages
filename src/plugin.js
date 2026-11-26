@@ -65,6 +65,7 @@ export class AcodeMessages {
 	get settingsUi() {
 		return {
 			list: [
+				...this.notifySettings(),
 				{
 					key: "editProfile",
 					text: "Edit profile",
