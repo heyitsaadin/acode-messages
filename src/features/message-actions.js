@@ -257,6 +257,8 @@ export class MessageActionsMethods {
 		try {
 			const { messages } = await this.api(`messages?channel=${encodeURIComponent(ch.slug)}&after=0`);
 			if (ch !== this.state.channel || !Array.isArray(messages) || !messages.length) return;
+			await this.decryptMessages(ch, messages);
+			if (ch !== this.state.channel) return;
 			const ids = new Set(messages.map((x) => String(x.id)));
 			const min = Math.min(...messages.map((x) => Number(x.id)));
 			const max = Math.max(...messages.map((x) => Number(x.id)));
