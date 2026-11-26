@@ -166,6 +166,7 @@ export class HomeMethods {
 		const t = this.state.tab;
 		const el = this.el.bind(this);
 		const close = el("button", { class: "am-btn", onclick: () => this.close() }, this.ico("close", 22));
+		if (t === "add") return this.paintAdd(close);
 		if (t === "dm") {
 			this.put(
 				this.$ph,
