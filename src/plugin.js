@@ -81,6 +81,7 @@ export class AcodeMessages {
 				},
 			],
 			cb: (key, value) => {
+				if (this.notifyChanged(key, value)) return;
 				if (key === "editProfile") {
 					this.openEditProfile();
 					return;
