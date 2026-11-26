@@ -1,0 +1,40 @@
+# Changelog
+
+## 1.1.1
+
+- Tap a profile picture in chat to open that person's profile.
+- Tap a name in chat to drop @Name into the message box.
+- @mentions are now blue, work with names that have spaces (like @Aadin Kc) and open the profile when tapped.
+- Type @ and a letter to get name suggestions; tap one to complete it.
+- Add friend, Cancel request, Accept and Friends buttons now live right on every profile.
+- Redesigned the Notifications page with a proper title, friend request cards and a clear empty state.
+- Optional server update: profile now reports friend status.
+
+## 1.1.0
+
+- Group menu is now organised into sections: Community, Channels, Appearance, People & access and Danger zone.
+- Channels: owners and people with the new "Manage channels" permission can create, rename, set a topic on and delete channels.
+- Private channels: choose which roles and people can see a channel, or use Advanced permissions to set View / Send per role (deny, inherit or allow).
+- Slowmode for any channel.
+- Giving roles is faster: tap a person, then tap a role. Each role also lists everyone with a switch so you can add people in one tap.
+- Needs the matching server update (migration 008).
+
+## 1.0.2
+
+- Cleaner, more minimal profile: Discord-style full-width Edit profile / Message button under the name.
+- Removed the Chat activity and Coding activity cards from profiles.
+- Pull a profile down from the top to close it.
+
+## 1.0.1
+
+- Profile now opens over a strong frosted blur.
+- Smoother profile open animation (slides up, content eases in).
+- Fixed the gap above the profile banner.
+
+## 1.0.0
+
+- First stable release.
+- Groups, channels, direct messages and friends.
+- Photos, voice messages and voice chat.
+- Profiles with optional coding activity.
+- Discord-style message layout with long-press actions.

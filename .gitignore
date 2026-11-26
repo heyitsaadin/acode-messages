@@ -1,0 +1,8 @@
+# Built by `node build.js`; not committed
+main.js
+
+# Release zips
+*.zip
+
+node_modules/
+.DS_Store
