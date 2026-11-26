@@ -10,6 +10,7 @@ export class SheetsMethods {
 		// Nothing may pop open by itself in the first instant after the page appears.
 		if (Date.now() - (this.openedAt || 0) < 700) return;
 		this.sheetSeq = (this.sheetSeq || 0) + 1;
+		this.sheetAt = Date.now();
 		const was = this.$sheet.classList.contains("open");
 		const $x = tall ? this.el("div", { class: "am-sx" }, this.el("button", { class: "am-btn", onclick: () => this.closeSheet() }, this.ico("close", 22))) : null;
 		this.put(this.$sheet, $x, title ? this.el("h3", { text: title, class: tall ? "am-th" : "" }) : null, ...nodes);
