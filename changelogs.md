@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.3.1
+
+- Replaces the plain verification check with the Acode verified badge image.
+- Labels platform administrators as "Acode Administrator" on profiles.
+- Includes the project image folder in release packages.
+
+
 ## 1.3.0
 
 - Share code straight from the editor: select code, tap "Send to chat" in the selection menu (or run "Send selected code to Acode Messages" from the command palette), pick a chat, add a note and send.
