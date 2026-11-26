@@ -39,7 +39,7 @@ export class EditProfileMethods {
 		this.state.user = { ...this.state.user, name: nu.name, avatar_url: nu.avatar_url };
 		const c = ls.get(`am-prof:${id}`);
 		if (c) {
-			c.user = { ...c.user, name: nu.name, avatar_url: nu.avatar_url, banner: nu.banner || null, about: nu.about || "" };
+			c.user = { ...c.user, name: nu.name, avatar_url: nu.avatar_url, banner: nu.banner || null, about: nu.about || "", ...(nu.visibility ? { visibility: nu.visibility, onboarded: nu.onboarded } : {}) };
 			ls.set(`am-prof:${id}`, c);
 		}
 	}
@@ -51,7 +51,7 @@ export class EditProfileMethods {
 		const mine = ls.get("am-me", {}) || {};
 		const src = info0 || ls.get(`am-prof:${id}`)?.user || {};
 		const acodeAvatar = ls.get("cached-logged-in-user")?.avatar_url || null;
-		const cur = { name: u.name || "", about: String(src.about ?? mine.about ?? ""), avatar: u.avatar_url || null, banner: src.banner || null };
+		const cur = { name: u.name || "", about: String(src.about ?? mine.about ?? ""), avatar: u.avatar_url || null, banner: src.banner || null, visibility: src.visibility || null };
 		const draft = {}; // undefined = unchanged, null = remove, string = new picture
 		const touched = {};
 		const $ban = el("div", { class: "am-ed-ban" });
@@ -62,6 +62,12 @@ export class EditProfileMethods {
 		const $about = el("textarea", { class: "am-inp", placeholder: "Tell people a little about yourself", maxlength: "190" });
 		const $cnt = el("div", { class: "am-cnt" });
 		const $save = el("button", { class: "am-go", text: "Save changes" });
+		// Public / private choice. Only shown when the server reports one (it needs migration 012).
+		const $vis = el("div");
+		const paintVis = () => {
+			if (!cur.visibility) return this.put($vis);
+			this.put($vis, el("div", { class: "am-fl", text: "Profile privacy" }), this.visPicker(draft.visibility || cur.visibility, (v) => (draft.visibility = v)));
+		};
 		$name.value = cur.name;
 		$about.value = cur.about;
 		const val = (k) => (draft[k] !== undefined ? draft[k] : cur[k]);
@@ -135,6 +141,7 @@ export class EditProfileMethods {
 			if (about !== cur.about.trim()) body.about = about;
 			if (draft.avatar !== undefined) body.avatar = draft.avatar;
 			if (draft.banner !== undefined) body.banner = draft.banner;
+			if (draft.visibility && draft.visibility !== cur.visibility) body.visibility = draft.visibility;
 			if (!Object.keys(body).length) {
 				this.closeSheet();
 				return;
@@ -157,6 +164,7 @@ export class EditProfileMethods {
 		};
 		media();
 		count();
+		paintVis();
 		this.openSheet(true, "", [
 			$ban,
 			$av,
@@ -167,6 +175,7 @@ export class EditProfileMethods {
 			el("div", { class: "am-fl", text: "About me" }),
 			$about,
 			$cnt,
+			$vis,
 			$err,
 			$save,
 		]);
@@ -175,6 +184,10 @@ export class EditProfileMethods {
 			this.api(`profile?user=${id}`, { cache: "no-store" })
 				.then((d) => {
 					ls.set(`am-prof:${id}`, d);
+					if (d.user?.visibility && !cur.visibility) {
+						cur.visibility = d.user.visibility;
+						paintVis();
+					}
 					if (!touched.about && d.user?.about != null) {
 						cur.about = String(d.user.about);
 						$about.value = cur.about;

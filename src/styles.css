@@ -356,4 +356,57 @@ textarea.am-inp{resize:none;height:96px;line-height:1.35}
 .am-code-h .ti{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.8}
 .am-code-h button{border:0;background:transparent;color:inherit;font:inherit;font-size:12px;font-weight:700;padding:7px 10px;border-radius:8px}
 .am-code-h button:active{background:rgba(127,127,127,.3)}
+/* first-run setup: a full-cover screen over the chat with three steps */
+.am-ob{position:absolute;inset:0;z-index:50;display:flex;flex-direction:column;background:var(--primary-color);color:var(--primary-text-color);transition:opacity .26s ease,transform .26s ease;animation:am-fade .25s ease both}
+.am-ob.out{opacity:0;transform:scale(1.02);pointer-events:none}
+.am-ob-top{display:flex;align-items:center;gap:6px;padding:10px 10px 4px;flex-shrink:0}
+.am-ob-top .am-btn.gone{visibility:hidden}
+.am-ob-dots{flex:1;display:flex;justify-content:center;gap:6px}
+.am-ob-dots i{display:block;height:6px;width:6px;border-radius:99px;background:rgba(127,127,127,.4);transition:width .25s cubic-bezier(.3,.8,.3,1),background-color .25s}
+.am-ob-dots i.on{width:22px;background:var(--active-color,#2f6fed)}
+.am-ob-body{flex:1;min-height:0;overflow-y:auto;padding:6px 0 18px;overscroll-behavior:contain}
+.am-ob-body.in{animation:am-in-d .32s cubic-bezier(.2,.8,.2,1) both}
+.am-ob-foot{flex-shrink:0;padding:8px 14px 14px;display:flex;flex-direction:column;gap:4px}
+.am-ob-foot .am-go{width:100%;margin:6px 0 0}
+.am-ob-sec{border:0;background:transparent;color:inherit;font:inherit;font-size:15px;opacity:.7;padding:12px;border-radius:12px}
+.am-ob-sec:active{background:rgba(127,127,127,.2)}
+.am-ob-sec:disabled{opacity:.35}
+.am-ob-err{margin:0 4px;text-align:center}
+.am-ob-hero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:34px 28px 14px}
+.am-ob-hero .ring{width:92px;height:92px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--active-color,#2f6fed);color:#fff;margin-bottom:6px}
+.am-ob-hero h2{margin:0;font-size:28px;font-weight:800;line-height:1.15;overflow-wrap:anywhere}
+.am-ob-hero p{margin:0;opacity:.7;line-height:1.45;max-width:320px;font-size:16px}
+.am-ob-title{padding:22px 20px 2px}
+.am-ob-title h2{margin:0;font-size:26px;font-weight:800;line-height:1.15}
+.am-ob-title p{margin:6px 0 0;opacity:.7;line-height:1.4}
+.am-ob-feat{display:flex;align-items:flex-start;gap:14px;padding:12px 24px}
+.am-ob-feat .ic{width:44px;height:44px;border-radius:14px;background:rgba(127,127,127,.18);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.am-ob-feat b{display:block;font-size:16px}
+.am-ob-feat small{display:block;opacity:.65;line-height:1.35;margin-top:2px;font-size:14px}
+.am-ob-note{margin:14px 22px 0;font-size:13px;line-height:1.45;opacity:.65}
+/* the edit-profile pieces reused on the setup screen sit on the page colour instead of the sheet colour */
+.am-ob .am-inp,.am-ob .am-pillb,.am-ob .am-ed-ban{background:var(--secondary-color)}
+.am-ob .am-ed-av .am-av,.am-ob .am-ed-cam{border-color:var(--primary-color)}
+.am-ob .am-ed-cam.b{border:0}
+/* public / private choice (setup screen, edit profile, your own profile) */
+.am-visw{padding:0 14px}
+.am-vis{display:flex;align-items:center;gap:14px;margin:10px 0 0;padding:14px;border-radius:18px;background:rgba(127,127,127,.14);border:2px solid transparent;transition:border-color .18s,background-color .18s}
+.am-vis:active{background:rgba(127,127,127,.22)}
+.am-vis.on{border-color:var(--active-color,#2f6fed);background:rgba(127,127,127,.08)}
+.am-vis .ic{width:40px;height:40px;border-radius:12px;background:rgba(127,127,127,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.am-vis.on .ic{background:var(--active-color,#2f6fed);color:#fff}
+.am-vis .tx{flex:1;min-width:0}
+.am-vis .tx b{display:block;font-size:16px}
+.am-vis .tx small{display:block;opacity:.65;line-height:1.35;margin-top:2px;font-size:14px}
+.am-vis .rd{width:22px;height:22px;border-radius:50%;border:2px solid rgba(127,127,127,.55);flex-shrink:0;position:relative;transition:border-color .18s}
+.am-vis.on .rd{border-color:var(--active-color,#2f6fed)}
+.am-vis.on .rd::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--active-color,#2f6fed)}
+.am-card .am-visw{padding:0}
+.am-card .am-vis:first-child{margin-top:0}
+/* what other people see on a private profile */
+.am-priv{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:26px 20px}
+.am-priv .ring{width:64px;height:64px;border-radius:50%;background:rgba(127,127,127,.18);display:flex;align-items:center;justify-content:center;margin-bottom:6px}
+.am-priv b{font-size:17px}
+.am-priv .t{opacity:.65;line-height:1.4;font-size:14px;max-width:280px}
+@media (prefers-reduced-motion:reduce){.am-ob,.am-ob-body.in,.am-ob-dots i,.am-vis{animation:none!important;transition:none!important}}
 .am-code pre{margin:0;padding:10px 12px;overflow:auto;max-height:320px;font:12.5px/1.45 ui-monospace,Menlo,Consolas,monospace;white-space:pre;tab-size:2;-webkit-user-select:text;user-select:text}

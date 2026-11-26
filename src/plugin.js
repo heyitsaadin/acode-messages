@@ -23,6 +23,8 @@ import { VoiceMessagesMethods } from "./features/voice-messages.js";
 import { VoiceChatMethods } from "./features/voice-chat.js";
 import { CodeShareMethods } from "./features/code-share.js";
 import { EncryptionMethods } from "./features/encryption.js";
+import { PrivacyMethods } from "./features/privacy.js";
+import { OnboardingMethods } from "./features/onboarding.js";
 
 // The class itself only holds the constructor and settings. Everything else lives in
 // features/*.js and is attached below, so `this` works the same across all files.
@@ -64,7 +66,7 @@ export class AcodeMessages {
 				{
 					key: "editProfile",
 					text: "Edit profile",
-					info: "Change your picture, banner, name and about me.",
+					info: "Change your picture, banner, name, about me and who can see your profile.",
 				},
 				{
 					key: "apiUrl",
@@ -110,4 +112,6 @@ mixin(AcodeMessages, [
 	VoiceChatMethods,
 	CodeShareMethods,
 	EncryptionMethods,
+	PrivacyMethods,
+	OnboardingMethods,
 ]);

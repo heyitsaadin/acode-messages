@@ -173,6 +173,12 @@ export class PageMethods {
 	}
 
 	onBack() {
+		// The setup screen sits on top of everything: back goes one step back inside it.
+		if (this.$ob) {
+			this.obBack();
+			if (this.$page) this.pushBack();
+			return;
+		}
 		if (this.$sheet?.classList.contains("open")) {
 			this.closeSheet();
 			this.pushBack();
@@ -198,6 +204,8 @@ export class PageMethods {
 		this.$page = null;
 		this.tab = null;
 		this.$err = null;
+		this.$ob = null;
+		this.obState = null;
 		this.actionStack?.remove?.(ID);
 		if (tab) {
 			// Closing from inside the chat (X, back): take the tab down. If the user closed the tab itself, it is already going.
@@ -254,6 +262,8 @@ export class PageMethods {
 			this.state.user = this.withMine(u);
 			this.paintMe();
 		}
+		// First visit: the server says setup isn't done yet, so show the welcome and profile setup on top.
+		this.checkOnboarding();
 		await this.loadHome(false);
 		this.pushShare(false).catch(() => {});
 		clearInterval(this.homeTimer);
