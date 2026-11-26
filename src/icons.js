@@ -39,5 +39,6 @@ export const ICONS = {
 	at: '<circle cx="12" cy="12" r="3.6"/><path d="M15.6 12v1.4a2.6 2.6 0 0 0 5.2 0V12a8.8 8.8 0 1 0-3.5 7"/>',
 	idcard: '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M8 10v4M12 10v4M12 10h2a2 2 0 0 1 0 4h-2"/>',
 	pause: '<path fill="currentColor" stroke="none" d="M7 4.5h3.5v15H7zM13.5 4.5H17v15h-3.5z"/>',
+	file: '<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/>',
 };
 export const EMOJI = "😀 😃 😄 😁 😆 😅 😂 🤣 🙂 😉 😊 😍 😘 😎 🤩 🥳 😏 😌 😴 🤔 🙄 😬 😢 😭 😡 🤯 😱 🥺 👍 👎 👏 🙏 💪 👋 🤝 ✌️ 👀 🔥 ✨ 🎉 💯 ❤️ 💔 💙 💚 🚀 ⭐ ✅ ❌ ⚡ 💡 🐛 🔧 💻 📱 ☕ 🍕 🎮 🎵".split(" ");
