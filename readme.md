@@ -54,6 +54,12 @@ Community group code: `acode`
 - Discord-style layout: avatar, name and time on top, plain text below.
 - Long-press any message for Reply, Copy Text, Mention and Copy Message ID. On your own messages you also get Edit Message and Delete Message. Double-tap your own message to edit it.
 
+## License
+
+The source is public so you can read it, but it is **not open source**. You can install and use the plugin, but you can't copy the code, republish it, or build another plugin from it. See [LICENSE](LICENSE) for the full terms.
+
+Copyright (c) 2026 heyitsaadin. All rights reserved.
+
 ## Screenshots
 
 <div style="overflow-x:auto; white-space:nowrap; -webkit-overflow-scrolling:touch;">
