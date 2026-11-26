@@ -342,3 +342,10 @@ textarea.am-inp{resize:none;height:96px;line-height:1.35}
 .am-col{width:34px;height:34px;border-radius:50%;border:3px solid transparent;background-clip:padding-box;display:flex;align-items:center;justify-content:center;color:#fff}
 .am-col.on{box-shadow:0 0 0 3px var(--primary-text-color)}
 .am-col.none{background:rgba(127,127,127,.3)}
+/* shared code */
+.am-code{margin:6px 0 2px;border-radius:12px;overflow:hidden;white-space:normal;background:rgba(127,127,127,.12);border:1px solid rgba(127,127,127,.2)}
+.am-code-h{display:flex;align-items:center;gap:2px;padding:4px 4px 4px 12px;background:rgba(127,127,127,.16);font-size:12px}
+.am-code-h .ti{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.8}
+.am-code-h button{border:0;background:transparent;color:inherit;font:inherit;font-size:12px;font-weight:700;padding:7px 10px;border-radius:8px}
+.am-code-h button:active{background:rgba(127,127,127,.3)}
+.am-code pre{margin:0;padding:10px 12px;overflow:auto;max-height:320px;font:12.5px/1.45 ui-monospace,Menlo,Consolas,monospace;white-space:pre;tab-size:2;-webkit-user-select:text;user-select:text}
