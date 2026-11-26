@@ -49,5 +49,22 @@ from any file. The build fails if two files define a method with the same name.
 
 ## Releasing
 
-Zip these files at the top level of the zip: `main.js`, `plugin.json`, `readme.md`,
-`changelogs.md`, `icon.png`. Bump `version` in `plugin.json` first; the build copies it into the code.
+Releases are automatic (`.github/workflows/release.yml`):
+
+1. Bump `version` in `plugin.json` and add notes to `changelogs.md`. Commit and push.
+2. Tag it with the same number and push the tag:
+   `git tag v1.1.2 && git push origin v1.1.2`
+3. GitHub builds `main.js`, zips `main.js`, `plugin.json`, `readme.md`, `changelogs.md` and
+   `icon.png`, and publishes `acode-messages.zip` as a Release. The build fails if the tag
+   and `plugin.json` version don't match.
+
+The permanent install link (paste into Acode: Plugins, +, Remote) always serves the newest release:
+
+```
+https://github.com/heyitsaadin/acode-messages/releases/latest/download/acode-messages.zip
+```
+
+This needs the repo to be public. To test the build without releasing, run the workflow by hand
+from the Actions tab; it uploads the zip as a workflow artifact only.
+
+To zip by hand instead, put those five files at the top level of the zip.
