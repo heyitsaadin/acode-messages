@@ -29,10 +29,14 @@ export class ChatMethods {
 		this.refreshOnline();
 		this.resetList();
 		// Show the last conversation straight away; only fetch what's new.
-		const cache = ls.get(`am-msgs:${c.slug}`);
+		const cache = c.kind === "dm" ? null : ls.get(`am-msgs:${c.slug}`);
 		const fresh = cache?.list?.length && Date.now() - cache.at < 864e5;
 		if (fresh) this.append(cache.list, true);
 		else this.chatSkeleton();
+		if (c.kind === "dm" && this.e2eSupported()) {
+			// Make sure the other person can write to me, and fetch their key before the first message.
+			this.e2ePublish().then(() => this.peerKey(this.dmPeerId(c), true)).catch(() => {});
+		}
 		this.pushBack();
 		this.poll(true);
 	}
