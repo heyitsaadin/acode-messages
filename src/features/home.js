@@ -7,7 +7,7 @@ export class HomeMethods {
 		const { groups } = this.state.home;
 		let t = this.state.tab;
 		if (initial) t = ls.get("am-tab", null) ?? (groups.length ? groups[0].id : "dm");
-		if (t !== "dm" && !groups.some((g) => g.id === t)) t = groups.length ? groups[0].id : "dm";
+		if (t !== "dm" && t !== "add" && !groups.some((g) => g.id === t)) t = groups.length ? groups[0].id : "dm";
 		this.state.tab = t;
 	}
 
@@ -88,10 +88,11 @@ export class HomeMethods {
 	setTab(t) {
 		const old = this.state.tab;
 		if (t === old && this.$rail?.querySelector("[data-t]")) return;
-		const order = (x) => (x === "dm" ? 0 : this.state.home.groups.findIndex((g) => g.id === x) + 1);
+		const order = (x) => (x === "dm" ? 0 : x === "add" ? this.state.home.groups.length + 1 : this.state.home.groups.findIndex((g) => g.id === x) + 1);
 		this.animDir = order(t) >= order(old) ? "d" : "u";
 		this.state.tab = t;
-		ls.set("am-tab", t);
+		// The add page is somewhere you pass through, so the app never reopens on it.
+		if (t !== "add") ls.set("am-tab", t);
 		if (this.$rail?.querySelector("[data-t]")) this.markRail(t);
 		else this.paintRail();
 		this.paintPanel();
@@ -147,7 +148,7 @@ export class HomeMethods {
 				}
 				return $s;
 			}),
-			this.el("div", { class: "am-srv add", onclick: () => this.addMenu() }, this.ico("plus", 26)),
+			this.el("div", { class: `am-srv add${t === "add" ? " on" : ""}`, "data-t": "add", onclick: () => this.setTab("add") }, this.ico("plus", 26)),
 		);
 	}
 
@@ -165,6 +166,7 @@ export class HomeMethods {
 		const t = this.state.tab;
 		const el = this.el.bind(this);
 		const close = el("button", { class: "am-btn", onclick: () => this.close() }, this.ico("close", 22));
+		if (t === "add") return this.paintAdd(close);
 		if (t === "dm") {
 			this.put(
 				this.$ph,

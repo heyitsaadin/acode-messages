@@ -120,13 +120,11 @@ export class SheetsMethods {
 		return $it;
 	}
 
-	addMenu() {
-		this.sheet("Add a group", this.item("plus", "Create a group", () => this.groupForm("create")), this.item("link", "Join with an invite code", () => this.groupForm("join")));
-	}
-
 	groupForm(kind) {
 		const create = kind === "create";
 		const $in = this.el("input", { class: "am-inp", placeholder: create ? "Group name" : "Invite code", maxlength: create ? "40" : "20", autocapitalize: "off" });
+		const who = this.state.user?.name;
+		if (create && who) $in.value = `${who}'s group`.slice(0, 40);
 		const $go = this.el("button", { class: "am-go", text: create ? "Create group" : "Join group" });
 		const $e = this.el("div", { class: "am-ferr" });
 		const go = async () => {
@@ -135,10 +133,7 @@ export class SheetsMethods {
 			$go.disabled = true;
 			$e.textContent = "";
 			try {
-				const { group } = await this.api("groups", { method: "POST", body: JSON.stringify(create ? { action: "create", name: v } : { action: "join", code: v }) });
-				this.closeSheet();
-				await this.refreshHome();
-				this.setTab(group.id);
+				await this.joinAndOpen(create ? { action: "create", name: v } : { action: "join", code: v });
 			} catch (e) {
 				$e.textContent = e.message;
 				$go.disabled = false;
@@ -147,6 +142,9 @@ export class SheetsMethods {
 		$go.onclick = go;
 		$in.addEventListener("keydown", (e) => e.key === "Enter" && go());
 		this.sheet(create ? "Create a group" : "Join a group", $in, $e, $go);
-		setTimeout(() => $in.focus(), 250);
+		setTimeout(() => {
+			$in.focus();
+			if (create) $in.select();
+		}, 250);
 	}
 }
