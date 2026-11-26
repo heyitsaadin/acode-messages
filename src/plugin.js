@@ -26,6 +26,7 @@ import { CodeShareMethods } from "./features/code-share.js";
 import { EncryptionMethods } from "./features/encryption.js";
 import { PrivacyMethods } from "./features/privacy.js";
 import { OnboardingMethods } from "./features/onboarding.js";
+import { NotificationsMethods } from "./features/notifications.js";
 
 // The class itself only holds the constructor and settings. Everything else lives in
 // features/*.js and is attached below, so `this` works the same across all files.
