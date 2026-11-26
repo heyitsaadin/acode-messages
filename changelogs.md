@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.6.0
+
+- The + button now opens a Groups page laid out like Discord's: "Create a place for you and your friends", Create a group, I have an invite code, and Join communities.
+- Join communities lists public groups with a banner, picture, verified tick, description and online / member counts. Tap Preview, then Join group.
+- New groups start with a suggested name you can change.
+- Needs the matching server update (migration 013). Without it the community list shows "Couldn't load communities"; creating and joining by code still work.
+
 ## 1.5.0
 
 - New setup screen for first-time users: a short welcome, then choose your name, picture, banner and about me, then pick who can see your profile. You can skip it and change everything later.
