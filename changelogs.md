@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.7.0
 
 - Group owners can make their group public from the group menu (Discovery > Public group). Public groups show up under Public groups on the + page and anyone can join without an invite code. Needs a short description.
 - Find people now lists everyone with a public profile (online first) before you type anything. Private profiles aren't listed, but can still be found by searching their username.
