@@ -65,12 +65,14 @@ export class CodeShareMethods {
 		const ext = /\.([\w+#-]{1,12})$/.exec(name)?.[1]?.toLowerCase() || "text";
 		const label = `${name}:${a}${b > a ? `-${b}` : ""}`;
 		this.pendingCode = { block: `\`\`\`${ext} ${label}\n${code}\n\`\`\``, trimmed };
+		const reused = !!this.tab;
 		try {
 			await this.open();
 		} catch {}
 		if (!this.$page) return;
-		// Sheets stay shut for a moment after the chat opens (see openSheet), so wait that out.
-		const wait = 760 - (Date.now() - (this.openedAt || 0));
+		// A freshly opened chat keeps sheets shut for a moment (see openSheet). When the tab was already
+		// open, the tap that chose "Send to chat" can still land on the chat after the switch, so wait that out too.
+		const wait = reused ? 450 : 760 - (Date.now() - (this.openedAt || 0));
 		if (wait > 0) await new Promise((r) => setTimeout(r, wait));
 		if (!this.state.user) return this.flash("Sign in to Acode first, then try again");
 		this.codeTargets();
