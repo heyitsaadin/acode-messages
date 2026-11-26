@@ -62,6 +62,12 @@ export class EditProfileMethods {
 		const $about = el("textarea", { class: "am-inp", placeholder: "Tell people a little about yourself", maxlength: "190" });
 		const $cnt = el("div", { class: "am-cnt" });
 		const $save = el("button", { class: "am-go", text: "Save changes" });
+		// Public / private choice. Only shown when the server reports one (it needs migration 012).
+		const $vis = el("div");
+		const paintVis = () => {
+			if (!cur.visibility) return this.put($vis);
+			this.put($vis, el("div", { class: "am-fl", text: "Profile privacy" }), this.visPicker(draft.visibility || cur.visibility, (v) => (draft.visibility = v)));
+		};
 		$name.value = cur.name;
 		$about.value = cur.about;
 		const val = (k) => (draft[k] !== undefined ? draft[k] : cur[k]);
