@@ -164,6 +164,7 @@ export class EditProfileMethods {
 		};
 		media();
 		count();
+		paintVis();
 		this.openSheet(true, "", [
 			$ban,
 			$av,
