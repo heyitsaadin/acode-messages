@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.4.0
+
+- Direct messages are now end-to-end encrypted. Only you and the person you're talking to can read them; the server only stores scrambled text.
+- Both people need to update to this version to message each other. Until they do, sending shows "needs to update Acode Messages first".
+- Your encryption key lives on this device. Clearing plugin data or switching devices means older DMs can't be read on the new one.
+- Older plain-text DMs still show normally. Group chats are unchanged.
+- Needs the matching server update (migration 009).
+
 ## 1.3.3
 
 - Adds a personal text-only "Plugin Admin" profile tag for the plugin owner.
