@@ -332,7 +332,7 @@ export class MentionsMethods {
 
 	// Text with @mentions highlighted in blue. Names with spaces ("@Aadin Kc") are matched whole.
 	// Built from nodes, never innerHTML. Tap a mention to open that person's profile.
-	richText(text) {
+	richInline(text) {
 		const f = document.createDocumentFragment();
 		const names = this.mentionNames();
 		const low = text.toLowerCase();
