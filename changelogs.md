@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.3
+
+- Adds a personal text-only "Plugin Admin" profile tag for the plugin owner.
+- Keeps the Acode Verified rosette logo beside the verified user's name.
+
+
 ## 1.3.1
 
 - Replaces the plain verification check with the Acode verified badge image.
