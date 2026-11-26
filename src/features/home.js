@@ -91,7 +91,8 @@ export class HomeMethods {
 		const order = (x) => (x === "dm" ? 0 : x === "add" ? this.state.home.groups.length + 1 : this.state.home.groups.findIndex((g) => g.id === x) + 1);
 		this.animDir = order(t) >= order(old) ? "d" : "u";
 		this.state.tab = t;
-		ls.set("am-tab", t);
+		// The add page is somewhere you pass through, so the app never reopens on it.
+		if (t !== "add") ls.set("am-tab", t);
 		if (this.$rail?.querySelector("[data-t]")) this.markRail(t);
 		else this.paintRail();
 		this.paintPanel();
