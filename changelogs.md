@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.0
+
+- Acode Messages now opens as a tab in Acode's tab bar instead of covering the whole screen.
+- Back button only controls the chat while its tab is open.
+- Older Acode versions without custom tabs still get the full-screen page.
+
 ## 1.1.1
 
 - Tap a profile picture in chat to open that person's profile.
