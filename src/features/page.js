@@ -254,6 +254,8 @@ export class PageMethods {
 			this.state.user = this.withMine(u);
 			this.paintMe();
 		}
+		// First visit: the server says setup isn't done yet, so show the welcome and profile setup on top.
+		this.checkOnboarding();
 		await this.loadHome(false);
 		this.pushShare(false).catch(() => {});
 		clearInterval(this.homeTimer);
