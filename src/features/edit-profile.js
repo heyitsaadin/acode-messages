@@ -39,7 +39,7 @@ export class EditProfileMethods {
 		this.state.user = { ...this.state.user, name: nu.name, avatar_url: nu.avatar_url };
 		const c = ls.get(`am-prof:${id}`);
 		if (c) {
-			c.user = { ...c.user, name: nu.name, avatar_url: nu.avatar_url, banner: nu.banner || null, about: nu.about || "" };
+			c.user = { ...c.user, name: nu.name, avatar_url: nu.avatar_url, banner: nu.banner || null, about: nu.about || "", ...(nu.visibility ? { visibility: nu.visibility, onboarded: nu.onboarded } : {}) };
 			ls.set(`am-prof:${id}`, c);
 		}
 	}
