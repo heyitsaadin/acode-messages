@@ -174,6 +174,7 @@ export class EditProfileMethods {
 			el("div", { class: "am-fl", text: "About me" }),
 			$about,
 			$cnt,
+			$vis,
 			$err,
 			$save,
 		]);
