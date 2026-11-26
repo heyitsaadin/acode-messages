@@ -287,7 +287,7 @@ export class HomeMethods {
 			return;
 		}
 		this.$me.onclick = () => this.profile(u, true);
-		const n = (this.state.home.requests || []).length;
+		const n = (this.state.home.requests || []).length + this.nfUnread();
 		const $bell = this.el(
 			"button",
 			{
