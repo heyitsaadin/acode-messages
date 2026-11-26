@@ -149,6 +149,7 @@ export class LauncherMethods {
 		} catch {}
 
 		this.initCodeShare();
+		this.nfStart();
 		this.warm();
 	}
 
