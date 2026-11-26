@@ -309,6 +309,7 @@ export class MessageActionsMethods {
 				if (replied && message.reply_to == null && !message.reply && message.reply_to_id == null) message.reply_to = replied.id;
 				this.append([message], true);
 			}
+			return true;
 		} catch (e) {
 			this.flash(`${attachment ? "Not sent" : "Message not sent"} (${e.message})`);
 			if (/muted/i.test(e.message)) this.refreshHome().then(() => this.syncMute());
