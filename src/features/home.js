@@ -88,7 +88,7 @@ export class HomeMethods {
 	setTab(t) {
 		const old = this.state.tab;
 		if (t === old && this.$rail?.querySelector("[data-t]")) return;
-		const order = (x) => (x === "dm" ? 0 : this.state.home.groups.findIndex((g) => g.id === x) + 1);
+		const order = (x) => (x === "dm" ? 0 : x === "add" ? this.state.home.groups.length + 1 : this.state.home.groups.findIndex((g) => g.id === x) + 1);
 		this.animDir = order(t) >= order(old) ? "d" : "u";
 		this.state.tab = t;
 		ls.set("am-tab", t);
