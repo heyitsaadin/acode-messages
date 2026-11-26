@@ -221,9 +221,11 @@ export class MessageActionsMethods {
 		if (this.sending) return;
 		this.sending = true;
 		try {
-			const r = await this.mutate("edit", m, { content });
+			const isDm = this.state.channel?.kind === "dm";
+			const r = await this.mutate("edit", m, { content: await this.e2eWire(this.state.channel, content) });
 			const nm = r?.message || {};
-			this.applyEdit(m.id, nm.content ?? content, nm.edited_at || new Date().toISOString());
+			// In a DM the server only has the ciphertext, so show what was typed.
+			this.applyEdit(m.id, isDm ? content : (nm.content ?? content), nm.edited_at || new Date().toISOString());
 			this.cancelCtx();
 		} catch (e) {
 			this.flash(`Couldn't edit (${e.message})`);
