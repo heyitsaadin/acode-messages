@@ -309,7 +309,7 @@ export class ProfileMethods {
 			"div",
 			{ class: "am-card" },
 			el("h4", { text: "Your profile" }),
-			el("div", { class: "am-it", onclick: toggle }, el("div", {}, el("span", { text: "Share my coding activity" }), el("small", { text: "Shows your streak, heatmap and top languages to people you share a group with. Never your code or file names." })), $sw),
+			el("div", { class: "am-it", onclick: toggle }, el("div", {}, el("span", { text: "Share my coding activity" }), el("small", { text: "Shows your streak, heatmap and top languages to people who can see your profile (everyone if it's public, friends if it's private). Never your code or file names." })), $sw),
 			$site,
 			$err,
 		);
