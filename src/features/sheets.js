@@ -142,6 +142,9 @@ export class SheetsMethods {
 		$go.onclick = go;
 		$in.addEventListener("keydown", (e) => e.key === "Enter" && go());
 		this.sheet(create ? "Create a group" : "Join a group", $in, $e, $go);
-		setTimeout(() => $in.focus(), 250);
+		setTimeout(() => {
+			$in.focus();
+			if (create) $in.select();
+		}, 250);
 	}
 }
