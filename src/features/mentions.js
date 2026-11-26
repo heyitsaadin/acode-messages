@@ -213,6 +213,7 @@ export class MentionsMethods {
 		try {
 			const after = this.lastId;
 			const { messages } = await this.api(`messages?channel=${encodeURIComponent(ch.slug)}&after=${after}`);
+			await this.decryptMessages(ch, messages);
 			if (ch !== this.state.channel) return;
 			if (first && !messages.length) {
 				if (this.lastId) this.$list.querySelectorAll(".am-skwrap").forEach((n) => n.remove());
