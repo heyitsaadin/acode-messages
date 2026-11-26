@@ -173,6 +173,12 @@ export class PageMethods {
 	}
 
 	onBack() {
+		// The setup screen sits on top of everything: back goes one step back inside it.
+		if (this.$ob) {
+			this.obBack();
+			if (this.$page) this.pushBack();
+			return;
+		}
 		if (this.$sheet?.classList.contains("open")) {
 			this.closeSheet();
 			this.pushBack();
