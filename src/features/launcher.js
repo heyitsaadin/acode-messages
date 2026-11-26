@@ -155,6 +155,7 @@ export class LauncherMethods {
 
 	async destroy() {
 		clearTimeout(this.warmT);
+		this.nfStop();
 		this.close();
 		this.cleanups?.forEach((f) => {
 			try {
