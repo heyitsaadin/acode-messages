@@ -52,7 +52,7 @@ function bundle() {
 
 	visit(entry);
 	const out = chunks.join("\n\n").split("__PLUGIN_VERSION__").join(version);
-	return `// Acode Messages v${version}. Copyright (c) 2026 heyitsaadin. MIT License.\n// Source-available, not open source: copying, republishing or deriving other plugins from this code is not allowed. See LICENSE.\n// Built by build.js from src/. Don't edit this file, edit the files in src/ instead.\n(() => {\n${out}\n})();\n`;
+	return `// Acode Messages v${version}. Copyright (c) 2026 heyitsaadin. MIT License.\n// Open source under the MIT License, see LICENSE.\n// Built by build.js from src/. Don't edit this file, edit the files in src/ instead.\n(() => {\n${out}\n})();\n`;
 }
 
 function build() {
