@@ -147,6 +147,7 @@ export class PageMethods {
 			if (this.tab === tab) this.actionStack?.remove?.(ID);
 		});
 		this.tab = tab;
+		this.tabOn = true;
 		this.$page = tab;
 		return true;
 	}
