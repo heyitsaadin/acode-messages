@@ -65,11 +65,18 @@ export class UiHelpersMethods {
 		return this.el("div", { class: "am-avw" }, this.avatar(u, size), online === undefined ? null : this.el("span", { class: `am-on${online ? "" : " off"}` }));
 	}
 
+	// Acode's blue rosette verification mark, rendered as a crisp inline SVG.
+	verifiedMark() {
+		const $mark = this.el("span", { class: "am-verified-mark", title: "Acode verified", "aria-label": "Acode verified" });
+		$mark.innerHTML = '<svg viewBox="0 0 40 40" role="img" aria-hidden="true"><path fill="currentColor" d="M20 1.5c3.5 0 5.4 4.1 8.5 4.1 2.6 0 5.1-2.7 8-1.2 2.9 1.6 1.9 6.1 3.8 8.2 2 2.1 6.5 2 7.1 5.1.6 3.1-3.1 5.8-3.1 8.8s3.7 5.7 3.1 8.8c-.6 3.1-5.1 3-7.1 5.1-1.9 2.1-.9 6.6-3.8 8.2-2.9 1.5-5.4-1.2-8-1.2-3.1 0-5 4.1-8.5 4.1s-5.4-4.1-8.5-4.1c-2.6 0-5.1 2.7-8 1.2-2.9-1.6-1.9-6.1-3.8-8.2-2-2.1-6.5-2-7.1-5.1-.6-3.1 3.1-5.8 3.1-8.8s-3.7-5.7-3.1-8.8c.6-3.1 5.1-3 7.1-5.1 1.9-2.1.9-6.6 3.8-8.2 2.9-1.5 5.4 1.2 8 1.2 3.1 0 5-4.1 8.5-4.1z" transform="translate(4 4) scale(.67)"/><path d="m10.5 20.5 6.2 6.1L30 13.5" fill="none" stroke="#fff" stroke-width="4.2" stroke-linecap="square" stroke-linejoin="miter"/></svg>';
+		return $mark;
+	}
+
 	badges(u) {
 		const out = [];
-		if (u.verified) out.push(this.el("span", { class: "am-badge", text: "✓" }));
+		if (u.verified) out.push(this.verifiedMark());
 		if (u.acode_pro) out.push(this.el("span", { class: "am-badge pro", text: "PRO" }));
-		if (u.is_admin) out.push(this.el("span", { class: "am-badge", text: "ADMIN" }));
+		if (u.is_admin) out.push(this.el("span", { class: "am-badge admin", text: "Acode Administrator", title: "Acode platform administrator" }));
 		return out;
 	}
 
