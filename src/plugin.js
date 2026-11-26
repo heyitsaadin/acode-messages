@@ -7,6 +7,7 @@ import { UiHelpersMethods } from "./features/ui-helpers.js";
 import { PageMethods } from "./features/page.js";
 import { HomeMethods } from "./features/home.js";
 import { SheetsMethods } from "./features/sheets.js";
+import { DiscoverMethods } from "./features/discover.js";
 import { PermissionsMethods } from "./features/permissions.js";
 import { BannerMethods } from "./features/banner.js";
 import { GroupIconMethods } from "./features/group-icon.js";
