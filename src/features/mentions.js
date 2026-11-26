@@ -233,7 +233,7 @@ export class MentionsMethods {
 
 	saveMsgs() {
 		const ch = this.state.channel;
-		if (!ch) return;
+		if (!ch || ch.kind === "dm") return; // decrypted DMs are never written to storage
 		clearTimeout(this.saveT);
 		this.saveT = setTimeout(() => ls.set(`am-msgs:${ch.slug}`, { at: Date.now(), list: this.msgBuf }), 800);
 	}
