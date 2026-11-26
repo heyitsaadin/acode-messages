@@ -184,6 +184,10 @@ export class EditProfileMethods {
 			this.api(`profile?user=${id}`, { cache: "no-store" })
 				.then((d) => {
 					ls.set(`am-prof:${id}`, d);
+					if (d.user?.visibility && !cur.visibility) {
+						cur.visibility = d.user.visibility;
+						paintVis();
+					}
 					if (!touched.about && d.user?.about != null) {
 						cur.about = String(d.user.about);
 						$about.value = cur.about;
