@@ -120,10 +120,6 @@ export class SheetsMethods {
 		return $it;
 	}
 
-	addMenu() {
-		this.sheet("Add a group", this.item("plus", "Create a group", () => this.groupForm("create")), this.item("link", "Join with an invite code", () => this.groupForm("join")));
-	}
-
 	groupForm(kind) {
 		const create = kind === "create";
 		const $in = this.el("input", { class: "am-inp", placeholder: create ? "Group name" : "Invite code", maxlength: create ? "40" : "20", autocapitalize: "off" });
