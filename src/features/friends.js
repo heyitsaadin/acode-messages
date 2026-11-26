@@ -32,7 +32,7 @@ export class FriendsMethods {
 				$res,
 				el("div", { class: "am-lbl", text: "People on Acode Messages" }),
 				...b.people.map((u) => this.personRow(u)),
-				b.more ? el("button", { class: "am-people-more", text: b.busy ? "Loading…" : "Show more", disabled: b.busy ? "" : null, onclick: () => loadBrowse(true) }) : null,
+				b.more ? Object.assign(el("button", { class: "am-people-more", text: b.busy ? "Loading…" : "Show more", onclick: () => loadBrowse(true) }), { disabled: b.busy }) : null,
 			);
 		};
 		const loadBrowse = async (next) => {
