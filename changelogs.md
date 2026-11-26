@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- Group owners can make their group public from the group menu (Discovery > Public group). Public groups show up under Public groups on the + page and anyone can join without an invite code. Needs a short description.
+- Find people now lists everyone with a public profile (online first) before you type anything. Private profiles aren't listed, but can still be found by searching their username.
+- The profile privacy choice now says clearly that public profiles are listed in Find people.
+- Cleaner Groups page: removed the template cards that all did the same thing, and replaced the big community cards with compact rows. Tap a row to preview the group, then Join.
+- Needs the matching server update (api/friends.js, api/groups.js, api/home.js). No new migration.
+
 ## 1.6.0
 
 - The + button now opens a Groups page laid out like Discord's: "Create a place for you and your friends", Create a group, I have an invite code, and Join communities.
