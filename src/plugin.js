@@ -109,4 +109,5 @@ mixin(AcodeMessages, [
 	VoiceMessagesMethods,
 	VoiceChatMethods,
 	CodeShareMethods,
+	EncryptionMethods,
 ]);
