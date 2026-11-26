@@ -84,7 +84,8 @@ export class PageMethods {
 		const chat = el("div", { class: "am-chat" }, this.$chead, this.$vbar, this.$list, this.$emo, this.$pend, this.$ctx, this.$sug, this.$bar);
 
 		// overlay sheet + inline error strip
-		this.$scrim = el("div", { class: "am-scrim", onclick: () => this.closeSheet() });
+		// A sheet ignores taps on its backdrop for a moment, so the tap that opened it can't close it again.
+		this.$scrim = el("div", { class: "am-scrim", onclick: () => Date.now() - (this.sheetAt || 0) > 350 && this.closeSheet() });
 		this.$sheet = el("div", { class: "am-sheet" });
 		this.bindSheetSwipe();
 		this.$err = el("div", { class: "am-err", onclick: () => this.$err.classList.remove("show") });
