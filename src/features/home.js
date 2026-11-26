@@ -244,7 +244,7 @@ export class HomeMethods {
 			"div",
 			{ class: "am-dm", onclick: () => this.openChannel({ slug: d.slug, name: d.name, kind: "dm", peer: peerOf(d) }) },
 			this.avw(d, 46, !!d.online),
-			this.el("div", { class: "bd" }, this.el("b", { text: d.name }), this.el("small", { text: d.last_content || "Say hi 👋" })),
+			this.el("div", { class: "bd" }, this.el("b", { text: d.name }), this.el("small", { text: this.plainPreview(d.last_content) || "Say hi 👋" })),
 			t ? this.el("time", { text: this.shortTime(t) }) : null,
 		);
 	}

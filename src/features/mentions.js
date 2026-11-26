@@ -286,7 +286,7 @@ export class MentionsMethods {
 		const k = m.kind || "text";
 		if (k === "image") return m.content && m.content !== "📷 Photo" ? `📷 ${m.content}` : "📷 Photo";
 		if (k === "voice") return "🎤 Voice message";
-		return String(m.content || "").replace(/\s+/g, " ");
+		return this.plainPreview(m.content).replace(/\s+/g, " ");
 	}
 
 	msgRow(m, t, cont, rp, animate) {
@@ -332,7 +332,7 @@ export class MentionsMethods {
 
 	// Text with @mentions highlighted in blue. Names with spaces ("@Aadin Kc") are matched whole.
 	// Built from nodes, never innerHTML. Tap a mention to open that person's profile.
-	richText(text) {
+	richInline(text) {
 		const f = document.createDocumentFragment();
 		const names = this.mentionNames();
 		const low = text.toLowerCase();

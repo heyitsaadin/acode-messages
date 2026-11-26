@@ -21,6 +21,7 @@ import { MessageActionsMethods } from "./features/message-actions.js";
 import { PhotosMethods } from "./features/photos.js";
 import { VoiceMessagesMethods } from "./features/voice-messages.js";
 import { VoiceChatMethods } from "./features/voice-chat.js";
+import { CodeShareMethods } from "./features/code-share.js";
 
 // The class itself only holds the constructor and settings. Everything else lives in
 // features/*.js and is attached below, so `this` works the same across all files.
@@ -106,4 +107,5 @@ mixin(AcodeMessages, [
 	PhotosMethods,
 	VoiceMessagesMethods,
 	VoiceChatMethods,
+	CodeShareMethods,
 ]);

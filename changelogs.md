@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.3.0
+
+- Share code straight from the editor: select code, tap "Send to chat" in the selection menu (or run "Send selected code to Acode Messages" from the command palette), pick a chat, add a note and send.
+- Code in messages now shows as a card with the file name and line numbers, a Copy button and an Open button that opens the snippet as a new file in the editor.
+- Code blocks show as "Code" in the chat list and in replies instead of raw backticks.
+- Now open source under the MIT License.
+
 ## 1.2.0
 
 - Acode Messages now opens as a tab in Acode's tab bar instead of covering the whole screen.
