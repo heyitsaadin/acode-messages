@@ -1,0 +1,47 @@
+name: Submit to Acode (new plugin)
+
+# Manual only. Uploads the plugin to acode.app as a NEW plugin (POST /api/plugin).
+# New plugins wait for admin review, and paid plugins must be submitted from the website.
+# Use this for the first submission. For later versions use the Release workflow,
+# which sends updates (PUT /api/plugin).
+#
+# Needs the ACODE_API_KEY repo secret, from a key that has "Submit new plugins"
+# (and ideally also "Publish plugin updates", so the new plugin is added to the key).
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    env:
+      ACODE_API_KEY: ${{ secrets.ACODE_API_KEY }}
+    steps:
+      - name: Check secret
+        run: |
+          if [ -z "$ACODE_API_KEY" ]; then
+            echo "::error::ACODE_API_KEY secret is not set."
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build main.js
+        run: node build.js
+
+      - name: Zip plugin files
+        run: zip -j acode-messages.zip main.js plugin.json readme.md changelogs.md icon.png
+
+      - name: Submit to acode.app
+        run: |
+          curl --fail-with-body -sS -X POST https://acode.app/api/plugin \
+            -H "Authorization: Bearer $ACODE_API_KEY" \
+            -F "plugin=@acode-messages.zip"
+          echo
+          echo "Submitted for review"

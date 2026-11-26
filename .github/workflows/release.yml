@@ -1,14 +1,25 @@
 name: Release
 
-# Publishes acode-messages.zip as a GitHub Release for the version in plugin.json.
+# Builds acode-messages.zip, publishes it as a GitHub Release, and (if the
+# ACODE_API_KEY secret is set) pushes the same zip to acode.app as an update.
+#
 # Two ways to run it:
-#   1. Push a tag like v1.1.2 (must match "version" in plugin.json).
-#   2. Actions tab -> Release -> Run workflow (no git commands needed).
-# If the release already exists, the zip is re-uploaded to it.
+#   1. Push a tag like v1.2.0 (must match "version" in plugin.json).
+#   2. Actions tab -> Release -> Run workflow. Untick "publish_to_acode" to skip acode.app.
+# If the GitHub release already exists, the zip is re-uploaded to it.
+#
+# One-time setup for acode.app publishing:
+#   acode.app/api-keys -> New key -> permission "Publish plugin updates" -> pick Acode Messages.
+#   GitHub repo -> Settings -> Secrets and variables -> Actions -> New secret: ACODE_API_KEY.
 on:
   push:
     tags: ["v*"]
   workflow_dispatch:
+    inputs:
+      publish_to_acode:
+        description: "Also publish this version to acode.app"
+        type: boolean
+        default: true
 
 permissions:
   contents: write
@@ -16,6 +27,8 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    env:
+      ACODE_API_KEY: ${{ secrets.ACODE_API_KEY }}
     steps:
       - uses: actions/checkout@v4
 
@@ -50,3 +63,16 @@ jobs:
               --notes-file changelogs.md \
               --target "$GITHUB_SHA"
           fi
+
+      - name: Publish update to acode.app
+        if: ${{ env.ACODE_API_KEY != '' && (github.event_name == 'push' || inputs.publish_to_acode) }}
+        run: |
+          curl --fail-with-body -sS -X PUT https://acode.app/api/plugin \
+            -H "Authorization: Bearer $ACODE_API_KEY" \
+            -F "plugin=@acode-messages.zip"
+          echo
+          echo "Published $TAG to acode.app"
+
+      - name: Note about missing key
+        if: ${{ env.ACODE_API_KEY == '' && (github.event_name == 'push' || inputs.publish_to_acode) }}
+        run: echo "::warning::ACODE_API_KEY secret is not set, so nothing was sent to acode.app. See the setup notes at the top of release.yml."
