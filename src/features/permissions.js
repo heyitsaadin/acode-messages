@@ -85,7 +85,59 @@ export class PermissionsMethods {
 				this.can(g, "manage_group") ? this.item("image", g.banner ? "Change group banner" : "Add a group banner", () => this.bannerMenu(g), "", "Shown at the top of the group for everyone") : null,
 			),
 			...sec("People & access", this.can(g, "manage_roles") ? this.item("shield", "Roles", () => this.rolesSheet(g), "", "Create roles, then give them to people in one tap") : null),
+			// Only the owner sees this, and only when the server knows about public groups (is_public is sent).
+			...sec("Discovery", this.isOwner(g) && typeof g.is_public === "boolean" ? this.item("globe", "Public group", () => this.publicSheet(g), "", g.is_public ? "On · listed under Public groups, anyone can join" : "Off · people need an invite code") : null),
 		];
+	}
+
+	// Owner: list the group under "Public groups" so people can join without an invite code.
+	publicSheet(g) {
+		g = this.fresh(g);
+		const el = this.el.bind(this);
+		let on = !!g.is_public;
+		const $sw = el("div", { class: `am-sw${on ? " on" : ""}` });
+		const $desc = el("textarea", { class: "am-inp", rows: "3", placeholder: "What is this group about?", maxlength: "140" });
+		$desc.value = g.description || "";
+		const $cnt = el("div", { class: "am-cnt" });
+		const $e = el("div", { class: "am-ferr" });
+		const $save = el("button", { class: "am-go", text: "Save" });
+		const $more = el("div", {}, el("div", { class: "am-fl", text: "Short description" }), $desc, $cnt);
+		const sync = () => {
+			$sw.classList.toggle("on", on);
+			$more.style.display = on ? "" : "none";
+			$cnt.textContent = `${$desc.value.length}/140`;
+		};
+		$desc.addEventListener("input", sync);
+		const row = el(
+			"div",
+			{ class: "am-it", onclick: () => ((on = !on), sync()) },
+			this.ico("globe", 22),
+			el("div", {}, el("span", { text: "List in Public groups" }), el("small", { text: "Anyone on Acode Messages can find the group and join it without an invite code. Private channels stay private, and the invite code still works." })),
+			$sw,
+		);
+		$save.onclick = async () => {
+			const description = $desc.value.trim();
+			if (on && !description && !g.description) {
+				$e.textContent = "Add a short description so people know what the group is about";
+				return;
+			}
+			$save.disabled = true;
+			$e.textContent = "";
+			try {
+				const r = await this.api("groups", { method: "POST", body: JSON.stringify({ action: "set_public", group_id: g.id, public: on, description }) });
+				const cur = this.fresh(g);
+				cur.is_public = !!r.is_public;
+				cur.description = r.description || "";
+				if (this.disc) this.disc.at = 0; // refresh the public list next time it opens
+				this.refreshHome();
+				this.groupMenu(cur);
+			} catch (e) {
+				$e.textContent = e.message;
+				$save.disabled = false;
+			}
+		};
+		sync();
+		this.sheet("Public group", row, $more, $e, $save, this.item("close", "Back", () => this.groupMenu(g)));
 	}
 
 	dangerItems(g) {

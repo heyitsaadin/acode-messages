@@ -4,8 +4,8 @@ import { ls } from "../util.js";
 // public:  banner, about me and activity are visible to everyone.
 // private: only friends see them. Everyone else sees just the name and picture.
 export const VISIBILITY = [
-	{ id: "public", icon: "globe", title: "Public", text: "Anyone on Acode Messages can see your banner, about me and activity." },
-	{ id: "private", icon: "lock", title: "Private", text: "Only friends can see them. Everyone else sees just your name and picture." },
+	{ id: "public", icon: "globe", title: "Public", text: "You're listed in Find people, and anyone can see your banner, about me and activity." },
+	{ id: "private", icon: "lock", title: "Private", text: "You're not listed. Only friends see your banner, about me and activity; others see just your name and picture." },
 ];
 
 export class PrivacyMethods {

@@ -1,11 +1,5 @@
-// The page behind the + button on the server rail, laid out like Discord's: make a group, use an
-// invite code, or browse public communities ("Join communities").
-
-const TEMPLATES = [
-	["Just to hangout", "A private hangout for you and your people. No theme required.", "chat", 235],
-	["For coding", "A home base to share code, ask questions and build together.", "hash", 150],
-	["For a team", "Keep your project, your channels and your teammates in one place.", "users", 20],
-];
+// The page behind the + button on the server rail: start a group, join with an invite code,
+// or browse the groups owners have made public.
 
 const FRESH_MS = 60000;
 
@@ -14,8 +8,8 @@ export class DiscoverMethods {
 
 	paintAdd($close) {
 		const el = this.el.bind(this);
-		this.put(this.$ph, el("div", { class: "am-phead" }, el("div", { class: "tt" }, el("b", { text: "Groups" })), $close));
-		// Build the page once per home screen; later refreshes only repaint the community list.
+		this.put(this.$ph, el("div", { class: "am-phead" }, el("div", { class: "tt" }, el("b", { text: "Groups" }), el("small", { text: "Start one, join one or browse" })), $close));
+		// Build the page once per home screen; later refreshes only repaint the group list.
 		if (!this.addEl || this.addFor !== this.$plist) {
 			this.addEl = this.buildAdd();
 			this.addFor = this.$plist;
@@ -27,33 +21,20 @@ export class DiscoverMethods {
 
 	buildAdd() {
 		const el = this.el.bind(this);
-		const $tpls = el(
-			"div",
-			{ class: "am-tpls" },
-			...TEMPLATES.map(([title, text, icon, hue]) => {
-				const $tile = el("div", { class: "tile" }, this.ico(icon, 34));
-				$tile.style.background = `linear-gradient(135deg,hsl(${hue} 70% 58%),hsl(${(hue + 40) % 360} 65% 42%))`;
-				return el("div", { class: "am-tpl", onclick: () => this.groupForm("create") }, el("div", { class: "art" }, $tile), el("b", { text: title }), el("p", { text }));
-			}),
-		);
 		this.$comms = el("div", { class: "am-comms" });
 		return el(
 			"div",
 			{ class: "am-add" },
-			el("h2", { text: "Create a place for you and your friends" }),
-			el("div", { class: "lead", text: "Groups are where you and your friends hang out. Make yours and start talking." }),
-			$tpls,
-			el("button", { class: "am-go", text: "Create a group", onclick: () => this.groupForm("create") }),
-			el("button", { class: "am-go alt", text: "I have an invite code", onclick: () => this.groupForm("join") }),
-			el("h2", { text: "Join communities" }),
-			el("div", { class: "lead", text: "Check out these groups we think you may like. Find coding tips, teammates, and more." }),
+			el("div", { class: "am-mg act" }, this.item("plus", "Create a group", () => this.groupForm("create"), "", "Your own space with channels and roles"), this.item("link", "Join with an invite code", () => this.groupForm("join"), "", "Got a code from a friend? Paste it here")),
+			el("div", { class: "am-lbl", text: "Public groups" }),
+			el("div", { class: "am-sub", style: "margin:0 10px 12px", text: "Open to everyone. No invite code needed." }),
 			this.$comms,
 		);
 	}
 
-	/* ---------- community list ---------- */
+	/* ---------- public group list ---------- */
 
-	// Public communities you have not joined, from GET /api/groups?discover=1 (server migration 013).
+	// Public groups you have not joined, from GET /api/groups?discover=1 (server migration 013).
 	loadDiscover(force) {
 		const d = (this.disc = this.disc || { list: null, error: "", at: 0, busy: null });
 		if (d.busy) return d.busy;
@@ -93,13 +74,13 @@ export class DiscoverMethods {
 		const el = this.el.bind(this);
 		const d = this.disc;
 		if (!d || (!d.list && !d.error)) {
-			this.put(this.$comms, this.commSkeleton(), this.commSkeleton());
+			this.put(this.$comms, this.commSkeleton(), this.commSkeleton(), this.commSkeleton());
 			return;
 		}
 		if (!d.list) {
 			this.put(
 				this.$comms,
-				el("div", { class: "am-note", text: `Couldn't load communities (${d.error}).` }),
+				el("div", { class: "am-note", text: `Couldn't load public groups (${d.error}).` }),
 				el("button", {
 					class: "am-go alt",
 					text: "Try again",
@@ -116,23 +97,56 @@ export class DiscoverMethods {
 		const mine = new Set(this.state.home.groups.map((g) => String(g.id)));
 		const left = d.list.filter((c) => !mine.has(String(c.id)));
 		if (!left.length) {
-			this.put(this.$comms, el("div", { class: "am-note", text: "No communities to show right now. Check back soon." }));
+			this.put(this.$comms, el("div", { class: "am-note", text: "No public groups yet. Group owners can list theirs from the group's settings." }));
 			return;
 		}
-		this.put(this.$comms, ...left.map((c) => this.commCard(c)));
+		this.put(this.$comms, ...left.map((c) => this.commRow(c)));
 	}
 
 	commSkeleton() {
 		const el = this.el.bind(this);
-		return el("div", { class: "am-comm" }, this.sk("100%", 118, 0), el("div", { class: "bd" }, this.sk("55%", 20, 6), el("div", { style: "height:10px" }), this.sk("90%", 14, 6), el("div", { style: "height:6px" }), this.sk("70%", 14, 6)));
+		return el("div", { class: "am-cr" }, this.sk(52, 52, 16), el("div", { class: "bd" }, this.sk("50%", 16, 6), el("div", { style: "height:8px" }), this.sk("85%", 12, 6)));
 	}
 
 	commCount(v) {
 		return v >= 10000 ? `${Math.round(v / 1000)}K` : v.toLocaleString();
 	}
 
-	// One community card: banner, round-square icon, name with a verified tick, blurb, counts.
-	commCard(c, full) {
+	// Round-square group picture, or the first letter on the same colour the server rail uses.
+	commIcon(c) {
+		const $ic = this.el("div", { class: "ic", text: this.initial(c.name) });
+		$ic.style.background = `hsl(${this.hue(c.name)} 40% 38%)`;
+		if (c.icon) {
+			const $i = document.createElement("img");
+			$i.alt = "";
+			$i.onerror = () => $i.remove();
+			$i.src = this.bannerSrc(c.icon);
+			$ic.append($i);
+		}
+		return $ic;
+	}
+
+	commName(c) {
+		return this.el("div", { class: "nm" }, this.el("span", { text: c.name }), c.verified ? this.el("span", { class: "vf", "aria-label": "Verified" }, this.ico("check", 14)) : null);
+	}
+
+	// One compact row in the list: picture, name, short blurb, counts. Tap for the full preview.
+	commRow(c) {
+		const el = this.el.bind(this);
+		const bits = [];
+		if (c.members != null) bits.push(`${this.commCount(c.members)} member${c.members === 1 ? "" : "s"}`);
+		if (c.online) bits.push(`${this.commCount(c.online)} online`);
+		return el(
+			"div",
+			{ class: "am-cr", onclick: () => this.commPreview(c) },
+			this.commIcon(c),
+			el("div", { class: "bd" }, this.commName(c), c.description ? el("div", { class: "ds", text: c.description }) : null, bits.length ? el("div", { class: "st", text: bits.join(" · ") }) : null),
+			el("button", { class: "am-pillb pri", text: "View", onclick: (e) => (e.stopPropagation(), this.commPreview(c)) }),
+		);
+	}
+
+	// The preview card: banner, picture, name with a verified tick, the full blurb and counts.
+	commCard(c) {
 		const el = this.el.bind(this);
 		const h = this.hue(c.name);
 		const $ban = el("div", { class: "ban" });
@@ -144,35 +158,14 @@ export class DiscoverMethods {
 			$b.src = this.bannerSrc(c.banner);
 			$ban.append($b);
 		}
-		const $ic = el("div", { class: "ic", text: this.initial(c.name) });
-		$ic.style.background = `hsl(${h} 40% 38%)`;
-		if (c.icon) {
-			const $i = document.createElement("img");
-			$i.alt = "";
-			$i.onerror = () => $i.remove();
-			$i.src = this.bannerSrc(c.icon);
-			$ic.append($i);
-		}
-		$ban.append($ic);
+		$ban.append(this.commIcon(c));
 		const bits = [];
 		if (c.online != null) bits.push(el("span", {}, el("i"), `${this.commCount(c.online)} Online`));
 		if (c.members != null) bits.push(el("span", {}, el("i", { class: "g" }), `${this.commCount(c.members)} Members`));
-		return el(
-			"div",
-			{ class: `am-comm${full ? " prev" : ""}` },
-			$ban,
-			el(
-				"div",
-				{ class: "bd" },
-				el("div", { class: "nm" }, el("span", { text: c.name }), c.verified ? el("span", { class: "vf", "aria-label": "Verified" }, this.ico("check", 14)) : null),
-				c.description ? el("div", { class: "ds", text: c.description }) : null,
-				bits.length ? el("div", { class: "st" }, ...bits) : null,
-				full ? null : el("button", { class: "am-go", text: "Preview", onclick: () => this.commPreview(c) }),
-			),
-		);
+		return el("div", { class: "am-comm prev" }, $ban, el("div", { class: "bd" }, this.commName(c), c.description ? el("div", { class: "ds", text: c.description }) : null, bits.length ? el("div", { class: "st" }, ...bits) : null));
 	}
 
-	// Preview: the same card in a sheet with a Join button.
+	// Preview: the card in a sheet with a Join button.
 	commPreview(c) {
 		const $e = this.el("div", { class: "am-ferr" });
 		const $go = this.el("button", { class: "am-go", text: "Join group" });
@@ -186,7 +179,7 @@ export class DiscoverMethods {
 				$go.disabled = false;
 			}
 		};
-		const $card = this.commCard(c, true);
+		const $card = this.commCard(c);
 		$card.querySelector(".bd").append($go, this.el("button", { class: "am-go alt", text: "Not now", onclick: () => this.closeSheet() }), $e);
 		this.sheet("", $card);
 	}

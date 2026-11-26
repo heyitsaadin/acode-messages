@@ -14,18 +14,55 @@ export class FriendsMethods {
 	}
 
 	// Search people who use the plugin and send them a friend request.
+	// Before you type anything it lists everyone whose profile is public (online first), a page at a time.
 	findPeople() {
 		const el = this.el.bind(this);
 		const $in = el("input", { class: "am-inp", placeholder: "Search people by username", autocapitalize: "off" });
-		const hint = () => el("div", { class: "am-note", text: "Find people who use Acode Messages and send them a friend request." });
-		const $res = el("div", {}, hint());
+		const $res = el("div", {});
+		const b = { people: [], more: false, loaded: false, busy: false, error: "", unavailable: false };
+		const paintBrowse = () => {
+			if (!b.loaded && !b.error) {
+				return this.put($res, el("div", { class: "am-lbl", text: "People on Acode Messages" }), ...[0, 1, 2, 3].map(() => el("div", { class: "am-dm" }, this.sk(42, 42, 21), el("div", { class: "bd" }, this.sk("45%", 14, 6), el("div", { style: "height:7px" }), this.sk("25%", 11, 6)))));
+			}
+			if (b.error) return this.put($res, el("div", { class: "am-note", text: `Couldn't load people. ${b.error}` }), el("button", { class: "am-people-more", text: "Try again", onclick: () => loadBrowse() }));
+			if (b.unavailable || !b.people.length) {
+				return this.put($res, el("div", { class: "am-note", text: b.unavailable ? "Find people who use Acode Messages and send them a friend request." : "Nobody has a public profile yet. Search a username to find someone." }));
+			}
+			this.put(
+				$res,
+				el("div", { class: "am-lbl", text: "People on Acode Messages" }),
+				...b.people.map((u) => this.personRow(u)),
+				b.more ? Object.assign(el("button", { class: "am-people-more", text: b.busy ? "Loading…" : "Show more", onclick: () => loadBrowse(true) }), { disabled: b.busy }) : null,
+			);
+		};
+		const loadBrowse = async (next) => {
+			if (b.busy) return;
+			b.busy = true;
+			b.error = "";
+			if (next) paintBrowse();
+			try {
+				const r = await this.api(`friends?browse=1&offset=${next ? b.people.length : 0}`);
+				const seen = new Set(next ? b.people.map((p) => String(p.id)) : []);
+				const add = (r.people || []).filter((p) => !seen.has(String(p.id)));
+				b.people = next ? [...b.people, ...add] : add;
+				b.more = !!r.more;
+				b.unavailable = !!r.unavailable;
+				b.loaded = true;
+			} catch (e) {
+				b.error = this.friendErr(e);
+			}
+			b.busy = false;
+			if (!$in.value.trim()) paintBrowse();
+		};
+		paintBrowse();
+		loadBrowse();
 		let timer;
 		let seq = 0;
 		$in.addEventListener("input", () => {
 			clearTimeout(timer);
 			const q = $in.value.trim();
 			const mine = ++seq;
-			if (!q) return this.put($res, hint());
+			if (!q) return paintBrowse();
 			timer = setTimeout(async () => {
 				try {
 					const { members } = await this.api(`friends?q=${encodeURIComponent(q)}`);
