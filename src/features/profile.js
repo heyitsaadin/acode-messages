@@ -168,10 +168,10 @@ export class ProfileMethods {
 			$ban.append($bi);
 		}
 		const online = self ? true : !!info.online;
-		const status = online ? "Online" : info.last_seen ? `Last seen ${this.ago(info.last_seen)}` : "Offline";
+		const status = data?.restricted ? "Private profile" : online ? "Online" : info.last_seen ? `Last seen ${this.ago(info.last_seen)}` : "Offline";
 		const out = [
 			$ban,
-			el("div", { class: "am-pf-top" }, this.avw(info, 90, online)),
+			el("div", { class: "am-pf-top" }, this.avw(info, 90, data?.restricted ? undefined : online)),
 			el("h2", {}, info.name || "?", ...this.badges(info)),
 			el("div", { class: "sub", text: `@${info.name} · ${status}` }),
 			self
@@ -182,7 +182,8 @@ export class ProfileMethods {
 
 		// About
 		const rows = [];
-		if (info.about) rows.push(el("div", { class: "am-abt", text: info.about }));
+		if (data?.restricted) out.push(this.privateCard(info));
+		if (info.about && !data?.restricted) rows.push(el("div", { class: "am-abt", text: info.about }));
 		if (data?.user?.first_seen) rows.push(this.kv("Member since", new Date(data.user.first_seen).toLocaleDateString([], { month: "short", year: "numeric" })));
 		const p = data?.profile;
 		if (p?.since) rows.push(this.kv("Coding since", new Date(p.since).toLocaleDateString([], { month: "short", year: "numeric" })));
@@ -195,7 +196,7 @@ export class ProfileMethods {
 		// Mutual groups
 		if (!self && data?.mutual?.length) out.push(el("div", { class: "am-card" }, el("h4", { text: `Groups in common — ${data.mutual.length}` }), el("div", { class: "am-chips" }, ...data.mutual.map((g) => el("span", { class: "am-chip", text: g.name })))));
 
-		if (self) out.push(this.shareCard(ctx));
+		if (self) out.push(this.visibilityCard(ctx), this.shareCard(ctx));
 		return out;
 	}
 
