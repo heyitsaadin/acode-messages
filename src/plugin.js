@@ -100,6 +100,7 @@ mixin(AcodeMessages, [
 	SheetsMethods,
 	DiscoverMethods,
 	PermissionsMethods,
+	ServerPanelMethods,
 	BannerMethods,
 	GroupIconMethods,
 	MembersMethods,
