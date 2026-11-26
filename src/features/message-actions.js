@@ -295,10 +295,12 @@ export class MessageActionsMethods {
 		this.$pend?.classList.add("busy");
 		const replied = this.replyTo;
 		try {
+			const wire = await this.e2eWire(ch, content); // DMs go out as an encrypted envelope
 			const { message } = await this.api("messages", {
 				method: "POST",
-				body: JSON.stringify({ channel: ch.slug, content, ...(attachment ? { attachment } : {}), ...(this.replyTo ? { reply_to: this.replyTo.id } : {}) }),
+				body: JSON.stringify({ channel: ch.slug, content: wire, ...(attachment ? { attachment } : {}), ...(this.replyTo ? { reply_to: this.replyTo.id } : {}) }),
 			});
+			await this.decryptMessages(ch, [message]);
 			if (attachment?.type !== "voice") {
 				this.clearCtx();
 				this.$ta.value = "";
