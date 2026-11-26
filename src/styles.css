@@ -149,7 +149,7 @@
 .am-row .am-av{width:40px;height:40px;font-size:17px}
 .am-sp{width:40px;flex-shrink:0}
 .am-mb{flex:1;min-width:0}
-.am-mh{display:flex;align-items:baseline;flex-wrap:wrap;gap:0 8px;line-height:1.25}
+.am-mh{display:flex;align-items:center;flex-wrap:wrap;gap:0 6px;line-height:1.25}
 .am-who{font-size:16px;font-weight:700}
 .am-mt{font-size:12px;opacity:.55;white-space:nowrap}
 .am-mc{font-size:16px;line-height:1.38;white-space:pre-wrap;word-break:break-word}
