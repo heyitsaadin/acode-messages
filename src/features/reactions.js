@@ -63,10 +63,9 @@ export class ReactionsMethods {
 	// Called after every message poll. Asks for the reactions on the first poll of a chat, then every other poll.
 	rxTick() {
 		if (this.rxOff) return;
-		const fresh = this.rx?.slug !== this.state.channel?.slug;
 		const rx = this.rxState();
 		rx.n += 1;
-		if (fresh || rx.n % 2 === 0) this.rxPull();
+		if (!rx.got || rx.n % 2 === 0) this.rxPull();
 	}
 
 	// Reads the reactions of the recent messages from the server and updates whatever changed.
