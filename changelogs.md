@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.11.0
+
+- Invite links. A group's Invite button now gives you a link (https://your-server/invite/code) as well as the code. Paste the link in any chat and it turns into a Join card with the group's picture, banner, name and online / member counts, like Discord. If you're already in the group the button says Go to Server.
+- Send an invite straight to someone: Invite > Send to a friend lists your chats and friends, tap Send. It goes out as a normal message, so in direct messages it is end-to-end encrypted like everything else.
+- "Join with an invite link or code" now accepts a pasted link too.
+- Opening the link in a browser shows a page with the group card and the steps to join. Opening a link directly inside Acode isn't supported, so that page shows the code to copy.
+- Needs the matching server update (api/groups.js, lib/invites.js, vercel.json). No migration. Without it everything still works, links just don't turn into cards.
+
 ## 1.10.1
 
 - Removed the server address setting everywhere (in-app Settings and the plugin's Acode settings page). The app always uses the default server, and any address saved by an older version is ignored.
