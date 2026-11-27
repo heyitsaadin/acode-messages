@@ -22,6 +22,7 @@ export const peerOf = (d) => ({
 	id: d.peer_id ?? d.id,
 	name: d.name,
 	avatar_url: d.avatar_url,
+	avatar_decoration: d.avatar_decoration,
 	verified: d.verified,
 	acode_pro: d.acode_pro,
 	is_admin: d.is_admin,
