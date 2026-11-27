@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.11.1
+
+- Fixed replies: a reply now stays on the message after you close and reopen the chat, and the person you replied to sees it too. Before, replies only showed on your own screen for a while.
+- Replies in direct messages stay end-to-end encrypted: the message you reply to is decrypted on your device.
+- Needs the matching server update (migration 016_message_replies.sql and api/messages.js).
+
 ## 1.11.0
 
 - Invite links. A group's Invite button now gives you a link (https://your-server/invite/code) as well as the code. Paste the link in any chat and it turns into a Join card with the group's picture, banner, name and online / member counts, like Discord. If you're already in the group the button says Go to Server.
