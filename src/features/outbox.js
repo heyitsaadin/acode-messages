@@ -18,6 +18,7 @@ export class OutboxMethods {
 		this.clearCtx();
 		this.$ta.value = "";
 		this.$ta.style.height = "48px";
+		this.typAt = 0; // the next message you type shows as "typing" right away
 		this.syncFab();
 		if (!this.outbox) this.outbox = [];
 		this.outbox.push(job);
