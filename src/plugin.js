@@ -109,7 +109,8 @@ export class AcodeMessages {
 					this.appSettings.update();
 					if (value) {
 						this.rxAt = 0;
-						this.playReceiveSound();
+						this.primeSound();
+						setTimeout(() => this.playReceiveSound(), 150); // the audio needs a moment to wake up after the tap
 					}
 					return;
 				}
