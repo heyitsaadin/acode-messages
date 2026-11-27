@@ -140,6 +140,7 @@ mixin(AcodeMessages, [
 	VoiceMessagesMethods,
 	VoiceChatMethods,
 	CodeShareMethods,
+	InvitesMethods,
 	EncryptionMethods,
 	PrivacyMethods,
 	OnboardingMethods,
