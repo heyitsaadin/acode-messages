@@ -33,25 +33,23 @@ export class BannerMethods {
 		$f.click();
 	}
 
-	// Crop to a W0 x H0 picture and squeeze it under the server's size limit.
+	// Let the person pick which part of the picture to use (move and zoom), make it a W0 x H0 picture
+	// and squeeze it under the server's size limit. Rejects with .cancelled = true if they back out.
 	prepImage(file, W0 = 960, H0 = 320, limit = 270000) {
 		return new Promise((resolve, reject) => {
 			const url = URL.createObjectURL(file);
 			const img = new Image();
-			img.onload = () => {
-				URL.revokeObjectURL(url);
+			img.onload = async () => {
 				try {
+					const r = await this.cropPicture(img, W0, H0);
+					URL.revokeObjectURL(url);
 					let W = W0;
 					let H = H0;
 					for (let attempt = 0; attempt < 5; attempt++) {
 						const c = document.createElement("canvas");
 						c.width = W;
 						c.height = H;
-						const cx = c.getContext("2d");
-						const s = Math.max(W / img.width, H / img.height);
-						const w = img.width * s;
-						const h = img.height * s;
-						cx.drawImage(img, (W - w) / 2, (H - h) / 2, w, h);
+						c.getContext("2d").drawImage(img, r.sx, r.sy, r.sw, r.sh, 0, 0, W, H);
 						for (const q of [0.82, 0.7, 0.58, 0.46]) {
 							const out = c.toDataURL("image/jpeg", q);
 							if (out.length <= limit) return resolve(out);
@@ -61,6 +59,7 @@ export class BannerMethods {
 					}
 					reject(new Error("That picture is too large"));
 				} catch (e) {
+					URL.revokeObjectURL(url);
 					reject(e);
 				}
 			};
