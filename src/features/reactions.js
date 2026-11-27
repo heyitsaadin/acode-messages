@@ -81,6 +81,7 @@ export class ReactionsMethods {
 				return;
 			}
 			const rx = this.rxState();
+			rx.got = true;
 			const changed = new Set();
 			for (const id of new Set([...Object.keys(rx.map), ...Object.keys(res.reactions)])) {
 				if (rx.pend[id]) continue; // I am in the middle of changing this one: what is on screen stays until the server has caught up
