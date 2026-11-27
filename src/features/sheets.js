@@ -102,6 +102,7 @@ export class SheetsMethods {
 	}
 
 	closeSheet() {
+		this.pfsPage = null;
 		this.$sheet?.classList.remove("open");
 		if (this.$sheet) this.$sheet.dataset.vp = "";
 		this.$scrim?.classList.remove("show");
