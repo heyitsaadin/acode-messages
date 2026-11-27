@@ -65,6 +65,7 @@ export class MessageActionsMethods {
 	msgMenu($r) {
 		const m = $r._m;
 		if (!m) return;
+		if (m._tmp) return this.outMenu($r); // not on the server yet
 		const own = String(m.user_id) === String(this.me.id);
 		const kind = m.kind || "text";
 		const hasText = kind === "text" || (kind !== "file" && m.content && m.content !== "📷 Photo");
