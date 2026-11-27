@@ -352,7 +352,7 @@ export class CodeShareMethods {
 				this.openSnippet(code, label, lang);
 			},
 		});
-		return el("div", { class: "am-code" }, el("div", { class: "am-code-h" }, el("span", { class: "ti", text: label || lang || "code" }), $copy, $open), el("pre", {}, el("code", { text: code })));
+		return el("div", { class: "am-code" }, el("div", { class: "am-code-h" }, el("span", { class: "ti", text: label || lang || "code" }), $copy, $open), el("pre", {}, el("code", {}, highlight(code, lang) || code)));
 	}
 
 	// Opens a shared snippet as a new file in the editor.
