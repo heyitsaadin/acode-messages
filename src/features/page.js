@@ -50,6 +50,7 @@ export class PageMethods {
 			this.$ta.style.height = `${Math.min(this.$ta.scrollHeight, 112)}px`;
 			this.syncFab();
 			this.suggest();
+			this.typingPing();
 		});
 		this.$ta.addEventListener("keyup", (e) => {
 			if (e.key && e.key.startsWith("Arrow")) this.suggest();
