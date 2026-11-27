@@ -151,4 +151,5 @@ mixin(AcodeMessages, [
 	OnboardingMethods,
 	SoundMethods,
 	OutboxMethods,
+	EmojiPickerMethods,
 ]);
