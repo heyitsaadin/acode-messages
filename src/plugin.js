@@ -133,4 +133,5 @@ mixin(AcodeMessages, [
 	PrivacyMethods,
 	OnboardingMethods,
 	SoundMethods,
+	OutboxMethods,
 ]);
