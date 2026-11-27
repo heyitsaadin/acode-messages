@@ -91,6 +91,12 @@ export class AcodeMessages {
 					this.openEditProfile();
 					return;
 				}
+				if (key === "sendSound") {
+					this.settings.sendSound = !!value;
+					this.appSettings.update();
+					if (value) this.playSendSound();
+					return;
+				}
 				this.settings[key] = String(value || "").trim() || DEFAULT_API;
 				this.appSettings.update();
 			},
