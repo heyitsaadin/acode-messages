@@ -77,11 +77,16 @@ export class NetworkMethods {
 					const r = await this.authFetch("chat-token");
 					t = r ? (await r.json()).token || null : null;
 				} catch {}
-				this.token = t;
-				// On failure, try again in 30s rather than 5 minutes.
-				this.tokenAt = t ? Date.now() : Date.now() - TOKEN_MS + 30000;
-				if (t) ls.set("am-token", { t, at: Date.now() });
-				return t;
+				if (t) {
+					this.token = t;
+					this.tokenAt = Date.now();
+					ls.set("am-token", { t, at: Date.now() });
+				} else if (!this.token || Date.now() - this.tokenAt >= TOKEN_MS) {
+					// Nothing usable left: try again in 30s rather than 5 minutes.
+					this.token = null;
+					this.tokenAt = Date.now() - TOKEN_MS + 30000;
+				}
+				return this.token;
 			})().finally(() => {
 				this.tokenP = null;
 			});
