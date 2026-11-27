@@ -67,7 +67,7 @@ export class MessageActionsMethods {
 		if (!m) return;
 		const own = String(m.user_id) === String(this.me.id);
 		const kind = m.kind || "text";
-		const hasText = kind === "text" || (m.content && m.content !== "📷 Photo");
+		const hasText = kind === "text" || (kind !== "file" && m.content && m.content !== "📷 Photo");
 		const close = (fn) => () => {
 			this.closeSheet();
 			$r.classList.remove("hl");
