@@ -68,3 +68,48 @@
 .am-av[data-deco=galaxy]::after{background:radial-gradient(circle at 14% 24%,#fff 0 1.3px,transparent 2.5px),radial-gradient(circle at 76% 12%,#fff 0 1.2px,transparent 2.5px),radial-gradient(circle at 92% 65%,#bdeaff 0 1.3px,transparent 2.5px),radial-gradient(circle at 28% 88%,#fff 0 1.2px,transparent 2.5px),radial-gradient(circle at 52% 2%,#f4c9ff 0 1.5px,transparent 2.5px),radial-gradient(circle at 4% 72%,#bda6ff 0 1px,transparent 2.5px),radial-gradient(circle at 66% 96%,#fff 0 1px,transparent 2.5px);animation:am-star-twinkle 1.45s ease-in-out infinite alternate}
 .am-av[data-deco=ember]::after{background:radial-gradient(circle at 18% 82%,#fff4b0 0 1.5px,transparent 3px),radial-gradient(circle at 72% 88%,#ffcf63 0 1.5px,transparent 3px),radial-gradient(circle at 91% 61%,#ff6a20 0 2px,transparent 4px),radial-gradient(circle at 42% 95%,#fff 0 1px,transparent 3px),radial-gradient(circle at 8% 58%,#ffb14a 0 1.5px,transparent 3px),radial-gradient(circle at 61% 8%,#ffe28b 0 1px,transparent 3px);animation:am-ember-rise 1.55s ease-out infinite}
 @media(prefers-reduced-motion:reduce){.am-sakura-petal{display:none!important}}
+
+
+/* Per-avatar particle layer inspired by natural particle systems and CSS motion studies.
+   Only decorated avatars receive these nodes; all motion is transform/opacity based. */
+.am-deco-particle{position:absolute;left:50%;top:50%;z-index:4;width:3px;height:3px;border-radius:50%;pointer-events:none;opacity:0;background:var(--particle-color,#fff);box-shadow:0 0 5px 1px var(--particle-glow,rgba(255,255,255,.7));transform:translate(-50%,-50%);animation:am-deco-particle-flight var(--particle-duration,3.6s) cubic-bezier(.2,.55,.35,1) var(--particle-delay,0s) infinite}
+.am-deco-particle:nth-of-type(2n){width:2px;height:2px;--particle-duration:4.3s}
+.am-deco-particle:nth-of-type(3n){width:4px;height:4px;--particle-duration:3.1s}
+.am-av[data-deco=neon]{--particle-color:#72ffb2;--particle-glow:rgba(57,255,136,.95)}
+.am-av[data-deco=gold],.am-av[data-deco=crown],.am-av[data-deco=halo]{--particle-color:#ffe89a;--particle-glow:rgba(255,205,70,.95)}
+.am-av[data-deco=rainbow]{--particle-color:#fff;--particle-glow:rgba(183,115,255,.95)}
+.am-av[data-deco=fire],.am-av[data-deco=ember],.am-av[data-deco=horns]{--particle-color:#ffc15b;--particle-glow:rgba(255,83,25,.95)}
+.am-av[data-deco=frost]{--particle-color:#d9fbff;--particle-glow:rgba(100,215,255,.95)}
+.am-av[data-deco=aurora]{--particle-color:#a4ffe9;--particle-glow:rgba(79,238,211,.95)}
+.am-av[data-deco=galaxy]{--particle-color:#e9d6ff;--particle-glow:rgba(155,117,255,.95)}
+.am-av[data-deco=electric]{--particle-color:#bafaff;--particle-glow:rgba(48,199,255,1)}
+.am-av[data-deco=sakura],.am-av[data-deco=ears]{--particle-color:#ffe3f0;--particle-glow:rgba(255,130,185,.95)}
+.am-av[data-deco=orbit]{--particle-color:#bceaff;--particle-glow:rgba(88,183,255,.95)}
+.am-av[data-deco=galaxy] .am-deco-particle,.am-av[data-deco=aurora] .am-deco-particle,.am-av[data-deco=sakura] .am-deco-particle{width:3px;height:3px}
+.am-av[data-deco=sakura] .am-deco-particle{border-radius:70% 15% 70% 15%;width:4px;height:6px;background:linear-gradient(145deg,#fff9fc,#ffacd0);box-shadow:0 0 6px rgba(255,137,190,.9)}
+.am-av[data-deco=orbit] .am-deco-particle{width:4px;height:4px}
+@keyframes am-deco-particle-flight{
+  0%{opacity:0;transform:translate(-50%,-50%) rotate(var(--particle-angle)) translateY(0) scale(.45)}
+  14%{opacity:1}
+  68%{opacity:.95;transform:translate(-50%,-50%) rotate(calc(var(--particle-angle) + 24deg)) translateY(calc(var(--particle-distance) * -1)) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-50%) rotate(calc(var(--particle-angle) + 58deg)) translateY(calc(var(--particle-distance) * -1.7)) scale(.35)}
+}
+/* Existing decorations get distinct motion signatures instead of one generic spinning ring. */
+.am-av[data-deco=neon]::after{inset:-8px;border-radius:50%;border:1px dashed rgba(100,255,170,.62);animation:am-neon-orbit 7s linear infinite}
+.am-av[data-deco=gold]::after{inset:-7px;border-radius:50%;border:1px solid rgba(255,218,120,.5);box-shadow:inset 0 0 8px rgba(255,200,70,.16);animation:am-gold-breathe 2.8s ease-in-out infinite}
+.am-av[data-deco=rainbow]::after{inset:-9px;border-radius:50%;background:conic-gradient(transparent,#fff8 8%,transparent 18%,#fff7 31%,transparent 42%,#fff8 65%,transparent 76%);filter:blur(1px);animation:am-deco-spin 3.6s linear infinite}
+.am-av[data-deco=fire]::after{inset:-8px;border-radius:50%;background:radial-gradient(circle at 20% 80%,rgba(255,195,60,.65),transparent 24%),radial-gradient(circle at 78% 78%,rgba(255,80,20,.65),transparent 26%);filter:blur(2px);animation:am-fire-aura 1.4s ease-in-out infinite alternate}
+.am-av[data-deco=frost]::after{inset:-8px;border-radius:50%;border:1px solid rgba(184,241,255,.6);box-shadow:0 0 12px rgba(127,214,255,.4),inset 0 0 10px rgba(127,214,255,.2);animation:am-frost-shimmer 4s ease-in-out infinite}
+.am-av[data-deco=halo]::after{left:23%;right:23%;top:-31%;height:35%;border-top:1px solid rgba(255,245,190,.8);border-radius:50%;filter:drop-shadow(0 0 4px #ffd95c);animation:am-halo-glint 2.4s ease-in-out infinite}
+.am-av[data-deco=crown]::after{left:25%;right:25%;top:-37%;height:36%;background:linear-gradient(110deg,transparent 20%,rgba(255,255,255,.85) 48%,transparent 72%);filter:blur(1px);animation:am-crown-glint 3.2s ease-in-out infinite}
+.am-av[data-deco=ears]::after{inset:-6px;border-radius:50%;border:1px solid rgba(255,160,205,.42);animation:am-ears-aura 3.4s ease-in-out infinite}
+.am-av[data-deco=horns]::after{inset:-8px;border-radius:50%;border:1px solid rgba(255,75,95,.45);box-shadow:0 0 10px rgba(255,55,75,.35);animation:am-horns-aura 2.2s ease-in-out infinite}
+@keyframes am-neon-orbit{to{transform:rotate(360deg)}}
+@keyframes am-gold-breathe{0%,100%{opacity:.45;transform:scale(.98)}50%{opacity:1;transform:scale(1.04)}}
+@keyframes am-fire-aura{from{opacity:.45;transform:scale(.98)}to{opacity:1;transform:scale(1.06)}}
+@keyframes am-frost-shimmer{0%,100%{opacity:.35;transform:rotate(0)}50%{opacity:.9;transform:rotate(180deg)}}
+@keyframes am-halo-glint{0%,100%{opacity:.25;transform:rotate(-8deg)}50%{opacity:1;transform:rotate(8deg)}}
+@keyframes am-crown-glint{0%,65%,100%{opacity:0;transform:translateX(-8px)}25%{opacity:.9;transform:translateX(8px)}}
+@keyframes am-ears-aura{0%,100%{opacity:.35;transform:scale(.98)}50%{opacity:.85;transform:scale(1.04)}}
+@keyframes am-horns-aura{0%,100%{opacity:.25;transform:scale(.98)}50%{opacity:.8;transform:scale(1.05)}}
+@media(prefers-reduced-motion:reduce){.am-deco-particle{display:none!important}}
