@@ -212,6 +212,13 @@ export class MentionsMethods {
 		let more = false;
 		try {
 			const after = this.lastId;
+			// Messages shown from the cache were saved before anyone's decoration (or new picture) was known,
+			// and polling only asks for newer ones. So once per opening, fetch the latest page and update the authors.
+			if (first && after) {
+				this.api(`messages?channel=${encodeURIComponent(ch.slug)}`)
+					.then((d) => ch === this.state.channel && this.refreshAuthors(d.messages || []))
+					.catch(() => {});
+			}
 			const { messages, typing } = await this.api(`messages?channel=${encodeURIComponent(ch.slug)}&after=${after}`);
 			await this.decryptMessages(ch, messages);
 			if (ch !== this.state.channel) return;
@@ -230,6 +237,32 @@ export class MentionsMethods {
 			if (this.syncN % 6 === 0) this.reconcile();
 			this.pollTimer = setTimeout(() => this.poll(), more ? 0 : document.hidden ? 8000 : POLL_MS);
 		}
+	}
+
+	// fresh: the newest messages straight from the server. Copies each author's current picture, name and decoration
+	// onto the messages already on screen (and in the saved list), and redraws those avatars.
+	refreshAuthors(fresh) {
+		const by = new Map();
+		for (const f of fresh) by.set(String(f.user_id), f);
+		if (!by.size) return;
+		const apply = (m) => {
+			const f = by.get(String(m.user_id));
+			if (!f) return false;
+			m.name = f.name;
+			m.avatar_url = f.avatar_url;
+			m.avatar_decoration = f.avatar_decoration || null;
+			return true;
+		};
+		for (const m of this.msgBuf) apply(m);
+		this.$list?.querySelectorAll(".am-row").forEach(($r) => {
+			const m = $r._m;
+			const $old = $r.querySelector(".am-mr > .am-av");
+			if (!m || !$old || !apply(m)) return;
+			const $new = this.avatar(m, 40);
+			$new.onclick = $old.onclick;
+			$old.replaceWith($new);
+		});
+		this.saveMsgs();
 	}
 
 	saveMsgs() {
