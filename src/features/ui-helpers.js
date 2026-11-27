@@ -60,30 +60,22 @@ export class UiHelpersMethods {
 		// A decoration is only a data attribute; styles.css draws it. Tiny avatars (reply previews) stay plain.
 		if (u.avatar_decoration && /^[a-z]{2,12}$/.test(u.avatar_decoration) && (!size || size >= 24)) {
 			$a.dataset.deco = u.avatar_decoration;
-			// Particles orbit OUTSIDE the portrait edge; keep the image itself unobstructed.
-			const particleCount = u.avatar_decoration === "sakura" ? 8 :
-				["aurora", "galaxy", "electric", "ember", "fire", "frost", "rainbow"].includes(u.avatar_decoration) ? 6 : 4;
-			const avatarRadius = (size || 40) / 2;
-			for (let n = 0; n < particleCount; n++) {
-				const angle = (Math.PI * 2 * n) / particleCount - Math.PI / 2;
-				const radius = avatarRadius + (u.avatar_decoration === "sakura" ? 9 : 7) + (n % 2) * 3;
-				const $particle = this.el("i", { class: "am-deco-particle", "aria-hidden": "true" });
-				$particle.style.left = `calc(50% + ${Math.cos(angle) * radius}px)`;
-				$particle.style.top = `calc(50% + ${Math.sin(angle) * radius}px)`;
-				$particle.style.setProperty("--particle-delay", `${-(n * 0.43)}s`);
-				$particle.style.setProperty("--particle-drift", `${n % 2 ? 5 : -5}px`);
-				$a.append($particle);
-			}
-			// Sakura petals also start beyond the avatar edge and drift down past the frame.
+			// Keep motion restrained: only Sakura gets a few petals, outside the portrait.
 			if (u.avatar_decoration === "sakura") {
-				const drift = [-10, -6, 6, 10, 12, -12, 4, -4];
-				for (let n = 0; n < drift.length; n++) {
-					const angle = (Math.PI * 2 * n) / drift.length - Math.PI / 2;
-					const radius = avatarRadius + 10 + (n % 3) * 2;
+				const avatarRadius = (size || 40) / 2;
+				const petals = [
+					{ angle: -90, drift: -7, delay: 0 },
+					{ angle: 35, drift: 6, delay: -2.1 },
+					{ angle: 155, drift: -5, delay: -4.2 },
+				];
+				for (const petal of petals) {
+					const radians = (petal.angle * Math.PI) / 180;
+					const radius = avatarRadius + 9;
 					const $petal = this.el("i", { class: "am-sakura-petal", "aria-hidden": "true" });
-					$petal.style.left = `calc(50% + ${Math.cos(angle) * radius}px)`;
-					$petal.style.top = `calc(50% + ${Math.sin(angle) * radius}px)`;
-					$petal.style.setProperty("--petal-x", `${drift[n]}px`);
+					$petal.style.left = `calc(50% + ${Math.cos(radians) * radius}px)`;
+					$petal.style.top = `calc(50% + ${Math.sin(radians) * radius}px)`;
+					$petal.style.setProperty("--petal-x", `${petal.drift}px`);
+					$petal.style.animationDelay = `${petal.delay}s`;
 					$a.append($petal);
 				}
 			}
