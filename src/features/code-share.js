@@ -199,34 +199,19 @@ export class CodeShareMethods {
 		return null;
 	}
 
-	// Cuts code into pieces that fit in one message each, at line breaks.
-	splitCode(code, budget) {
-		const parts = [];
-		let buf = [];
-		let size = 0;
-		let from = 1;
-		const flush = () => {
-			if (!buf.length) return;
-			parts.push({ text: buf.join("\n"), a: from, b: from + buf.length - 1 });
-			from += buf.length;
-			buf = [];
-			size = 0;
-		};
-		for (const raw of code.split("\n")) {
-			// a single line longer than a message (minified files) is cut into pieces
-			const pieces = raw.length > budget ? raw.match(new RegExp(`[\\s\\S]{1,${budget}}`, "g")) : [raw];
-			for (const line of pieces) {
-				if (buf.length && size + line.length + 1 > budget) flush();
-				buf.push(line);
-				size += line.length + 1;
-			}
-		}
-		flush();
-		return parts;
+	fmtBytes(n) {
+		return n < 1024 ? `${n} B` : n < 1048576 ? `${(n / 1024).toFixed(1)} KB` : `${(n / 1048576).toFixed(1)} MB`;
 	}
 
-	// Sends a whole tab as a code card (same format as "Send to chat"). Big files go out as several messages.
-	shareFile(file) {
+	toBase64(bytes) {
+		let bin = "";
+		for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+		return btoa(bin);
+	}
+
+	// Sends a whole tab. A file that fits in one message goes out as a text code card (same as "Send to chat");
+	// a bigger one is uploaded as a file that can be opened or copied from the chat.
+	async shareFile(file) {
 		const ch = this.state.channel;
 		if (!ch) return;
 		const name = String(file.filename);
@@ -236,37 +221,54 @@ export class CodeShareMethods {
 			text = this.fileText(file);
 		} catch {}
 		if (text == null) return this.flash(`Couldn't read ${name}`);
-		const code = String(text).replace(/\r\n?/g, "\n").replace(/\s+$/, "").replace(/```/g, "``\u200b`");
-		if (!code.trim()) return this.flash(`${name} is empty, so nothing was shared`);
+		text = String(text);
+		if (!text.trim()) return this.flash(`${name} is empty, so nothing was shared`);
 		const safe = name.replace(/[`\r\n]/g, "_");
 		const ext = /\.([\w+#-]{1,12})$/.exec(name)?.[1]?.toLowerCase() || "text";
+		const code = text.replace(/\r\n?/g, "\n").replace(/\s+$/, "").replace(/```/g, "``\u200b`");
 		const budget = Math.max(300, 1950 - (ext.length + safe.length + 25)); // the server takes 2000 characters per message
-		const parts = this.splitCode(code, budget);
-		if (parts.length > SHARE_MAX_PARTS) return this.flash(`${name} is too long to share whole. Select the part you want and use "Send to chat"`);
-		const blocks = parts.map((p) => {
-			const label = parts.length === 1 ? safe : `${safe}:${p.a}${p.b > p.a ? `-${p.b}` : ""}`;
-			return `\`\`\`${ext} ${label}\n${p.text}\n\`\`\``;
-		});
-		const go = async () => {
-			for (let i = 0; i < blocks.length; i++) {
-				if (this.state.channel !== ch) return; // left the chat meanwhile
-				if (!(await this.postMessage(blocks[i], null, ch))) {
-					if (i) this.flash(`Only ${i} of ${blocks.length} parts were sent`);
-					return;
-				}
-			}
+		if (code.length <= budget) return this.postMessage(`\`\`\`${ext} ${safe}\n${code}\n\`\`\``, null, ch);
+		const bytes = new TextEncoder().encode(text);
+		if (bytes.length > FILE_MAX_BYTES) return this.flash(`${name} is too big to share (${this.fmtBytes(bytes.length)}, the limit is ${this.fmtBytes(FILE_MAX_BYTES)})`);
+		return this.postMessage("", { type: "file", name, data: this.toBase64(bytes) }, ch);
+	}
+
+	// A shared file in the chat: name, size, and Copy / Open. The text is only downloaded when you tap one.
+	fileCard(m) {
+		const el = this.el.bind(this);
+		const name = String(m.content || "file");
+		const load = async () => {
+			const r = await fetch(this.bannerSrc(m.media_url));
+			if (!r.ok) throw new Error(`HTTP ${r.status}`);
+			return r.text();
 		};
-		if (blocks.length === 1) return go();
-		// Several messages: ask first, so a big file never floods the chat by accident.
-		const kb = (code.length / 1024).toFixed(1);
-		this.sheet(
-			`Share ${safe}?`,
-			this.el("div", { class: "am-sub", style: "margin:0 14px 8px", text: `It's ${kb} KB, too big for one message, so it goes out as ${blocks.length} messages.` }),
-			this.item("send", `Send ${blocks.length} messages`, () => {
-				this.closeSheet();
-				go();
-			}),
-			this.item("close", "Cancel", () => this.closeSheet()),
+		const act = (label, done, fn) => {
+			const $b = el("button", { text: label });
+			$b.onclick = async (e) => {
+				e.stopPropagation();
+				if ($b.disabled) return;
+				$b.disabled = true;
+				$b.textContent = "…";
+				try {
+					await fn(await load());
+					$b.textContent = done;
+				} catch {
+					$b.textContent = "Failed";
+				}
+				setTimeout(() => {
+					$b.textContent = label;
+					$b.disabled = false;
+				}, 1500);
+			};
+			return $b;
+		};
+		return el(
+			"div",
+			{ class: "am-file" },
+			this.ico("file", 26),
+			el("div", { class: "tx" }, el("b", { text: name }), el("small", { text: Number(m.size) > 0 ? this.fmtBytes(Number(m.size)) : "File" })),
+			act("Copy", "Copied ✓", (t) => this.copy(t)),
+			act("Open", "Opened ✓", (t) => this.openSnippet(t, name, "")),
 		);
 	}
 
