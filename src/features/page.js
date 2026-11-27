@@ -1,5 +1,4 @@
 import { ID, HOME_MS, ICON_CLASS } from "../constants.js";
-import { EMOJI } from "../icons.js";
 import { ls } from "../util.js";
 import CSS from "../styles.css";
 
