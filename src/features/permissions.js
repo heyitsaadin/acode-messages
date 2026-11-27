@@ -137,7 +137,7 @@ export class PermissionsMethods {
 			}
 		};
 		sync();
-		this.sheet("Public group", row, $more, $e, $save, this.item("close", "Back", () => this.groupMenu(g)));
+		this.sheet("Public group", row, $more, $e, $save, this.item("close", "Back", () => this.serverSettings(g)));
 	}
 
 	// Generic "are you sure" sheet. onYes may throw; the message shows under the button.
