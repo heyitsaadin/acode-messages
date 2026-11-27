@@ -212,6 +212,13 @@ export class MentionsMethods {
 		let more = false;
 		try {
 			const after = this.lastId;
+			// Messages shown from the cache were saved before anyone's decoration (or new picture) was known,
+			// and polling only asks for newer ones. So once per opening, fetch the latest page and update the authors.
+			if (first && after) {
+				this.api(`messages?channel=${encodeURIComponent(ch.slug)}`)
+					.then((d) => ch === this.state.channel && this.refreshAuthors(d.messages || []))
+					.catch(() => {});
+			}
 			const { messages, typing } = await this.api(`messages?channel=${encodeURIComponent(ch.slug)}&after=${after}`);
 			await this.decryptMessages(ch, messages);
 			if (ch !== this.state.channel) return;
