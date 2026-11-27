@@ -400,7 +400,7 @@ export class ShopMethods {
 		return [
 			this.pfsLabel("How to make one"),
 			this.pfsNote(`Draw it on a see-through ${L.side}\u00D7${L.side} picture. Your profile picture sits in the middle (240\u00D7240), so keep that area clear. Save it as a PNG, or as an animated PNG (APNG) or WebP to make it move.`),
-			this.pfsGroup(this.pfsRow({ icon: "image", title: "Open the template", sub: "A guide with the avatar circle marked", onclick: () => window.open(SHOP_TEMPLATE, "_system") })),
+			this.pfsGroup(this.pfsRow({ icon: "image", title: "Open the template", sub: "A guide with the avatar circle marked", onclick: () => this.pfsOpen("shoptemplate") })),
 			this.pfsNote(`Limits: ${L.side}\u00D7${L.side}, at most ${Math.round(L.bytes / 1000)} KB. Animations can run ${L.maxMs / 1000} seconds with up to ${L.maxFrames} frames. GIF isn't supported.`),
 			this.pfsLabel("Your decoration"),
 			$pv,
