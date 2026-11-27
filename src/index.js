@@ -1,3 +1,4 @@
+import "./avatar-decorations.css";
 import { ID } from "./constants.js";
 import { AcodeMessages } from "./plugin.js";
 
