@@ -43,7 +43,8 @@ export class PageMethods {
 		// chat
 		this.$chead = el("div", { class: "am-chead" });
 		this.$list = el("div", { class: "am-list" });
-		this.$emo = el("div", { class: "am-emo" }, ...EMOJI.map((e) => el("button", { text: e, onclick: () => this.addEmoji(e) })));
+		this.$emo = el("div", { class: "am-emo" });
+		this.emoBuild();
 		this.$ta = el("textarea", { rows: "1", placeholder: "Message" });
 		this.$ta.addEventListener("input", () => {
 			this.$ta.style.height = "48px";
