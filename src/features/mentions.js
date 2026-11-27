@@ -288,6 +288,7 @@ export class MentionsMethods {
 		const k = m.kind || "text";
 		if (k === "image") return m.content && m.content !== "📷 Photo" ? `📷 ${m.content}` : "📷 Photo";
 		if (k === "voice") return "🎤 Voice message";
+		if (k === "file") return `📄 ${m.content || "File"}`;
 		return this.plainPreview(m.content).replace(/\s+/g, " ");
 	}
 
