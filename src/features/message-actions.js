@@ -91,7 +91,7 @@ export class MessageActionsMethods {
 				this.item("idcard", "Copy Message ID", close(() => this.copy(String(m.id)))),
 			].filter(Boolean),
 		);
-		const nodes = [this.el("div", { class: "am-mhint", text: own ? "Double tap your message to edit" : `${m.name} · ${this.shortTime(new Date(m.created_at))}` }), g1, g2];
+		const nodes = [this.el("div", { class: "am-mhint", text: own ? "Double tap your message to edit" : `${m.name} · ${this.shortTime(new Date(m.created_at))}` }), this.rxOff ? null : this.rxQuick(m, close), g1, g2];
 		if (own) nodes.push(this.el("div", { class: "am-mg" }, this.item("trash", "Delete Message", close(() => this.askDelete(m)), "danger")));
 		this.sheet("", ...nodes);
 		// the row stays highlighted until the sheet closes
