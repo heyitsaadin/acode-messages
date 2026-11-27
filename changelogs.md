@@ -3,7 +3,7 @@
 ## 1.12.0
 
 - Message reactions. Press and hold a message and tap an emoji at the top of the menu (👍 ❤️ 😂 😮 😢 🙏 🔥 🎉). It shows as a small pill under the message with a count, and everyone in the chat sees it within a few seconds.
-- Tap a pill to add your own reaction, tap it again to take it back. Your own reactions are highlighted. The same works from the long-press menu.
+- Tap a pill to add your own reaction, tap it again to take it back. Your own reactions are highlighted.
 - Works in groups and in direct messages. In DMs the message text stays end-to-end encrypted, but the server can see which emoji was used, because it has to count them.
 - Needs the matching server update (migration 017_message_reactions.sql and api/messages.js). Without it nothing changes: the emoji row is hidden or says reactions need a server update, and everything else works as before.
 
