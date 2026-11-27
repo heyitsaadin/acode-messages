@@ -42,6 +42,7 @@ export class ProfileSettingsMethods {
 			sounds: () => this.pfsSounds(),
 			shop: () => this.shopPage(),
 			shopnew: () => this.shopCreate(),
+			shoptemplate: () => this.shopTemplate(),
 		};
 		const key = pages[page] ? page : "main";
 		const $pg = this.el("div", { class: `am-spg ${dir}` }, this.pfsHead(key), ...pages[key]());
