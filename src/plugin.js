@@ -104,6 +104,15 @@ export class AcodeMessages {
 					if (value) this.playSendSound();
 					return;
 				}
+				if (key === "receiveSound") {
+					this.settings.receiveSound = !!value;
+					this.appSettings.update();
+					if (value) {
+						this.rxAt = 0;
+						this.playReceiveSound();
+					}
+					return;
+				}
 				this.settings[key] = String(value || "").trim() || DEFAULT_API;
 				this.appSettings.update();
 			},
