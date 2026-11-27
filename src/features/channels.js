@@ -67,7 +67,7 @@ export class ChannelsMethods {
 			$go.disabled = true;
 			$e.textContent = "";
 			try {
-				const { channel } = await this.chanPost({ action: "channel_create", group_id: g.id, name, topic: $topic.value.trim(), private: priv });
+				const { channel } = await this.chanPost({ action: "channel_create", group_id: g.id, name, topic: $topic.value.trim(), private: priv, ...(cat != null ? { category_id: cat } : {}) });
 				await this.refreshHome();
 				const fresh = this.fresh(g);
 				const c = fresh.channels.find((x) => x.slug === channel.slug) || channel;
