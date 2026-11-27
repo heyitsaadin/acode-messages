@@ -44,9 +44,11 @@ export class ChannelsMethods {
 		);
 	}
 
-	channelForm(g) {
+	// catId pre-selects a category; back is where Cancel and a finished create go (default: the Channels list).
+	channelForm(g, catId = null, back = null) {
 		g = this.fresh(g);
 		let priv = false;
+		let cat = catId;
 		const $name = this.el("input", { class: "am-inp", placeholder: "channel-name", maxlength: "32", autocapitalize: "off" });
 		const $topic = this.el("input", { class: "am-inp", placeholder: "Topic (optional)", maxlength: "1024" });
 		const $sw = this.el("div", { class: "am-sw" });
