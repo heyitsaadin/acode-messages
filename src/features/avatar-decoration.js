@@ -19,7 +19,6 @@ export const DECORATIONS = [
 	{ id: "electric", name: "Electric" },
 	{ id: "sakura", name: "Sakura" },
 	{ id: "ember", name: "Ember" },
-	{ id: "orbit", name: "Orbit" },
 ];
 
 const readBytes = (file) =>
