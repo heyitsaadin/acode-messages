@@ -63,7 +63,7 @@ export class PageMethods {
 			}
 		});
 		this.bindRows();
-		this.$emoBtn = el("button", { class: "am-btn", onclick: () => this.$emo.classList.toggle("show") }, this.ico("smile", 24));
+		this.$emoBtn = el("button", { class: "am-btn", onclick: () => this.emoToggle() }, this.ico("smile", 24));
 		this.$plus = el("button", { class: "am-btn am-plus", onclick: () => this.plusMenu() }, this.ico("plus", 26));
 		this.$send = el("button", { class: "am-send", onclick: () => this.send() }, this.ico("send", 20));
 		// Tapping the button would take focus from the message box and close the keyboard. Stop that at the
