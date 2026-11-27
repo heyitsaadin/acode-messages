@@ -2,7 +2,7 @@
 // so a GIF that is too big or too long can be turned away before it is uploaded.
 // The server checks the same limits (acode-messages-server/lib/gif.js), so keep the two in step.
 export const GIF_LIMITS = {
-	avatar: { bytes: 300000, side: 512, label: "profile picture" },
+	avatar: { bytes: 600000, side: 512, label: "profile picture" },
 	banner: { bytes: 800000, side: 1280, label: "banner" },
 	maxMs: 8000, // one run through, in milliseconds
 	maxFrames: 200,
