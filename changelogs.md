@@ -3,7 +3,7 @@
 ## 1.12.0
 
 - Avatar decorations. Edit profile has a new row under your picture: pick a ring (Neon, Gold, Rainbow, Fire, Frost) or an accessory (Halo, Crown, Cat ears, Horns) and it shows around your picture everywhere: messages, friends, members, profiles and chats. Tap None to remove it.
-- GIF profile pictures and banners. Change picture and Change banner now accept GIFs. A GIF skips the crop screen and is uploaded as it is, so it keeps moving. Limits: profile picture up to 300 KB and 512×512, banner up to 800 KB and 1280×1280, and no longer than 8 seconds or 200 frames. A GIF over a limit is turned away with a message that says why.
+- GIF profile pictures and banners. Change picture and Change banner now accept GIFs. A GIF skips the crop screen and is uploaded as it is, so it keeps moving. Limits: profile picture up to 600 KB and 512×512, banner up to 800 KB and 1280×1280, and no longer than 8 seconds or 200 frames. A GIF over a limit is turned away with a message that says why.
 - Other pictures (group icons and banners) are unchanged, and a GIF picked there is still flattened to a still picture.
 - Needs the matching server update (acode-messages-server, migration 018_avatar_decoration.sql plus the new GIF checks). Without it everything else works; decorations just won't save or show.
 
