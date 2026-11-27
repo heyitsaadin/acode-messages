@@ -21,6 +21,9 @@ export class ChatMethods {
 		this.$pend?.classList.remove("show");
 		this.$ta.value = "";
 		this.$ta.style.height = "48px";
+		this.typKey = null; // forget who was typing in the last chat
+		this.typAt = 0;
+		this.paintTyping([]);
 		this.syncFab();
 		this.syncMute();
 		this.paintChatHead();
