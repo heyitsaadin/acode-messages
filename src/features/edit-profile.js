@@ -255,6 +255,7 @@ export class EditProfileMethods {
 			$vis,
 			$err,
 			$save,
+			el("div", { class: "am-savebar" }, $pill),
 		]);
 		// Opened from settings with nothing loaded yet: fetch the saved values in the background.
 		if (!info0) {
