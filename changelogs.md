@@ -2,7 +2,7 @@
 
 ## 1.10.1
 
-- Removed the server address setting from Settings. Changing it is still possible from the plugin's own settings page in Acode.
+- Removed the server address setting everywhere (in-app Settings and the plugin's Acode settings page). The app always uses the default server, and any address saved by an older version is ignored.
 - The Shop / Settings pill is smaller, with the two buttons close together.
 - Moving between the profile, Settings and its pages now slides smoothly, forward and back.
 - Settings pages only have the back arrow now. The extra round X is gone (the profile keeps its X).
