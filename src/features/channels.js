@@ -122,6 +122,7 @@ export class ChannelsMethods {
 			$name,
 			this.el("div", { class: "am-fl", text: "Topic" }),
 			$topic,
+			...this.catChips(g, cat, (id) => (cat = id)),
 			$e,
 			$go,
 			this.el("div", { class: "am-fl", text: "Who can use it" }),
