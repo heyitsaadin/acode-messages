@@ -2,7 +2,7 @@ import { ls } from "../util.js";
 
 // Where "back" goes from each page. "profile" is the profile sheet the pill lives on.
 const UP = { main: "profile", shop: "profile", shopnew: "shop", shoptemplate: "shopnew", account: "main", name: "account", appearance: "main", sounds: "main" };
-const TITLE = { main: "Settings", shop: "Shop", shopnew: "New decoration", account: "Account", name: "Display name", appearance: "Appearance", sounds: "Sounds" };
+const TITLE = { main: "Settings", shop: "Shop", shopnew: "New decoration", shoptemplate: "Template", account: "Account", name: "Display name", appearance: "Appearance", sounds: "Sounds" };
 
 export class ProfileSettingsMethods {
 	/* ---------- Shop / Settings pill and the settings pages ---------- */
