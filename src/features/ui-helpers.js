@@ -60,30 +60,30 @@ export class UiHelpersMethods {
 		// A decoration is only a data attribute; styles.css draws it. Tiny avatars (reply previews) stay plain.
 		if (u.avatar_decoration && /^[a-z]{2,12}$/.test(u.avatar_decoration) && (!size || size >= 24)) {
 			$a.dataset.deco = u.avatar_decoration;
-			// Add small, independently timed particles to every cosmetic. The count is deliberately
-			// capped so chat lists stay light even when several decorated users are visible.
+			// Particles orbit OUTSIDE the portrait edge; keep the image itself unobstructed.
 			const particleCount = u.avatar_decoration === "sakura" ? 8 :
-				["aurora", "galaxy", "electric", "ember", "orbit", "fire", "frost", "rainbow"].includes(u.avatar_decoration) ? 6 : 4;
+				["aurora", "galaxy", "electric", "ember", "fire", "frost", "rainbow"].includes(u.avatar_decoration) ? 6 : 4;
+			const avatarRadius = (size || 40) / 2;
 			for (let n = 0; n < particleCount; n++) {
+				const angle = (Math.PI * 2 * n) / particleCount - Math.PI / 2;
+				const radius = avatarRadius + (u.avatar_decoration === "sakura" ? 9 : 7) + (n % 2) * 3;
 				const $particle = this.el("i", { class: "am-deco-particle", "aria-hidden": "true" });
-				$particle.style.setProperty("--particle-index", n);
-				$particle.style.setProperty("--particle-angle", `${(360 / particleCount) * n + (n % 2 ? 12 : -8)}deg`);
-				const distance = size && size < 60 ? 8 : 13 + (n % 3) * 3;
-				$particle.style.setProperty("--particle-distance", `${distance}px`);
-				$particle.style.setProperty("--particle-rise", `-${distance}px`);
-				$particle.style.setProperty("--particle-fall-end", `-${Math.round(distance * 1.7)}px`);
+				$particle.style.left = `calc(50% + ${Math.cos(angle) * radius}px)`;
+				$particle.style.top = `calc(50% + ${Math.sin(angle) * radius}px)`;
 				$particle.style.setProperty("--particle-delay", `${-(n * 0.43)}s`);
+				$particle.style.setProperty("--particle-drift", `${n % 2 ? 5 : -5}px`);
 				$a.append($particle);
 			}
-			// Sakura uses real DOM petals (rather than static radial-gradient dots),
-			// so each petal can tumble independently around the avatar edge.
+			// Sakura petals also start beyond the avatar edge and drift down past the frame.
 			if (u.avatar_decoration === "sakura") {
-				const drift = [-15, -8, 8, 15, 12, -12, 5, -5];
+				const drift = [-10, -6, 6, 10, 12, -12, 4, -4];
 				for (let n = 0; n < drift.length; n++) {
+					const angle = (Math.PI * 2 * n) / drift.length - Math.PI / 2;
+					const radius = avatarRadius + 10 + (n % 3) * 2;
 					const $petal = this.el("i", { class: "am-sakura-petal", "aria-hidden": "true" });
-					$petal.style.setProperty("--petal-index", n);
+					$petal.style.left = `calc(50% + ${Math.cos(angle) * radius}px)`;
+					$petal.style.top = `calc(50% + ${Math.sin(angle) * radius}px)`;
 					$petal.style.setProperty("--petal-x", `${drift[n]}px`);
-					$petal.style.setProperty("--petal-end-x", `${-drift[n]}px`);
 					$a.append($petal);
 				}
 			}
