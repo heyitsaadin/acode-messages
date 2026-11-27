@@ -41,7 +41,7 @@ export class ChatMethods {
 			this.e2ePublish().then(() => this.peerKey(this.dmPeerId(c), true)).catch(() => {});
 		}
 		this.pushBack();
-		this.clearUnread(c);
+		this.openRead(c);
 		this.poll(true);
 	}
 
