@@ -329,6 +329,7 @@ export class MessageActionsMethods {
 		} finally {
 			this.sending = false;
 			if (this.$send) this.$send.disabled = false;
+			this.sendBusy(false);
 			this.$pend?.classList.remove("busy");
 			this.syncFab();
 		}
