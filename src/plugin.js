@@ -152,4 +152,5 @@ mixin(AcodeMessages, [
 	CropperMethods,
 	ProfileSettingsMethods,
 	TypingMethods,
+	ReactionsMethods,
 ]);
