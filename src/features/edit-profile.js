@@ -14,7 +14,8 @@ export class EditProfileMethods {
 
 	// gifKind ("avatar" or "banner") lets that picture be a GIF: it skips the cropper and is uploaded as it is,
 	// as long as it passes the GIF limits. Without it (group icons and so on) a GIF is flattened to a still picture.
-	pickImage(w, h, limit, done, gifKind) {
+	// onBusy(true/false) tells the caller when the picture is being processed (after the crop, or while a GIF is checked).
+	pickImage(w, h, limit, done, gifKind, onBusy) {
 		const $f = document.createElement("input");
 		$f.type = "file";
 		$f.accept = "image/*";
@@ -25,11 +26,18 @@ export class EditProfileMethods {
 			if (!f) return;
 			try {
 				if (gifKind && (await this.looksLikeGif(f))) {
-					done(await this.prepGif(f, gifKind));
+					onBusy?.(true);
+					await this.nextPaint();
+					const g = await this.prepGif(f, gifKind);
+					onBusy?.(false);
+					done(g);
 					return;
 				}
-				done(await this.prepImage(f, w, h, limit));
+				const d = await this.prepImage(f, w, h, limit, () => onBusy?.(true));
+				onBusy?.(false);
+				done(d);
 			} catch (e) {
+				onBusy?.(false);
 				if (e.cancelled) return;
 				done(null, e.message);
 			}
@@ -72,15 +80,47 @@ export class EditProfileMethods {
 		const $about = el("textarea", { class: "am-inp", placeholder: "Tell people a little about yourself", maxlength: "190" });
 		const $cnt = el("div", { class: "am-cnt" });
 		const $save = el("button", { class: "am-go", text: "Save changes" });
+		// Floating pill at the bottom of the sheet: appears as soon as anything changed, so saving is hard to miss.
+		const $pillBtn = el("button", { text: "Save" });
+		const $pill = el("div", { class: "am-savepill" }, el("span", { text: "Save your changes" }), $pillBtn);
+		const busy = {}; // "avatar" / "banner" while that picture is being processed
+		let saving = false;
 		// Public / private choice. Only shown when the server reports one (it needs migration 012).
 		const $vis = el("div");
 		const paintVis = () => {
 			if (!cur.visibility) return this.put($vis);
-			this.put($vis, el("div", { class: "am-fl", text: "Profile privacy" }), this.visPicker(draft.visibility || cur.visibility, (v) => (draft.visibility = v)));
+			this.put(
+				$vis,
+				el("div", { class: "am-fl", text: "Profile privacy" }),
+				this.visPicker(draft.visibility || cur.visibility, (v) => {
+					draft.visibility = v;
+					syncDirty();
+				}),
+			);
 		};
 		$name.value = cur.name;
 		$about.value = cur.about;
 		const val = (k) => (draft[k] !== undefined ? draft[k] : cur[k]);
+		// Everything that differs from what is saved right now.
+		const changes = () => {
+			const body = {};
+			const name = $name.value.trim();
+			const about = $about.value.trim();
+			if (name !== cur.name) body.name = name;
+			if (about !== cur.about.trim()) body.about = about;
+			if (draft.avatar !== undefined) body.avatar = draft.avatar;
+			if (draft.banner !== undefined) body.banner = draft.banner;
+			if (draft.decoration !== undefined && draft.decoration !== cur.decoration) body.decoration = draft.decoration;
+			if (draft.visibility && draft.visibility !== cur.visibility) body.visibility = draft.visibility;
+			return body;
+		};
+		const syncDirty = () => {
+			const working = Object.values(busy).some(Boolean);
+			$pill.classList.toggle("show", Object.keys(changes()).length > 0);
+			$pillBtn.disabled = working || saving;
+			if (saving) $pillBtn.replaceChildren(this.spinner("sm"), "Saving…");
+			else $pillBtn.textContent = working ? "Processing…" : "Save";
+		};
 		const count = () => {
 			$cnt.textContent = `${$about.value.length}/190`;
 		};
@@ -92,20 +132,27 @@ export class EditProfileMethods {
 			return $i;
 		};
 		const pick = (k, w, h, limit, gifKind) => {
+			if (busy[k]) return; // already working on one
 			$err.textContent = "";
 			this.pickImage(
 				w,
 				h,
 				limit,
 				(d, e) => {
+					busy[k] = false;
 					if (e) {
 						$err.textContent = e;
+						media();
 						return;
 					}
 					draft[k] = d;
 					media();
 				},
 				gifKind,
+				(on) => {
+					busy[k] = !!on;
+					media();
+				},
 			);
 		};
 		const pickAvatar = () => pick("avatar", 256, 256, 110000, "avatar");
@@ -115,8 +162,9 @@ export class EditProfileMethods {
 			const avatar = draft.avatar === null ? acodeAvatar : val("avatar");
 			const deco = val("decoration");
 			const who = { name: $name.value.trim() || cur.name, avatar_url: avatar };
-			this.put($ban, banner ? img(banner) : null, el("div", { class: "am-ed-cam b" }, this.ico("image", 16)));
-			this.put($av, this.avatar({ ...who, avatar_decoration: deco }, 90), el("div", { class: "am-ed-cam" }, this.ico("image", 16)));
+			const loading = () => el("div", { class: "am-ed-load" }, this.spinner());
+			this.put($ban, banner ? img(banner) : null, el("div", { class: "am-ed-cam b" }, this.ico("image", 16)), busy.banner ? loading() : null);
+			this.put($av, this.avatar({ ...who, avatar_decoration: deco }, 90), el("div", { class: "am-ed-cam" }, this.ico("image", 16)), busy.avatar ? loading() : null);
 			this.put($decos, ...this.decoTiles(who, deco, (d) => {
 				draft.decoration = d;
 				media();
@@ -147,34 +195,32 @@ export class EditProfileMethods {
 						})
 					: null,
 			);
+			syncDirty();
 		};
 		$ban.onclick = pickBanner;
 		$av.onclick = pickAvatar;
-		$name.addEventListener("input", () => !val("avatar") && media());
+		$name.addEventListener("input", () => (!val("avatar") ? media() : syncDirty()));
 		$about.addEventListener("input", () => {
 			touched.about = true;
 			count();
+			syncDirty();
 		});
-		$save.onclick = async () => {
-			const body = {};
-			const name = $name.value.trim();
-			const about = $about.value.trim();
-			if (name !== cur.name) body.name = name;
-			if (about !== cur.about.trim()) body.about = about;
-			if (draft.avatar !== undefined) body.avatar = draft.avatar;
-			if (draft.banner !== undefined) body.banner = draft.banner;
-			if (draft.decoration !== undefined && draft.decoration !== cur.decoration) body.decoration = draft.decoration;
-			if (draft.visibility && draft.visibility !== cur.visibility) body.visibility = draft.visibility;
+		const save = async () => {
+			if (saving || Object.values(busy).some(Boolean)) return; // a picture is still being processed
+			const body = changes();
 			if (!Object.keys(body).length) {
 				this.closeSheet();
 				return;
 			}
+			saving = true;
 			$save.disabled = true;
 			$save.textContent = "Saving…";
 			$err.textContent = "";
+			syncDirty();
 			try {
 				const { user: nu } = await this.api("me", { method: "POST", body: JSON.stringify(body) });
 				this.applyMe(nu);
+				$pill.classList.remove("show");
 				this.closeSheet();
 				this.paintHome();
 				this.refreshHome();
@@ -183,8 +229,12 @@ export class EditProfileMethods {
 				$err.textContent = /HTTP 404/.test(e.message) ? "Your server doesn't support profile editing yet. Update acode-messages-server first." : e.message;
 				$save.disabled = false;
 				$save.textContent = "Save changes";
+				saving = false;
+				syncDirty();
 			}
 		};
+		$save.onclick = save;
+		$pillBtn.onclick = save;
 		media();
 		count();
 		paintVis();
@@ -205,6 +255,7 @@ export class EditProfileMethods {
 			$vis,
 			$err,
 			$save,
+			el("div", { class: "am-savebar" }, $pill),
 		]);
 		// Opened from settings with nothing loaded yet: fetch the saved values in the background.
 		if (!info0) {
@@ -223,6 +274,7 @@ export class EditProfileMethods {
 					if (draft.banner === undefined) cur.banner = d.user?.banner || null;
 					if (draft.decoration === undefined) cur.decoration = d.user?.avatar_decoration || null; // the server leaves it out when there is none
 					if (draft.banner === undefined || draft.decoration === undefined) media();
+					syncDirty();
 				})
 				.catch(() => {});
 		}

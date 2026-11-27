@@ -37,7 +37,7 @@ export class BannerMethods {
 
 	// Let the person pick which part of the picture to use (move and zoom), make it a W0 x H0 picture
 	// and squeeze it under the server's size limit. Rejects with .cancelled = true if they back out.
-	prepImage(file, W0 = 960, H0 = 320, limit = 270000) {
+	prepImage(file, W0 = 960, H0 = 320, limit = 270000, onWork) {
 		return new Promise((resolve, reject) => {
 			const url = URL.createObjectURL(file);
 			const img = new Image();
@@ -45,6 +45,11 @@ export class BannerMethods {
 				try {
 					const r = await this.cropPicture(img, W0, H0);
 					URL.revokeObjectURL(url);
+					// the crop is confirmed: from here it is only compressing, so let the caller show a spinner
+					if (onWork) {
+						onWork();
+						await this.nextPaint();
+					}
 					let W = W0;
 					let H = H0;
 					for (let attempt = 0; attempt < 5; attempt++) {

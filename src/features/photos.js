@@ -3,6 +3,35 @@ import { PHOTO_B64_MAX } from "../constants.js";
 export class PhotosMethods {
 	/* ---------- photos ---------- */
 
+	// The three-ring loading spinner. Pass "sm" for the small white one used inside buttons.
+	spinner(cls = "") {
+		return this.el("div", { class: `am-spin ${cls}`.trim() });
+	}
+
+	// Resolves once the browser has painted, so a spinner shows up before heavy work blocks the page.
+	nextPaint() {
+		return new Promise((ok) => {
+			requestAnimationFrame(() => setTimeout(ok, 0));
+			setTimeout(ok, 100);
+		});
+	}
+
+	// While a message is on its way to the server the send arrow turns into the spinner.
+	sendBusy(on) {
+		const $b = this.$send;
+		if (!$b) return;
+		$b.classList.toggle("busy", !!on);
+		if (on) {
+			if (!$b._ico) {
+				$b._ico = [...$b.childNodes];
+				$b.replaceChildren(this.spinner("sm"));
+			}
+		} else if ($b._ico) {
+			$b.replaceChildren(...$b._ico);
+			$b._ico = null;
+		}
+	}
+
 	pickPhoto() {
 		const c = this.state.channel;
 		if (!c) return;
