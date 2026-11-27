@@ -95,13 +95,16 @@ export class ChannelsMethods {
 		$topic.value = c.topic || "";
 		const $e = this.el("div", { class: "am-ferr" });
 		const $go = this.el("button", { class: "am-go", text: "Save changes" });
+		let cat = c.category_id ?? null;
 		$go.onclick = async () => {
 			const name = $name.value.trim();
 			if (!name) return;
 			$go.disabled = true;
 			$e.textContent = "";
 			try {
-				await this.chanPost({ action: "channel_update", slug: c.slug, name, topic: $topic.value.trim() });
+				const body = { action: "channel_update", slug: c.slug, name, topic: $topic.value.trim() };
+				if (cat !== (c.category_id ?? null)) body.category_id = cat;
+				await this.chanPost(body);
 				await this.refreshHome();
 				$go.textContent = "Saved ✓";
 				setTimeout(() => {
