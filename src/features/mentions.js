@@ -328,6 +328,7 @@ export class MentionsMethods {
 			head = el("div", { class: "am-mh" }, nm, ...this.badges(m), el("span", { class: "am-mt", text: t.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }) }));
 		}
 		$row.append(el("div", { class: "am-mr" }, lead, el("div", { class: "am-mb" }, head, this.bubble(m, null, t, own))));
+		this.paintReactRow($row); // a row that is rebuilt (or loaded from the cache) gets its pills straight away
 		return $row;
 	}
 
