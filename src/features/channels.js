@@ -82,7 +82,7 @@ export class ChannelsMethods {
 		};
 		$go.onclick = go;
 		$name.addEventListener("keydown", (e) => e.key === "Enter" && go());
-		this.sheet("Create channel", $name, $topic, $priv, $e, $go, this.item("close", "Cancel", () => this.channelsAdmin(g)));
+		this.sheet("Create channel", $name, $topic, ...this.catChips(g, cat, (id) => (cat = id)), $priv, $e, $go, this.item("close", "Cancel", () => (back ? back() : this.channelsAdmin(g))));
 		setTimeout(() => $name.focus(), 250);
 	}
 
