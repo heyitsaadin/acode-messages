@@ -74,6 +74,10 @@
 .am-srv.on{border-radius:16px;background:var(--active-color,#5865f2)}
 .am-srv::before{content:"";position:absolute;left:-10px;top:50%;height:0;width:4px;border-radius:0 4px 4px 0;background:var(--primary-text-color);transform:translateY(-50%);transition:height .22s cubic-bezier(.3,.8,.3,1)}
 .am-srv.on::before{height:26px}
+/* unread: a small pill on the left edge of the icon, and a red count that stops at 99+ */
+.am-srv.unread:not(.on)::before{height:8px}
+.am-ub{flex-shrink:0;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#ed4245;color:#fff;font-size:12px;font-weight:700;line-height:20px;text-align:center;font-style:normal;font-variant-numeric:tabular-nums}
+.am-ub.rail{position:absolute;right:-7px;bottom:-5px;z-index:2;padding:0 4px;line-height:16px;border:2px solid var(--primary-color);pointer-events:none}
 .am-srv.add{color:#3ba55d;background:rgba(127,127,127,.22)}
 .am-srv.add.on{color:#fff;background:var(--active-color,#5865f2)}
 .am-sep{width:32px;height:2px;border-radius:2px;background:rgba(127,127,127,.35);flex-shrink:0}
