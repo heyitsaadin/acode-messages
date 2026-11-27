@@ -62,7 +62,14 @@ export class NetworkMethods {
 
 	// One shared token request, so ten parallel calls don't make ten logins.
 	getToken() {
-		if (this.token && Date.now() - this.tokenAt < TOKEN_MS) return Promise.resolve(this.token);
+		const age = Date.now() - this.tokenAt;
+		const fresh = !!this.token && age < TOKEN_MS;
+		// Past 60% of its life, renew it quietly so a send never has to wait for a new login.
+		if (fresh && age > TOKEN_MS * 0.6) this.renewToken().catch(() => {});
+		return fresh ? Promise.resolve(this.token) : this.renewToken();
+	}
+
+	renewToken() {
 		if (!this.tokenP) {
 			this.tokenP = (async () => {
 				let t = null;
