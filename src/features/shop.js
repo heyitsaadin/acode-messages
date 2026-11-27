@@ -378,7 +378,8 @@ export class ShopMethods {
 			$img,
 			$err,
 			this.pfsGroup(
-				this.pfsRow({ icon: "image", title: "Save the PNG", sub: "Opens it in your browser. Press and hold the picture to save it", onclick: () => window.open(SHOP_TEMPLATE, "_system") }),
+				$dl,
+				this.pfsRow({ icon: "image", title: "Open in browser", sub: "Backup: press and hold the picture there to save it", onclick: () => window.open(SHOP_TEMPLATE, "_system") }),
 				this.pfsRow({
 					icon: "file",
 					title: "Copy link",
