@@ -54,17 +54,18 @@ export class AcodeMessages {
 	get settings() {
 		const all = this.appSettings.value;
 		if (!all[ID]) {
-			all[ID] = { apiUrl: DEFAULT_API };
+			all[ID] = {};
 			this.appSettings.update(false);
-		} else if (/heyitsaadins-projects\.vercel\.app/.test(all[ID].apiUrl || "")) {
-			all[ID].apiUrl = DEFAULT_API;
+		} else if (all[ID].apiUrl) {
+			delete all[ID].apiUrl; // the server address is fixed now, so drop any address saved by an older version
 			this.appSettings.update(false);
 		}
 		return all[ID];
 	}
 
+	// The server address is not configurable: it is always the default one.
 	get base() {
-		return String(this.settings.apiUrl || DEFAULT_API).replace(/\/$/, "");
+		return String(DEFAULT_API).replace(/\/$/, "");
 	}
 
 	get settingsUi() {
