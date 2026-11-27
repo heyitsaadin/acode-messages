@@ -4,7 +4,8 @@ import { DECO_LIMITS, cleanDecoName, decoInfo, decoProblem } from "../deco-image
 // The server side is lib/shop.js in acode-messages-server (reached as /api/shop). Equipping one goes through POST /api/me.
 // Every file in src/ is bundled into one scope, so the top-level names here start with "shop".
 
-const SHOP_TEMPLATE = "https://raw.githubusercontent.com/heyitsaadin/acode-messages/main/project/decoration-template.svg";
+// The template picture (transparent 288x288 PNG) lives in the repo at project/decoration-template.png.
+const SHOP_TEMPLATE = "https://raw.githubusercontent.com/heyitsaadin/acode-messages/main/project/decoration-template.png";
 const SHOP_STILLS = 120; // first frames kept in memory
 
 const shopReadBytes = (file) =>
@@ -312,6 +313,41 @@ export class ShopMethods {
 		this.refreshHome();
 	}
 
+	/* ---------- the template page (a settings page, so it has the back arrow) ---------- */
+
+	shopTemplate() {
+		const el = this.el.bind(this);
+		const L = DECO_LIMITS;
+		const $err = el("div", { class: "am-ferr" });
+		const $img = el("img", { alt: "Decoration template: 288 by 288 canvas with a 240 by 240 avatar circle in the middle" });
+		$img.style.cssText = "display:block;width:min(100%,288px);aspect-ratio:1;margin:14px auto;background:#fff;border-radius:12px";
+		$img.onerror = () => {
+			$img.style.display = "none";
+			$err.textContent = "Couldn't load the template. Check your connection and try again.";
+		};
+		$img.src = SHOP_TEMPLATE;
+		const $done = el("button", { class: "am-go", text: "Done" });
+		$done.onclick = () => this.pfsBack();
+		return [
+			this.pfsNote(`This is the guide for your ${L.side}\u00D7${L.side} picture. The pink circle is where your profile picture sits, so keep it clear. Draw around it, hide or delete the guide, then export a see-through PNG.`),
+			$img,
+			$err,
+			this.pfsGroup(
+				this.pfsRow({ icon: "image", title: "Save the PNG", sub: "Opens it in your browser. Press and hold the picture to save it", onclick: () => window.open(SHOP_TEMPLATE, "_system") }),
+				this.pfsRow({
+					icon: "file",
+					title: "Copy link",
+					sub: "Link to the template PNG",
+					onclick: async () => {
+						await this.copy(SHOP_TEMPLATE);
+						this.flash("Link copied");
+					},
+				}),
+			),
+			$done,
+		];
+	}
+
 	/* ---------- making one ---------- */
 
 	shopCreate() {
@@ -383,7 +419,7 @@ export class ShopMethods {
 		return [
 			this.pfsLabel("How to make one"),
 			this.pfsNote(`Draw it on a see-through ${L.side}\u00D7${L.side} picture. Your profile picture sits in the middle (240\u00D7240), so keep that area clear. Save it as a PNG, or as an animated PNG (APNG) or WebP to make it move.`),
-			this.pfsGroup(this.pfsRow({ icon: "image", title: "Open the template", sub: "A guide with the avatar circle marked", onclick: () => window.open(SHOP_TEMPLATE, "_system") })),
+			this.pfsGroup(this.pfsRow({ icon: "image", title: "Open the template", sub: "A guide with the avatar circle marked", onclick: () => this.pfsOpen("shoptemplate") })),
 			this.pfsNote(`Limits: ${L.side}\u00D7${L.side}, at most ${Math.round(L.bytes / 1000)} KB. Animations can run ${L.maxMs / 1000} seconds with up to ${L.maxFrames} frames. GIF isn't supported.`),
 			this.pfsLabel("Your decoration"),
 			$pv,
