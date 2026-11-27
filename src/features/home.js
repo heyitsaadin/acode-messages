@@ -23,13 +23,14 @@ export class HomeMethods {
 		const epoch = this.homeEpoch || 0;
 		this.homeBusy = (async () => {
 			try {
-				if (this.readP) await this.readP; // a read mark still on its way would make this answer stale
+				while (this.readPend?.size) await Promise.all([...this.readPend]); // read marks still on their way would make this answer stale
+				const since = Date.now();
 				const { me, ...next } = await this.api("home");
 				// Keep the official default community at the top of the server rail.
 				// The server marks it with is_default; other groups retain their relative order.
 				if (Array.isArray(next.groups)) next.groups.sort((a, b) => Number(!!b.is_default) - Number(!!a.is_default));
 				if (epoch !== (this.homeEpoch || 0)) return;
-				this.settleUnread(next);
+				this.settleUnread(next, since);
 				if (me) this.state.user = this.withMine({ ...this.state.user, ...me });
 				// Publish my encryption key right away so people can DM me without me opening a DM first.
 				// Cheap after the first success; retried on the next refresh if it fails.
