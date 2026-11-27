@@ -140,6 +140,17 @@ export class ChatMethods {
 		const has = !!this.$ta?.value.trim() || !!this.pend;
 		this.$send?.classList.toggle("on", has);
 		this.$mic?.classList.toggle("off", has);
+		if (has) this.warmSend();
 		if (!this.$ta?.value) this.hideSug();
+	}
+
+	// While you type, quietly get ready to send: renew the login token and, in a DM, refresh the other
+	// person's encryption key. Without this, the first send after a pause waited on those requests.
+	warmSend() {
+		const c = this.state.channel;
+		if (!c || this.view !== "chat" || Date.now() - (this.warmAt || 0) < 15000) return;
+		this.warmAt = Date.now();
+		this.getToken().catch(() => {});
+		if (c.kind === "dm" && this.e2eSupported()) this.peerKey(this.dmPeerId(c), false, 10000).catch(() => {});
 	}
 }
