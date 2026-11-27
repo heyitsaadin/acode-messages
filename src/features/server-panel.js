@@ -138,16 +138,6 @@ export class ServerPanelMethods {
 		}
 	}
 
-	inviteSheet(g) {
-		g = this.fresh(g);
-		this.sheet(
-			"Invite people",
-			this.el("div", { class: "am-sub", style: "margin:0 14px 8px", text: "Share this code. Anyone can enter it under the + on the left to join." }),
-			this.copyItem("link", `Invite code: ${g.invite_code}`, g.invite_code),
-			this.item("close", "Back", () => this.groupMenu(g)),
-		);
-	}
-
 	/* ---------- group settings (owner / people with permissions) ---------- */
 
 	serverSettings(g) {
