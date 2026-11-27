@@ -228,6 +228,7 @@ export class MentionsMethods {
 		if (this.$page && this.view === "chat" && ch === this.state.channel) {
 			this.syncN = (this.syncN || 0) + 1;
 			if (this.syncN % 6 === 0) this.reconcile();
+			this.rxTick(); // who reacted with what
 			this.pollTimer = setTimeout(() => this.poll(), more ? 0 : document.hidden ? 8000 : POLL_MS);
 		}
 	}
