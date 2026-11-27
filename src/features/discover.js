@@ -25,7 +25,7 @@ export class DiscoverMethods {
 		return el(
 			"div",
 			{ class: "am-add" },
-			el("div", { class: "am-mg act" }, this.item("plus", "Create a group", () => this.groupForm("create"), "", "Your own space with channels and roles"), this.item("link", "Join with an invite code", () => this.groupForm("join"), "", "Got a code from a friend? Paste it here")),
+			el("div", { class: "am-mg act" }, this.item("plus", "Create a group", () => this.groupForm("create"), "", "Your own space with channels and roles"), this.item("link", "Join with an invite link or code", () => this.groupForm("join"), "", "Got a link or code from a friend? Paste it here")),
 			el("div", { class: "am-lbl", text: "Public groups" }),
 			el("div", { class: "am-sub", style: "margin:0 10px 12px", text: "Open to everyone. No invite code needed." }),
 			this.$comms,
