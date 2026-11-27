@@ -316,6 +316,7 @@ export class MessageActionsMethods {
 				if (replied && message.reply_to == null && !message.reply && message.reply_to_id == null) message.reply_to = replied.id;
 				this.append([message], true);
 			}
+			this.playSendSound();
 			return true;
 		} catch (e) {
 			this.flash(`${attachment ? "Not sent" : "Message not sent"} (${e.message})`);
