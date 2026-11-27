@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.11.2
+
+- Typing indicator: when someone is typing in a DM or a group channel you have open, you see three dots bouncing in a wave with "Name is typing" above the message box. Only the fact that you are typing is sent, never what you type. Needs the matching server update (acode-messages-server, migration 015); without it nothing is shown and everything else works as before.
+- The Account page now says that only you can see your email.
+
 ## 1.11.1
 
 - Fixed replies: a reply now stays on the message after you close and reopen the chat, and the person you replied to sees it too. Before, replies only showed on your own screen for a while.

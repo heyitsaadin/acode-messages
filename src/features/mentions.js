@@ -212,9 +212,10 @@ export class MentionsMethods {
 		let more = false;
 		try {
 			const after = this.lastId;
-			const { messages } = await this.api(`messages?channel=${encodeURIComponent(ch.slug)}&after=${after}`);
+			const { messages, typing } = await this.api(`messages?channel=${encodeURIComponent(ch.slug)}&after=${after}`);
 			await this.decryptMessages(ch, messages);
 			if (ch !== this.state.channel) return;
+			this.paintTyping(typing); // an older server sends nothing here, which just keeps the row hidden
 			if (first && !messages.length) {
 				if (this.lastId) this.$list.querySelectorAll(".am-skwrap").forEach((n) => n.remove());
 				else this.chatNote("No messages yet. Say hi!");
