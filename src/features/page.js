@@ -129,6 +129,7 @@ export class PageMethods {
 
 		// Preferred: a tab in Acode's own tab bar, like the Welcome tab. Older Acode builds
 		// without custom tabs get the old full-screen page instead.
+		this.tabBlur = false;
 		if (!this.mountTab()) this.mountPage();
 		this.pushBack();
 	}
