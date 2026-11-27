@@ -22,10 +22,12 @@ export class BannerMethods {
 			const f = $f.files?.[0];
 			$f.remove();
 			if (!f) return;
-			this.sheet("Group banner", this.el("div", { class: "am-note", text: "Uploading…" }));
 			try {
-				await this.setBanner(g, await this.prepImage(f));
+				const data = await this.prepImage(f);
+				this.sheet("Group banner", this.el("div", { class: "am-note", text: "Uploading…" }));
+				await this.setBanner(g, data);
 			} catch (e) {
+				if (e.cancelled) return;
 				this.bannerMenu(g, e.message);
 			}
 		};
