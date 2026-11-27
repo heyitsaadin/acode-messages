@@ -34,6 +34,7 @@ import { OutboxMethods } from "./features/outbox.js";
 import { EmojiPickerMethods } from "./features/emoji-picker.js";
 import { CropperMethods } from "./features/cropper.js";
 import { ProfileSettingsMethods } from "./features/profile-settings.js";
+import { ShopMethods } from "./features/shop.js";
 import { TypingMethods } from "./features/typing.js";
 
 // The class itself only holds the constructor and settings. Everything else lives in
