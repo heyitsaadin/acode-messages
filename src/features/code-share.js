@@ -317,7 +317,7 @@ export class CodeShareMethods {
 	}
 
 	// "```js main.js:12-20\n...\n```" blocks become cards; everything around them keeps the @mention formatting.
-	richText(text) {
+	richBlocks(text) {
 		if (!text.includes("```")) return this.richInline(text);
 		const f = document.createDocumentFragment();
 		const re = /```([^\n`]*)\n([\s\S]*?)\n?```/g;
