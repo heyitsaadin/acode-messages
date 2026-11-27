@@ -242,15 +242,18 @@ export class MentionsMethods {
 		const L = this.$list;
 		const stick = forceStick || L.scrollHeight - L.scrollTop - L.clientHeight < 160;
 		L.querySelectorAll(".am-note,.am-skwrap").forEach((n) => n.remove());
-		const animate = this.lastId > 0;
+		const animate = this.lastId > 0; // false while the chat is first loading: old messages make no sound
+		let heard = false;
 		for (const m of messages) {
 			if (Number(m.id) <= this.lastId) continue;
 			this.lastId = Math.max(this.lastId, Number(m.id));
 			if (m.deleted) continue;
 			if (this.outAdopt(m)) continue; // my own message, already on screen dimmed: it just turns normal
+			if (String(m.user_id) !== String(this.me.id)) heard = true;
 			this.msgBuf.push(m);
 			L.append(...this.rowNodes(m, animate));
 		}
+		if (heard && animate) this.playReceiveSound();
 		if (this.msgBuf.length > MSG_CACHE) this.msgBuf = this.msgBuf.slice(-MSG_CACHE);
 		this.saveMsgs();
 		if (stick) L.scrollTop = L.scrollHeight;
