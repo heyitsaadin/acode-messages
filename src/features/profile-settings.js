@@ -1,33 +1,51 @@
-import { DEFAULT_API } from "../constants.js";
 import { ls } from "../util.js";
 
 // Where "back" goes from each page. "profile" is the profile sheet the pill lives on.
-const UP = { main: "profile", shop: "profile", account: "main", name: "account", appearance: "main", sounds: "main", advanced: "main" };
-const TITLE = { main: "Settings", shop: "Shop", account: "Account", name: "Display name", appearance: "Appearance", sounds: "Sounds", advanced: "Advanced" };
+const UP = { main: "profile", shop: "profile", account: "main", name: "account", appearance: "main", sounds: "main" };
+const TITLE = { main: "Settings", shop: "Shop", account: "Account", name: "Display name", appearance: "Appearance", sounds: "Sounds" };
 
 export class ProfileSettingsMethods {
 	/* ---------- Shop / Settings pill and the settings pages ---------- */
 
-	// The floating pill at the bottom of your own profile, like Discord's.
+	// The small floating pill at the bottom of your own profile, like Discord's.
 	pfsDock() {
 		const el = this.el.bind(this);
-		const tab = (icon, label, go) => el("button", { class: "am-dk", onclick: go }, this.ico(icon, 24), el("span", { text: label }));
+		const tab = (icon, label, go) => el("button", { class: "am-dk", onclick: go }, this.ico(icon, 22), el("span", { text: label }));
 		return el("div", { class: "am-dockw" }, el("div", { class: "am-dock" }, tab("shop", "Shop", () => this.pfsOpen("shop")), tab("gear", "Settings", () => this.pfsOpen("main"))));
 	}
 
+	// Swap what the sheet shows with a push animation: the old page slides out a little, then the new one slides in.
+	// dir is "fwd" (going deeper, new page comes from the right) or "back" (new page comes from the left).
+	// A newer call cancels one that is still waiting, and nothing happens if the sheet was closed meanwhile.
+	pfsSwap(dir, show) {
+		const seq = (this.pfsSeq = (this.pfsSeq || 0) + 1);
+		const $s = this.$sheet;
+		const $cur = $s?.querySelector(".am-spg, .am-pf");
+		if (!$cur || !$s.classList.contains("open")) return show();
+		$cur.classList.add(dir === "fwd" ? "out-l" : "out-r");
+		setTimeout(() => {
+			if (seq === this.pfsSeq && $s.classList.contains("open")) show();
+		}, 110);
+	}
+
+	pfsOpen(page = "main", dir = "fwd") {
+		this.pfsSwap(dir, () => this.pfsShow(page, dir));
+	}
+
 	// Every settings page is the tall sheet again with new content, so moving between them feels like one place.
-	pfsOpen(page = "main") {
+	pfsShow(page, dir) {
 		const pages = {
 			main: () => this.pfsMain(),
 			account: () => this.pfsAccount(),
 			name: () => this.pfsName(),
 			appearance: () => this.pfsAppearance(),
 			sounds: () => this.pfsSounds(),
-			advanced: () => this.pfsAdvanced(),
 			shop: () => this.pfsShop(),
 		};
 		const key = pages[page] ? page : "main";
-		this.openSheet(true, "", [this.pfsHead(key), ...pages[key]()]);
+		const $pg = this.el("div", { class: `am-spg ${dir}` }, this.pfsHead(key), ...pages[key]());
+		this.openSheet(true, "", [$pg]);
+		this.$sheet?.querySelector(".am-sx")?.remove(); // the back arrow is the only way out here; the round X stays on the profile
 		this.pfsPage = key; // openSheet clears this, so it is set after
 	}
 
@@ -35,8 +53,12 @@ export class ProfileSettingsMethods {
 	pfsBack() {
 		const up = UP[this.pfsPage];
 		if (!up) return false;
-		if (up === "profile") this.profile(this.me, true);
-		else this.pfsOpen(up);
+		if (up === "profile") {
+			this.pfsSwap("back", () => {
+				this.profile(this.me, true);
+				this.$sheet?.querySelector(".am-pf")?.classList.add("am-spg", "back");
+			});
+		} else this.pfsOpen(up, "back");
 		return true;
 	}
 
@@ -106,8 +128,6 @@ export class ProfileSettingsMethods {
 				this.pfsRow({ icon: "palette", title: "Appearance", sub: "Who can see your profile", onclick: () => this.pfsOpen("appearance") }),
 				this.pfsRow({ icon: "bell", title: "Sounds", sub: "Send and receive sounds", onclick: () => this.pfsOpen("sounds") }),
 			),
-			this.pfsLabel("App"),
-			this.pfsGroup(this.pfsRow({ icon: "sliders", title: "Advanced", sub: "Server address", onclick: () => this.pfsOpen("advanced") })),
 		];
 	}
 
@@ -154,7 +174,7 @@ export class ProfileSettingsMethods {
 				this.applyMe(nu);
 				this.paintHome();
 				this.refreshHome();
-				this.pfsOpen("account");
+				this.pfsOpen("account", "back");
 			} catch (e) {
 				$err.textContent = /HTTP 404/.test(e.message) ? "Your server doesn't support profile editing yet. Update acode-messages-server first." : e.message;
 				$go.disabled = false;
@@ -226,33 +246,6 @@ export class ProfileSettingsMethods {
 					}
 				}),
 			),
-		];
-	}
-
-	pfsAdvanced() {
-		const el = this.el.bind(this);
-		const $in = el("input", { class: "am-inp", placeholder: DEFAULT_API, autocapitalize: "off", inputmode: "url", maxlength: "200" });
-		$in.value = this.settings.apiUrl || DEFAULT_API;
-		const $err = el("div", { class: "am-ferr" });
-		const save = (raw) => {
-			const v = String(raw || "").trim().replace(/\/+$/, "");
-			if (v && !/^https?:\/\/\S+$/i.test(v)) {
-				$err.textContent = "Enter a full address that starts with http:// or https://";
-				return;
-			}
-			$err.textContent = "";
-			this.settings.apiUrl = v || DEFAULT_API;
-			this.appSettings.update();
-			$in.value = this.settings.apiUrl;
-			this.flash("Saved. Reopen Acode Messages to use it.");
-		};
-		return [
-			this.pfsLabel("Server address"),
-			$in,
-			$err,
-			el("button", { class: "am-go", text: "Save", onclick: () => save($in.value) }),
-			el("button", { class: "am-go alt", text: "Use the default server", onclick: () => save("") }),
-			this.pfsNote("Only change this if you run your own server."),
 		];
 	}
 
