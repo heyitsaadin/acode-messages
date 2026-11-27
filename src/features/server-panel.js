@@ -24,9 +24,11 @@ export class ServerPanelMethods {
 		const el = this.el.bind(this);
 		return el(
 			"div",
-			{ class: "am-ch", onclick: () => this.openChannel({ slug: c.slug, name: c.name, kind: "text", group_id: g.id }) },
+			{ class: `am-ch${c.mentions > 0 ? " ment" : c.unread > 0 ? " unread" : ""}`, "data-slug": c.slug, onclick: () => this.openChannel({ slug: c.slug, name: c.name, kind: "text", group_id: g.id }) },
+			// On the left edge, like Discord: a small @ when someone mentioned you here, otherwise a dot when there is something new.
+			c.mentions > 0 ? el("span", { class: "am-um", "aria-label": "You were mentioned", text: "@" }) : c.unread > 0 ? el("span", { class: "am-ud", "aria-label": "Unread messages" }) : null,
 			this.ico(c.private ? "lock" : "hash", 20),
-			el("span", { text: c.name }),
+			el("span", { class: "cn", text: c.name }),
 			this.can(g, "manage_channels") ? el("button", { class: "am-btn", "aria-label": "Channel settings", style: "margin-left:auto;width:32px;height:32px", onclick: (e) => (e.stopPropagation(), this.channelSettings(g, c)) }, this.ico("sliders", 18)) : null,
 		);
 	}
