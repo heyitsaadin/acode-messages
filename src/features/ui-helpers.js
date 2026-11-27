@@ -63,10 +63,12 @@ export class UiHelpersMethods {
 			// Sakura uses real DOM particles (rather than a few static radial-gradient dots),
 			// so each petal can tumble independently around the avatar edge.
 			if (u.avatar_decoration === "sakura") {
-				const petals = 8;
-				for (let n = 0; n < petals; n++) {
+				const drift = [-15, -8, 8, 15, 12, -12, 5, -5];
+				for (let n = 0; n < drift.length; n++) {
 					const $petal = this.el("i", { class: "am-sakura-petal", "aria-hidden": "true" });
 					$petal.style.setProperty("--petal-index", n);
+					$petal.style.setProperty("--petal-x", `${drift[n]}px`);
+					$petal.style.setProperty("--petal-end-x", `${-drift[n]}px`);
 					$a.append($petal);
 				}
 			}
