@@ -4,7 +4,24 @@ import { DECO_LIMITS, cleanDecoName, decoInfo, decoProblem } from "../deco-image
 // The server side is lib/shop.js in acode-messages-server (reached as /api/shop). Equipping one goes through POST /api/me.
 // Every file in src/ is bundled into one scope, so the top-level names here start with "shop".
 
-const SHOP_TEMPLATE = "https://raw.githubusercontent.com/heyitsaadin/acode-messages/main/project/decoration-template.svg";
+// Same picture as project/decoration-template.svg, kept here so the template opens inside the plugin (with a back button) instead of as a bare web page.
+const SHOP_TEMPLATE_SVG = [
+	'<svg xmlns="http://www.w3.org/2000/svg" width="288" height="288" viewBox="0 0 288 288">',
+	"  <title>Acode Messages avatar decoration template (288 x 288)</title>",
+	"  <!-- How to use: draw your decoration around the pink circle, keep the circle itself clear, then HIDE or DELETE",
+	"       every layer made from this file and export a transparent PNG (or APNG / WebP) at exactly 288 x 288. -->",
+	'  <rect x="1" y="1" width="286" height="286" fill="none" stroke="#3ca0ff" stroke-width="2" stroke-dasharray="6 4"/>',
+	'  <circle cx="144" cy="144" r="120" fill="#828282" fill-opacity="0.18" stroke="#ff3caa" stroke-width="3"/>',
+	'  <path d="M136 144h16M144 136v16" stroke="#ff3caa" stroke-width="1.5"/>',
+	'  <g font-family="sans-serif" font-size="11" text-anchor="middle">',
+	'    <text x="144" y="126" fill="#ff3caa">AVATAR 240 x 240</text>',
+	'    <text x="144" y="166" fill="#ff3caa">keep this area clear</text>',
+	'    <text x="144" y="16" fill="#3ca0ff">CANVAS 288 x 288</text>',
+	'    <text x="144" y="280" fill="#3ca0ff">hide this guide before exporting</text>',
+	"  </g>",
+	"</svg>",
+	"",
+].join("\n");
 const SHOP_STILLS = 120; // first frames kept in memory
 
 const shopReadBytes = (file) =>
