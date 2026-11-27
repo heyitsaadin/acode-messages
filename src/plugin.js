@@ -37,6 +37,7 @@ import { ProfileSettingsMethods } from "./features/profile-settings.js";
 import { ShopMethods } from "./features/shop.js";
 import { TypingMethods } from "./features/typing.js";
 import { UnreadMethods } from "./features/unread.js";
+import { AlertMethods } from "./features/alerts.js";
 
 // The class itself only holds the constructor and settings. Everything else lives in
 // features/*.js and is attached below, so `this` works the same across all files.
