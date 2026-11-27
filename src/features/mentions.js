@@ -233,6 +233,7 @@ export class MentionsMethods {
 			if (first && !this.lastId) this.chatNote(`Could not load messages (${e.message}).`);
 		}
 		if (this.$page && this.view === "chat" && ch === this.state.channel) {
+			this.markRead(); // does nothing unless there is something new on screen and the chat is in front
 			this.syncN = (this.syncN || 0) + 1;
 			if (this.syncN % 6 === 0) this.reconcile();
 			this.pollTimer = setTimeout(() => this.poll(), more ? 0 : document.hidden ? 8000 : POLL_MS);
