@@ -57,6 +57,8 @@ export class UiHelpersMethods {
 			$i.src = this.bannerSrc(u.avatar_url);
 			$a.append($i);
 		}
+		// A decoration is only a data attribute; styles.css draws it. Tiny avatars (reply previews) stay plain.
+		if (u.avatar_decoration && /^[a-z]{2,12}$/.test(u.avatar_decoration) && (!size || size >= 24)) $a.dataset.deco = u.avatar_decoration;
 		return $a;
 	}
 
