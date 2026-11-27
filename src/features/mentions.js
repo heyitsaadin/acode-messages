@@ -247,6 +247,7 @@ export class MentionsMethods {
 			if (Number(m.id) <= this.lastId) continue;
 			this.lastId = Math.max(this.lastId, Number(m.id));
 			if (m.deleted) continue;
+			if (this.outAdopt(m)) continue; // my own message, already on screen dimmed: it just turns normal
 			this.msgBuf.push(m);
 			L.append(...this.rowNodes(m, animate));
 		}
