@@ -23,11 +23,13 @@ export class HomeMethods {
 		const epoch = this.homeEpoch || 0;
 		this.homeBusy = (async () => {
 			try {
+				if (this.readP) await this.readP; // a read mark still on its way would make this answer stale
 				const { me, ...next } = await this.api("home");
 				// Keep the official default community at the top of the server rail.
 				// The server marks it with is_default; other groups retain their relative order.
 				if (Array.isArray(next.groups)) next.groups.sort((a, b) => Number(!!b.is_default) - Number(!!a.is_default));
 				if (epoch !== (this.homeEpoch || 0)) return;
+				this.settleUnread(next);
 				if (me) this.state.user = this.withMine({ ...this.state.user, ...me });
 				// Publish my encryption key right away so people can DM me without me opening a DM first.
 				// Cheap after the first success; retried on the next refresh if it fails.
@@ -134,7 +136,7 @@ export class HomeMethods {
 		const t = this.state.tab;
 		this.put(
 			this.$rail,
-			this.el("div", { class: `am-srv${t === "dm" ? " on" : ""}`, "data-t": "dm", onclick: () => this.setTab("dm") }, this.ico("chat", 26)),
+			this.el("div", { class: `am-srv${t === "dm" ? " on" : ""}${this.dmUnread() > 0 ? " unread" : ""}`, "data-t": "dm", onclick: () => this.setTab("dm") }, this.ico("chat", 26), this.unreadBadge(this.dmUnread(), "rail")),
 			groups.length ? this.el("div", { class: "am-sep" }) : null,
 			...groups.map((g) => {
 				const $s = this.el("div", { class: `am-srv${g.id === t ? " on" : ""}`, text: this.initial(g.name), "data-t": String(g.id), "data-g": "1", "data-h": String(this.hue(g.name)), onclick: () => this.setTab(g.id) });
@@ -145,6 +147,11 @@ export class HomeMethods {
 					$i.onerror = () => $i.remove();
 					$i.src = this.bannerSrc(g.icon);
 					$s.append($i);
+				}
+				// Discord style: a small pill on the left edge, and a red count on the icon that stops at 99+.
+				if (g.unread > 0) {
+					$s.classList.add("unread");
+					$s.append(this.unreadBadge(g.unread, "rail"));
 				}
 				return $s;
 			}),
@@ -214,10 +221,11 @@ export class HomeMethods {
 		}
 		return this.el(
 			"div",
-			{ class: "am-dm", onclick: () => this.openChannel({ slug: d.slug, name: d.name, kind: "dm", peer: peerOf(d) }) },
+			{ class: `am-dm${d.unread > 0 ? " unread" : ""}`, "data-slug": d.slug, onclick: () => this.openChannel({ slug: d.slug, name: d.name, kind: "dm", peer: peerOf(d) }) },
 			this.avw(d, 46, !!d.online),
 			this.el("div", { class: "bd" }, this.el("b", { text: d.name }), $sm),
 			t ? this.el("time", { text: this.shortTime(t) }) : null,
+			this.unreadBadge(d.unread),
 		);
 	}
 

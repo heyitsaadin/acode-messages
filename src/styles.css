@@ -95,6 +95,10 @@
 .am-srv.on{border-radius:16px;background:var(--active-color,#5865f2)}
 .am-srv::before{content:"";position:absolute;left:-10px;top:50%;height:0;width:4px;border-radius:0 4px 4px 0;background:var(--primary-text-color);transform:translateY(-50%);transition:height .22s cubic-bezier(.3,.8,.3,1)}
 .am-srv.on::before{height:26px}
+/* unread: a small pill on the left edge of the icon, and a red count that stops at 99+ */
+.am-srv.unread:not(.on)::before{height:8px}
+.am-ub{flex-shrink:0;min-width:20px;height:20px;padding:0 6px;border-radius:10px;background:#ed4245;color:#fff;font-size:12px;font-weight:700;line-height:20px;text-align:center;font-style:normal;font-variant-numeric:tabular-nums}
+.am-ub.rail{position:absolute;right:-7px;bottom:-5px;z-index:2;padding:0 4px;line-height:16px;border:2px solid var(--primary-color);pointer-events:none}
 .am-srv.add{color:#3ba55d;background:rgba(127,127,127,.22)}
 .am-srv.add.on{color:#fff;background:var(--active-color,#5865f2)}
 .am-sep{width:32px;height:2px;border-radius:2px;background:rgba(127,127,127,.35);flex-shrink:0}
@@ -128,6 +132,19 @@
 .am-ch{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:12px;font-size:16px}
 .am-ch:active,.am-dm:active,.am-it:active{background:rgba(127,127,127,.22)}
 .am-ch .am-i{opacity:.55}
+/* unread channels: bold name and a dot on the left edge; a red @ there instead when you were mentioned */
+.am-ch{position:relative;padding-left:16px}
+.am-ud{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--primary-text-color);flex-shrink:0}
+.am-ch>.am-ud{position:absolute;left:4px;top:50%;margin-top:-4px}
+.am-um{display:flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;background:#ed4245;color:#fff;font-size:11px;font-weight:800;line-height:1;flex-shrink:0}
+.am-ch>.am-um{position:absolute;left:-1px;top:50%;margin-top:-8px}
+.am-ch.unread .cn,.am-ch.ment .cn{font-weight:700}
+.am-ch.unread .am-i,.am-ch.ment .am-i{opacity:.95}
+.am-cat .am-ud{margin-right:auto}
+.am-dm.unread b{font-weight:800}
+.am-dm.unread small{opacity:.95;font-weight:600}
+.am-dm.unread time{opacity:.9}
+.am-dm>.am-ub{align-self:center}
 .am-dm{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:14px}
 .am-dm .bd{flex:1;min-width:0}
 .am-dm b{display:block;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

@@ -130,6 +130,7 @@ export class PageMethods {
 
 		// Preferred: a tab in Acode's own tab bar, like the Welcome tab. Older Acode builds
 		// without custom tabs get the old full-screen page instead.
+		this.tabBlur = false;
 		if (!this.mountTab()) this.mountPage();
 		this.pushBack();
 	}
@@ -166,10 +167,15 @@ export class PageMethods {
 		});
 		// Only grab the back button while the chat tab is the one on screen.
 		tab.on("focus", () => {
-			if (this.tab === tab) this.pushBack();
+			if (this.tab !== tab) return;
+			this.tabBlur = false;
+			this.pushBack();
+			this.markRead(); // whatever arrived while another tab was in front is read now
 		});
 		tab.on("blur", () => {
-			if (this.tab === tab) this.actionStack?.remove?.(ID);
+			if (this.tab !== tab) return;
+			this.tabBlur = true;
+			this.actionStack?.remove?.(ID);
 		});
 		this.tab = tab;
 		this.$page = tab;
