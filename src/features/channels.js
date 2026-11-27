@@ -72,7 +72,9 @@ export class ChannelsMethods {
 				const fresh = this.fresh(g);
 				const c = fresh.channels.find((x) => x.slug === channel.slug) || channel;
 				// A private channel is useless until someone can get in, so go straight to its access list.
-				priv ? this.channelPerms(fresh, c) : this.channelsAdmin(fresh);
+				if (priv) this.channelPerms(fresh, c);
+				else if (back) back();
+				else this.channelsAdmin(fresh);
 			} catch (e) {
 				$e.textContent = e.message;
 				$go.disabled = false;
