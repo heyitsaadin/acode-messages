@@ -100,7 +100,9 @@ export class PageMethods {
 		this.$vbar = el("div", { class: "am-vbar", onclick: () => this.voicePanel() }, el("span", { class: "am-pdot" }), el("b", { text: "" }), this.ico("chev", 18));
 		this.syncFab();
 		this.$sug = el("div", { class: "am-sug" });
-		const chat = el("div", { class: "am-chat" }, this.$chead, this.$vbar, this.$list, this.$pend, this.$ctx, this.$sug, this.$bar, this.$emo);
+		// "Aadin is typing" with three dots that bounce in a wave; hidden until someone is typing here
+		this.$typ = el("div", { class: "am-typ" }, el("span", { class: "wv" }, el("i", {}), el("i", {}), el("i", {})), el("span", { class: "tx" }));
+		const chat = el("div", { class: "am-chat" }, this.$chead, this.$vbar, this.$list, this.$typ, this.$pend, this.$ctx, this.$sug, this.$bar, this.$emo);
 
 		// overlay sheet + inline error strip
 		// A sheet ignores taps on its backdrop for a moment, so the tap that opened it can't close it again.
