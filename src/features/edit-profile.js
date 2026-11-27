@@ -162,8 +162,9 @@ export class EditProfileMethods {
 			const avatar = draft.avatar === null ? acodeAvatar : val("avatar");
 			const deco = val("decoration");
 			const who = { name: $name.value.trim() || cur.name, avatar_url: avatar };
-			this.put($ban, banner ? img(banner) : null, el("div", { class: "am-ed-cam b" }, this.ico("image", 16)));
-			this.put($av, this.avatar({ ...who, avatar_decoration: deco }, 90), el("div", { class: "am-ed-cam" }, this.ico("image", 16)));
+			const loading = () => el("div", { class: "am-ed-load" }, this.spinner());
+			this.put($ban, banner ? img(banner) : null, el("div", { class: "am-ed-cam b" }, this.ico("image", 16)), busy.banner ? loading() : null);
+			this.put($av, this.avatar({ ...who, avatar_decoration: deco }, 90), el("div", { class: "am-ed-cam" }, this.ico("image", 16)), busy.avatar ? loading() : null);
 			this.put($decos, ...this.decoTiles(who, deco, (d) => {
 				draft.decoration = d;
 				media();
