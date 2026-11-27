@@ -28,6 +28,7 @@ import { EncryptionMethods } from "./features/encryption.js";
 import { PrivacyMethods } from "./features/privacy.js";
 import { OnboardingMethods } from "./features/onboarding.js";
 import { SoundMethods } from "./features/sounds.js";
+import { OutboxMethods } from "./features/outbox.js";
 
 // The class itself only holds the constructor and settings. Everything else lives in
 // features/*.js and is attached below, so `this` works the same across all files.
@@ -132,4 +133,5 @@ mixin(AcodeMessages, [
 	PrivacyMethods,
 	OnboardingMethods,
 	SoundMethods,
+	OutboxMethods,
 ]);

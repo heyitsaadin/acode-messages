@@ -65,6 +65,7 @@ export class MessageActionsMethods {
 	msgMenu($r) {
 		const m = $r._m;
 		if (!m) return;
+		if (m._tmp) return this.outMenu($r); // not on the server yet
 		const own = String(m.user_id) === String(this.me.id);
 		const kind = m.kind || "text";
 		const hasText = kind === "text" || (kind !== "file" && m.content && m.content !== "📷 Photo");
@@ -141,7 +142,7 @@ export class MessageActionsMethods {
 	}
 
 	startEdit(m) {
-		if (!m || m.locked || String(m.user_id) !== String(this.me.id) || (m.kind && m.kind !== "text")) return;
+		if (!m || m._tmp || m.locked || String(m.user_id) !== String(this.me.id) || (m.kind && m.kind !== "text")) return;
 		this.replyTo = null;
 		this.editing = m;
 		this.$ta.value = m.content;
@@ -287,6 +288,8 @@ export class MessageActionsMethods {
 		// "/share app.py" sends that open tab as a code card instead of the literal text
 		const cmd = !pend && /^\/share(?:\s+([\s\S]*))?$/i.exec(content);
 		if (cmd) return this.shareCommand(cmd[1]);
+		// Plain text goes on screen straight away (dimmed) and is sent in the background.
+		if (!pend) return this.outQueue(content);
 		await this.postMessage(content, pend ? { type: "image", data: pend.b64, w: pend.w, h: pend.h } : null);
 	}
 
