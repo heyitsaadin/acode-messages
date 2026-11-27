@@ -30,7 +30,7 @@ export class HomeMethods {
 				// The server marks it with is_default; other groups retain their relative order.
 				if (Array.isArray(next.groups)) next.groups.sort((a, b) => Number(!!b.is_default) - Number(!!a.is_default));
 				if (epoch !== (this.homeEpoch || 0)) return;
-				this.settleUnread(next);
+				this.settleUnread(next, since);
 				if (me) this.state.user = this.withMine({ ...this.state.user, ...me });
 				// Publish my encryption key right away so people can DM me without me opening a DM first.
 				// Cheap after the first success; retried on the next refresh if it fails.
