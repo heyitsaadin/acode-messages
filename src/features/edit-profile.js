@@ -274,6 +274,7 @@ export class EditProfileMethods {
 					if (draft.banner === undefined) cur.banner = d.user?.banner || null;
 					if (draft.decoration === undefined) cur.decoration = d.user?.avatar_decoration || null; // the server leaves it out when there is none
 					if (draft.banner === undefined || draft.decoration === undefined) media();
+					syncDirty();
 				})
 				.catch(() => {});
 		}
