@@ -148,4 +148,5 @@ mixin(AcodeMessages, [
 	EmojiPickerMethods,
 	CropperMethods,
 	ProfileSettingsMethods,
+	TypingMethods,
 ]);
