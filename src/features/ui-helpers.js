@@ -68,7 +68,10 @@ export class UiHelpersMethods {
 				const $particle = this.el("i", { class: "am-deco-particle", "aria-hidden": "true" });
 				$particle.style.setProperty("--particle-index", n);
 				$particle.style.setProperty("--particle-angle", `${(360 / particleCount) * n + (n % 2 ? 12 : -8)}deg`);
-				$particle.style.setProperty("--particle-distance", `${size && size < 60 ? 8 : 13 + (n % 3) * 3}px`);
+				const distance = size && size < 60 ? 8 : 13 + (n % 3) * 3;
+				$particle.style.setProperty("--particle-distance", `${distance}px`);
+				$particle.style.setProperty("--particle-rise", `-${distance}px`);
+				$particle.style.setProperty("--particle-fall-end", `-${Math.round(distance * 1.7)}px`);
 				$particle.style.setProperty("--particle-delay", `${-(n * 0.43)}s`);
 				$a.append($particle);
 			}
