@@ -29,6 +29,8 @@ export class ServerPanelMethods {
 			c.mentions > 0 ? el("span", { class: "am-um", "aria-label": "You were mentioned", text: "@" }) : c.unread > 0 ? el("span", { class: "am-ud", "aria-label": "Unread messages" }) : null,
 			this.ico(c.private ? "lock" : "hash", 20),
 			el("span", { class: "cn", text: c.name }),
+			// And on the right, like Discord: a red pill with how many mentions are waiting here.
+			c.mentions > 0 ? this.unreadBadge(c.mentions, "men") : null,
 			this.can(g, "manage_channels") ? el("button", { class: "am-btn", "aria-label": "Channel settings", style: "margin-left:auto;width:32px;height:32px", onclick: (e) => (e.stopPropagation(), this.channelSettings(g, c)) }, this.ico("sliders", 18)) : null,
 		);
 	}
