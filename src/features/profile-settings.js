@@ -250,10 +250,4 @@ export class ProfileSettingsMethods {
 			),
 		];
 	}
-
-	// Placeholder until shops exist.
-	pfsShop() {
-		const el = this.el.bind(this);
-		return [el("div", { class: "am-empty" }, el("span", { class: "ring" }, this.ico("shop", 40)), el("b", { text: "Shop" }), el("span", { class: "t", text: "The shop isn't open yet. Check back soon." }))];
-	}
 }
