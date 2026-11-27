@@ -182,7 +182,7 @@ export class MentionsMethods {
 			this.item("hash", "Switch channel", () => this.channelPicker()),
 			g && info && this.can(g, "manage_channels") ? this.item("sliders", "Channel settings", () => this.channelSettings(g, info), "", "Name, topic, slowmode and who can use it") : null,
 			this.item("users", "Members", () => g && this.showMembers(g)),
-			g ? this.copyItem("link", `Invite code: ${g.invite_code}`, g.invite_code) : null,
+			g ? this.item("userplus", "Invite people", () => this.inviteSheet(g), "", "Send a link or share the code") : null,
 			g && this.hasSettings(g) ? this.item("gear", "Group settings", () => this.serverSettings(g), "", "Channels, roles, appearance and more") : null,
 			this.item("chat", "Home", () => {
 				this.closeSheet();
