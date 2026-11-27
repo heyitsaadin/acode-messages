@@ -190,9 +190,32 @@
 .am-mg .am-it+.am-it{border-top:1px solid rgba(127,127,127,.14)}
 .am-mprev{margin:0 14px 12px;padding:10px 12px;border-radius:12px;background:rgba(127,127,127,.12);font-size:14px;opacity:.85;max-height:64px;overflow:hidden;text-overflow:ellipsis}
 .am-mhint{text-align:center;font-size:13px;opacity:.55;margin:0 0 10px}
-.am-emo{display:none;flex-wrap:wrap;padding:6px 8px;max-height:176px;overflow-y:auto;border-top:1px solid rgba(127,127,127,.2);flex-shrink:0}
+/* emoji panel: sits under the message box, Discord style */
+.am-emo{display:none;flex-direction:column;height:min(340px,46vh);flex-shrink:0;padding:14px 10px 0;overflow:hidden;position:relative;background:var(--secondary-color);border-radius:20px 20px 0 0;box-shadow:0 -4px 18px rgba(0,0,0,.25)}
 .am-emo.show{display:flex}
-.am-emo button{width:12.5%;height:42px;border:0;background:transparent;font-size:24px}
+.am-emo::before{content:"";position:absolute;top:6px;left:50%;width:40px;height:4px;margin-left:-20px;border-radius:2px;background:rgba(127,127,127,.5)}
+.am-emo button{border:0;background:transparent;color:inherit;font:inherit;padding:0}
+.am-emo-m{display:flex;gap:4px;padding:4px;border-radius:14px;background:rgba(127,127,127,.18);flex-shrink:0}
+.am-emo-m button{flex:1;height:38px;border-radius:10px;font-size:15px;font-weight:600;opacity:.65}
+.am-emo-m button.on{background:rgba(127,127,127,.38);opacity:1}
+.am-emo-s{display:flex;align-items:center;gap:10px;margin:10px 0 0;padding:0 14px;height:46px;border-radius:14px;border:1px solid rgba(127,127,127,.4);flex-shrink:0}
+.am-emo-s .ic{display:flex;opacity:.6}
+.am-emo-s input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:inherit;font:inherit;font-size:16px;-webkit-user-select:text;user-select:text}
+.am-emo.ph .am-emo-s,.am-emo.ph .am-emo-t{display:none}
+.am-emo-g{position:relative;flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;margin:0 -10px;padding:0 10px 8px}
+.am-eh{padding:14px 2px 6px;font-size:16px;font-weight:700;opacity:.7}
+.am-eg{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr))}
+.am-emo .am-ee{height:46px;font-size:28px;line-height:1;border-radius:10px}
+.am-emo .am-ee:active{background:rgba(127,127,127,.3)}
+.am-emo-note{padding:40px 20px;text-align:center;opacity:.7;line-height:1.4}
+.am-emo-note b{display:block;font-size:17px;margin-bottom:4px}
+.am-emo-t{display:flex;align-items:center;flex-shrink:0;padding:4px 0 6px;border-top:1px solid rgba(127,127,127,.16)}
+.am-emo-tt{flex:1;min-width:0;display:flex;overflow-x:auto;scrollbar-width:none}
+.am-emo-tt::-webkit-scrollbar{display:none}
+.am-emo-tt button{flex:1 0 40px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;border-radius:12px;opacity:.55;filter:grayscale(1)}
+.am-emo-tt button.on{opacity:1;filter:none;background:rgba(127,127,127,.28)}
+.am-emo-t .del{width:46px;height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;border-radius:12px;opacity:.8}
+.am-emo-t .del:active{background:rgba(127,127,127,.3)}
 .am-bar{display:flex;align-items:flex-end;padding:6px 10px 10px;flex-shrink:0}
 .am-pill{flex:1;min-width:0;display:flex;align-items:flex-end;background:rgba(127,127,127,.2);border:1px solid rgba(127,127,127,.14);border-radius:26px;padding:0 4px;transition:border-color .18s,background .18s}
 .am-pill:focus-within{border-color:rgba(127,127,127,.34);background:rgba(127,127,127,.25)}
