@@ -14,7 +14,8 @@ export class EditProfileMethods {
 
 	// gifKind ("avatar" or "banner") lets that picture be a GIF: it skips the cropper and is uploaded as it is,
 	// as long as it passes the GIF limits. Without it (group icons and so on) a GIF is flattened to a still picture.
-	pickImage(w, h, limit, done, gifKind) {
+	// onBusy(true/false) tells the caller when the picture is being processed (after the crop, or while a GIF is checked).
+	pickImage(w, h, limit, done, gifKind, onBusy) {
 		const $f = document.createElement("input");
 		$f.type = "file";
 		$f.accept = "image/*";
@@ -25,11 +26,18 @@ export class EditProfileMethods {
 			if (!f) return;
 			try {
 				if (gifKind && (await this.looksLikeGif(f))) {
-					done(await this.prepGif(f, gifKind));
+					onBusy?.(true);
+					await this.nextPaint();
+					const g = await this.prepGif(f, gifKind);
+					onBusy?.(false);
+					done(g);
 					return;
 				}
-				done(await this.prepImage(f, w, h, limit));
+				const d = await this.prepImage(f, w, h, limit, () => onBusy?.(true));
+				onBusy?.(false);
+				done(d);
 			} catch (e) {
+				onBusy?.(false);
 				if (e.cancelled) return;
 				done(null, e.message);
 			}
