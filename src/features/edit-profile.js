@@ -80,15 +80,47 @@ export class EditProfileMethods {
 		const $about = el("textarea", { class: "am-inp", placeholder: "Tell people a little about yourself", maxlength: "190" });
 		const $cnt = el("div", { class: "am-cnt" });
 		const $save = el("button", { class: "am-go", text: "Save changes" });
+		// Floating pill at the bottom of the sheet: appears as soon as anything changed, so saving is hard to miss.
+		const $pillBtn = el("button", { text: "Save" });
+		const $pill = el("div", { class: "am-savepill" }, el("span", { text: "Save your changes" }), $pillBtn);
+		const busy = {}; // "avatar" / "banner" while that picture is being processed
+		let saving = false;
 		// Public / private choice. Only shown when the server reports one (it needs migration 012).
 		const $vis = el("div");
 		const paintVis = () => {
 			if (!cur.visibility) return this.put($vis);
-			this.put($vis, el("div", { class: "am-fl", text: "Profile privacy" }), this.visPicker(draft.visibility || cur.visibility, (v) => (draft.visibility = v)));
+			this.put(
+				$vis,
+				el("div", { class: "am-fl", text: "Profile privacy" }),
+				this.visPicker(draft.visibility || cur.visibility, (v) => {
+					draft.visibility = v;
+					syncDirty();
+				}),
+			);
 		};
 		$name.value = cur.name;
 		$about.value = cur.about;
 		const val = (k) => (draft[k] !== undefined ? draft[k] : cur[k]);
+		// Everything that differs from what is saved right now.
+		const changes = () => {
+			const body = {};
+			const name = $name.value.trim();
+			const about = $about.value.trim();
+			if (name !== cur.name) body.name = name;
+			if (about !== cur.about.trim()) body.about = about;
+			if (draft.avatar !== undefined) body.avatar = draft.avatar;
+			if (draft.banner !== undefined) body.banner = draft.banner;
+			if (draft.decoration !== undefined && draft.decoration !== cur.decoration) body.decoration = draft.decoration;
+			if (draft.visibility && draft.visibility !== cur.visibility) body.visibility = draft.visibility;
+			return body;
+		};
+		const syncDirty = () => {
+			const working = Object.values(busy).some(Boolean);
+			$pill.classList.toggle("show", Object.keys(changes()).length > 0);
+			$pillBtn.disabled = working || saving;
+			if (saving) $pillBtn.replaceChildren(this.spinner("sm"), "Saving…");
+			else $pillBtn.textContent = working ? "Processing…" : "Save";
+		};
 		const count = () => {
 			$cnt.textContent = `${$about.value.length}/190`;
 		};
