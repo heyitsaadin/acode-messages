@@ -110,8 +110,6 @@ export class AcodeMessages {
 					}
 					return;
 				}
-				this.settings[key] = String(value || "").trim() || DEFAULT_API;
-				this.appSettings.update();
 			},
 		};
 	}
