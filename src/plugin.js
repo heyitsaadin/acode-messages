@@ -31,6 +31,7 @@ import { SoundMethods } from "./features/sounds.js";
 import { OutboxMethods } from "./features/outbox.js";
 import { EmojiPickerMethods } from "./features/emoji-picker.js";
 import { CropperMethods } from "./features/cropper.js";
+import { ProfileSettingsMethods } from "./features/profile-settings.js";
 
 // The class itself only holds the constructor and settings. Everything else lives in
 // features/*.js and is attached below, so `this` works the same across all files.
@@ -154,4 +155,5 @@ mixin(AcodeMessages, [
 	OutboxMethods,
 	EmojiPickerMethods,
 	CropperMethods,
+	ProfileSettingsMethods,
 ]);

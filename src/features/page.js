@@ -207,7 +207,8 @@ export class PageMethods {
 			return;
 		}
 		if (this.$sheet?.classList.contains("open")) {
-			this.closeSheet();
+			// Inside Settings (or Shop), back goes up one page instead of closing the whole sheet.
+			if (!this.pfsBack()) this.closeSheet();
 			this.pushBack();
 		} else if (this.view === "chat") {
 			this.showHome();

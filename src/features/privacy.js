@@ -1,5 +1,3 @@
-import { ls } from "../util.js";
-
 // Who can see what on a profile.
 // public:  banner, about me and activity are visible to everyone.
 // private: only friends see them. Everyone else sees just the name and picture.
@@ -12,6 +10,7 @@ export class PrivacyMethods {
 	/* ---------- public / private profile ---------- */
 
 	// Two big tappable choices. onpick(id) fires on every change. The returned node has .set(id) to move the choice back (for example when saving fails).
+	// Used by Settings → Appearance, the edit-profile sheet and the setup screen.
 	visPicker(current, onpick) {
 		const el = this.el.bind(this);
 		const $box = el("div", { class: "am-visw", role: "radiogroup" });
@@ -46,27 +45,6 @@ export class PrivacyMethods {
 			paint();
 		};
 		return $box;
-	}
-
-	// "Who can see your profile" card on your own profile. Saves as soon as you tap.
-	// Hidden when the server doesn't report a visibility (an older server without migration 012).
-	visibilityCard(ctx) {
-		const cur = ctx.data?.user?.visibility;
-		if (!cur) return null;
-		const el = this.el.bind(this);
-		const $err = el("div", { class: "am-ferr", style: "margin:8px 0 0" });
-		const $pick = this.visPicker(cur, async (v) => {
-			$err.textContent = "";
-			try {
-				await this.api("me", { method: "POST", body: JSON.stringify({ visibility: v }) });
-				ctx.data.user.visibility = v;
-				ls.set(`am-prof:${ctx.id}`, ctx.data);
-			} catch (e) {
-				$pick.set(ctx.data.user.visibility);
-				$err.textContent = e.message;
-			}
-		});
-		return el("div", { class: "am-card" }, el("h4", { text: "Who can see your profile" }), $pick, $err);
 	}
 
 	// What you see on someone else's private profile when you're not their friend.

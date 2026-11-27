@@ -196,7 +196,8 @@ export class ProfileMethods {
 		// Mutual groups
 		if (!self && data?.mutual?.length) out.push(el("div", { class: "am-card" }, el("h4", { text: `Groups in common — ${data.mutual.length}` }), el("div", { class: "am-chips" }, ...data.mutual.map((g) => el("span", { class: "am-chip", text: g.name })))));
 
-		if (self) out.push(this.visibilityCard(ctx), this.shareCard(ctx));
+		// "Who can see your profile" now lives in Settings → Appearance. The Shop / Settings pill floats at the bottom.
+		if (self) out.push(this.shareCard(ctx), this.pfsDock());
 		return out;
 	}
 

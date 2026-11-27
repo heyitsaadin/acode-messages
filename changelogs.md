@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.10.0
+
+- Your own profile now has a floating Shop and Settings pill at the bottom, like Discord's.
+- Settings has Account (display name, about me, picture and banner, sign-in info), Appearance, Sounds (send and receive) and Advanced (server address).
+- "Who can see your profile" moved from the profile page to Settings > Appearance.
+- The back button now steps back through the settings pages before it closes the sheet.
+- Shop is a placeholder for now.
+- No server update needed. Appearance still needs migration 012, like the old privacy card did.
+
 ## 1.9.4
 
 - Text messages now appear the moment you tap send, slightly dimmed, and turn to full colour once the server has them. No more waiting on a blank chat.
