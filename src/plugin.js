@@ -79,6 +79,12 @@ export class AcodeMessages {
 					checkbox: this.settings.sendSound !== false,
 				},
 				{
+					key: "receiveSound",
+					text: "Receive sound",
+					info: "Play a soft sound when someone else's message arrives in the chat you have open.",
+					checkbox: this.settings.receiveSound !== false,
+				},
+				{
 					key: "apiUrl",
 					text: "Server URL",
 					info: "Advanced: only change this to use your own server.",
@@ -96,6 +102,16 @@ export class AcodeMessages {
 					this.settings.sendSound = !!value;
 					this.appSettings.update();
 					if (value) this.playSendSound();
+					return;
+				}
+				if (key === "receiveSound") {
+					this.settings.receiveSound = !!value;
+					this.appSettings.update();
+					if (value) {
+						this.rxAt = 0;
+						this.primeSound();
+						setTimeout(() => this.playReceiveSound(), 150); // the audio needs a moment to wake up after the tap
+					}
 					return;
 				}
 				this.settings[key] = String(value || "").trim() || DEFAULT_API;

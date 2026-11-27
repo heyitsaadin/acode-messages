@@ -5,6 +5,8 @@
 - Text messages now appear the moment you tap send, slightly dimmed, and turn to full colour once the server has them. No more waiting on a blank chat.
 - If a message can't be sent, it turns red with "Not sent. Tap to retry". Long press it to retry, copy the text or delete it.
 - Photos, voice clips and shared files still wait for the server before they show.
+- A soft sound plays when someone else's message arrives in the chat you have open. You can turn it off under Settings > Receive sound.
+- The keyboard now stays open when you tap send, so you can keep typing.
 
 ## 1.9.3
 

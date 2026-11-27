@@ -65,6 +65,24 @@ export class PageMethods {
 		this.$emoBtn = el("button", { class: "am-btn", onclick: () => this.$emo.classList.toggle("show") }, this.ico("smile", 24));
 		this.$plus = el("button", { class: "am-btn am-plus", onclick: () => this.plusMenu() }, this.ico("plus", 26));
 		this.$send = el("button", { class: "am-send", onclick: () => this.send() }, this.ico("send", 20));
+		// Tapping the button would take focus from the message box and close the keyboard. Stop that at the
+		// press, so the box keeps focus and you can type the next message straight away.
+		const keepFocus = (e) => e.preventDefault();
+		this.$send.addEventListener("pointerdown", keepFocus);
+		this.$send.addEventListener("mousedown", keepFocus);
+		this.$send.addEventListener("touchstart", (e) => {
+			if (e.cancelable && this.$ta.getRootNode().activeElement === this.$ta) {
+				// keep focus, but still let the tap become a click
+				this.kbOpen = true;
+			}
+		}, { passive: true });
+		this.$send.addEventListener("click", () => {
+			// backup for webviews that move focus anyway: if the keyboard was open, put the cursor back
+			if (this.kbOpen) {
+				this.kbOpen = false;
+				if (this.$ta.getRootNode().activeElement !== this.$ta) this.$ta.focus({ preventScroll: true });
+			}
+		});
 		this.$mic = el("button", { class: "am-btn am-mic", onclick: () => this.recStart() }, this.ico("mic", 24));
 		this.$recT = el("span", { class: "tm", text: "0:00" });
 		this.$rec = el(
@@ -102,6 +120,9 @@ export class PageMethods {
 			this.$shield = null;
 		}, 700);
 		this.$root = el("div", { class: "am-root" }, home, chat, this.$scrim, this.$sheet, this.$err, this.$shield);
+		// Audio can only start after a tap, so any tap in the chat gets the sounds ready.
+		this.$root.addEventListener("touchend", () => this.primeSound(), { passive: true });
+		this.$root.addEventListener("click", () => this.primeSound(), { passive: true });
 
 		// Preferred: a tab in Acode's own tab bar, like the Welcome tab. Older Acode builds
 		// without custom tabs get the old full-screen page instead.
