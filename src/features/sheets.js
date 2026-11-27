@@ -9,6 +9,7 @@ export class SheetsMethods {
 		if (!this.$sheet) return;
 		// Nothing may pop open by itself in the first instant after the page appears.
 		if (Date.now() - (this.openedAt || 0) < 700) return;
+		this.pfsPage = null; // a settings page sets this again right after it opens
 		this.sheetSeq = (this.sheetSeq || 0) + 1;
 		this.sheetAt = Date.now();
 		const was = this.$sheet.classList.contains("open");
