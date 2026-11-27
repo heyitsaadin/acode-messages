@@ -142,7 +142,7 @@ export class MessageActionsMethods {
 	}
 
 	startEdit(m) {
-		if (!m || m.locked || String(m.user_id) !== String(this.me.id) || (m.kind && m.kind !== "text")) return;
+		if (!m || m._tmp || m.locked || String(m.user_id) !== String(this.me.id) || (m.kind && m.kind !== "text")) return;
 		this.replyTo = null;
 		this.editing = m;
 		this.$ta.value = m.content;
