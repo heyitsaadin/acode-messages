@@ -190,6 +190,18 @@
 .am-mg .am-it+.am-it{border-top:1px solid rgba(127,127,127,.14)}
 .am-mprev{margin:0 14px 12px;padding:10px 12px;border-radius:12px;background:rgba(127,127,127,.12);font-size:14px;opacity:.85;max-height:64px;overflow:hidden;text-overflow:ellipsis}
 .am-mhint{text-align:center;font-size:13px;opacity:.55;margin:0 0 10px}
+/* reactions: the emoji row at the top of the long-press menu, and the pills under a message */
+.am-rxq{display:flex;gap:2px;margin:0 6px 12px;padding:6px;border-radius:999px;background:rgba(127,127,127,.14);overflow-x:auto;scrollbar-width:none}
+.am-rxq::-webkit-scrollbar{display:none}
+.am-rxq button{flex:1 0 42px;height:46px;border:0;border-radius:50%;background:transparent;color:inherit;font:inherit;font-size:26px;line-height:1;transition:transform .12s,background-color .12s}
+.am-rxq button:active{background:rgba(127,127,127,.3);transform:scale(.88)}
+.am-rxq button.on{background:rgba(61,139,255,.28)}
+.am-rx{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 2px}
+.am-rc{display:inline-flex;align-items:center;gap:5px;height:26px;padding:0 9px;border:1px solid transparent;border-radius:9px;background:rgba(127,127,127,.18);color:inherit;font:inherit;font-size:13px;font-weight:600;line-height:1}
+.am-rc .e{font-size:15px}
+.am-rc.on{background:rgba(61,139,255,.22);border-color:rgba(61,139,255,.7)}
+.am-rc:active{background:rgba(127,127,127,.32)}
+@media (prefers-reduced-motion:reduce){.am-rxq button{transition:none!important}}
 /* emoji panel: sits under the message box, Discord style */
 .am-emo{display:none;flex-direction:column;height:min(340px,46vh);flex-shrink:0;padding:14px 10px 0;overflow:hidden;position:relative;background:var(--secondary-color);border-radius:20px 20px 0 0;box-shadow:0 -4px 18px rgba(0,0,0,.25)}
 .am-emo.show{display:flex}
