@@ -595,3 +595,13 @@ button.am-chip{border:0;color:inherit;font:inherit;font-size:13px}
 .am-sheet .out-l{animation:am-sout-l .11s ease-in forwards;pointer-events:none}
 .am-sheet .out-r{animation:am-sout-r .11s ease-in forwards;pointer-events:none}
 @media (prefers-reduced-motion:reduce){.am-sheet .am-spg,.am-sheet .out-l,.am-sheet .out-r{animation:none!important}}
+/* "Aadin is typing": three dots that bounce one after another like a wave, then the names */
+.am-typ{display:none;align-items:center;gap:8px;flex-shrink:0;min-height:26px;padding:2px 14px 4px;font-size:13px;font-weight:600;line-height:1.2}
+.am-typ.show{display:flex;animation:am-fade .22s ease both}
+.am-typ .wv{display:inline-flex;align-items:center;gap:4px;height:20px;padding:0 9px;border-radius:99px;background:rgba(127,127,127,.22);flex-shrink:0}
+.am-typ .wv i{display:block;width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.5;animation:am-wave 1.15s ease-in-out infinite}
+.am-typ .wv i:nth-child(2){animation-delay:.14s}
+.am-typ .wv i:nth-child(3){animation-delay:.28s}
+.am-typ .tx{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.72}
+@keyframes am-wave{0%,55%,100%{transform:translateY(0);opacity:.45}28%{transform:translateY(-4px);opacity:1}}
+@media (prefers-reduced-motion:reduce){.am-typ .wv i{animation:none;opacity:.7}}
