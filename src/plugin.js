@@ -153,4 +153,5 @@ mixin(AcodeMessages, [
 	SoundMethods,
 	OutboxMethods,
 	EmojiPickerMethods,
+	CropperMethods,
 ]);
