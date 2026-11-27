@@ -205,26 +205,22 @@ export class EditProfileMethods {
 			count();
 			syncDirty();
 		});
-		$save.onclick = async () => {
-			const body = {};
-			const name = $name.value.trim();
-			const about = $about.value.trim();
-			if (name !== cur.name) body.name = name;
-			if (about !== cur.about.trim()) body.about = about;
-			if (draft.avatar !== undefined) body.avatar = draft.avatar;
-			if (draft.banner !== undefined) body.banner = draft.banner;
-			if (draft.decoration !== undefined && draft.decoration !== cur.decoration) body.decoration = draft.decoration;
-			if (draft.visibility && draft.visibility !== cur.visibility) body.visibility = draft.visibility;
+		const save = async () => {
+			if (saving || Object.values(busy).some(Boolean)) return; // a picture is still being processed
+			const body = changes();
 			if (!Object.keys(body).length) {
 				this.closeSheet();
 				return;
 			}
+			saving = true;
 			$save.disabled = true;
 			$save.textContent = "Saving…";
 			$err.textContent = "";
+			syncDirty();
 			try {
 				const { user: nu } = await this.api("me", { method: "POST", body: JSON.stringify(body) });
 				this.applyMe(nu);
+				$pill.classList.remove("show");
 				this.closeSheet();
 				this.paintHome();
 				this.refreshHome();
@@ -233,8 +229,13 @@ export class EditProfileMethods {
 				$err.textContent = /HTTP 404/.test(e.message) ? "Your server doesn't support profile editing yet. Update acode-messages-server first." : e.message;
 				$save.disabled = false;
 				$save.textContent = "Save changes";
+			} finally {
+				saving = false;
+				if ($pill.isConnected) syncDirty();
 			}
 		};
+		$save.onclick = save;
+		$pillBtn.onclick = save;
 		media();
 		count();
 		paintVis();
