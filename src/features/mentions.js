@@ -14,7 +14,7 @@ export class MentionsMethods {
 			if (!name || !uid || uid === myId) return;
 			const k = name.toLowerCase();
 			const old = out.get(k);
-			const next = { id: uid, name, avatar_url: u.avatar_url, verified: u.verified, acode_pro: u.acode_pro, is_admin: u.is_admin, is_plugin_admin: u.is_plugin_admin, online: u.online };
+			const next = { id: uid, name, avatar_url: u.avatar_url, avatar_decoration: u.avatar_decoration, verified: u.verified, acode_pro: u.acode_pro, is_admin: u.is_admin, is_plugin_admin: u.is_plugin_admin, online: u.online };
 			if (!old || (old.online === undefined && u.online !== undefined)) out.set(k, { ...old, ...next });
 		};
 		const c = this.state.channel;
@@ -121,7 +121,7 @@ export class MentionsMethods {
 	}
 
 	msgUser(m) {
-		return { id: m.user_id, name: m.name, avatar_url: m.avatar_url, verified: m.verified, acode_pro: m.acode_pro, is_admin: m.is_admin };
+		return { id: m.user_id, name: m.name, avatar_url: m.avatar_url, avatar_decoration: m.avatar_decoration, verified: m.verified, acode_pro: m.acode_pro, is_admin: m.is_admin };
 	}
 
 	chatPlaceholder() {

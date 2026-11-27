@@ -17,6 +17,7 @@ import { ChannelsMethods } from "./features/channels.js";
 import { FriendsMethods } from "./features/friends.js";
 import { ProfileMethods } from "./features/profile.js";
 import { EditProfileMethods } from "./features/edit-profile.js";
+import { AvatarDecorationMethods } from "./features/avatar-decoration.js";
 import { ChatMethods } from "./features/chat.js";
 import { MentionsMethods } from "./features/mentions.js";
 import { MessageActionsMethods } from "./features/message-actions.js";
@@ -134,6 +135,7 @@ mixin(AcodeMessages, [
 	FriendsMethods,
 	ProfileMethods,
 	EditProfileMethods,
+	AvatarDecorationMethods,
 	ChatMethods,
 	MentionsMethods,
 	MessageActionsMethods,

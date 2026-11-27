@@ -1,4 +1,5 @@
 import { ls } from "../util.js";
+import { GIF_LIMITS } from "../gif.js";
 
 export class EditProfileMethods {
 	/* ---------- edit profile ---------- */
@@ -11,7 +12,9 @@ export class EditProfileMethods {
 		this.editProfile();
 	}
 
-	pickImage(w, h, limit, done) {
+	// gifKind ("avatar" or "banner") lets that picture be a GIF: it skips the cropper and is uploaded as it is,
+	// as long as it passes the GIF limits. Without it (group icons and so on) a GIF is flattened to a still picture.
+	pickImage(w, h, limit, done, gifKind) {
 		const $f = document.createElement("input");
 		$f.type = "file";
 		$f.accept = "image/*";
@@ -21,6 +24,10 @@ export class EditProfileMethods {
 			$f.remove();
 			if (!f) return;
 			try {
+				if (gifKind && (await this.looksLikeGif(f))) {
+					done(await this.prepGif(f, gifKind));
+					return;
+				}
 				done(await this.prepImage(f, w, h, limit));
 			} catch (e) {
 				if (e.cancelled) return;
@@ -33,14 +40,15 @@ export class EditProfileMethods {
 
 	applyMe(nu) {
 		const id = Number(this.me.id);
+		const deco = nu.avatar_decoration || null;
 		const m = { uid: this.me.id, about: nu.about || "" };
 		if (nu.custom_name) m.name = nu.name;
 		if (nu.custom_avatar) m.avatar_url = nu.avatar_url;
 		ls.set("am-me", m);
-		this.state.user = { ...this.state.user, name: nu.name, avatar_url: nu.avatar_url };
+		this.state.user = { ...this.state.user, name: nu.name, avatar_url: nu.avatar_url, avatar_decoration: deco };
 		const c = ls.get(`am-prof:${id}`);
 		if (c) {
-			c.user = { ...c.user, name: nu.name, avatar_url: nu.avatar_url, banner: nu.banner || null, about: nu.about || "", ...(nu.visibility ? { visibility: nu.visibility, onboarded: nu.onboarded } : {}) };
+			c.user = { ...c.user, name: nu.name, avatar_url: nu.avatar_url, avatar_decoration: deco, banner: nu.banner || null, about: nu.about || "", ...(nu.visibility ? { visibility: nu.visibility, onboarded: nu.onboarded } : {}) };
 			ls.set(`am-prof:${id}`, c);
 		}
 	}
@@ -52,12 +60,13 @@ export class EditProfileMethods {
 		const mine = ls.get("am-me", {}) || {};
 		const src = info0 || ls.get(`am-prof:${id}`)?.user || {};
 		const acodeAvatar = ls.get("cached-logged-in-user")?.avatar_url || null;
-		const cur = { name: u.name || "", about: String(src.about ?? mine.about ?? ""), avatar: u.avatar_url || null, banner: src.banner || null, visibility: src.visibility || null };
-		const draft = {}; // undefined = unchanged, null = remove, string = new picture
+		const cur = { name: u.name || "", about: String(src.about ?? mine.about ?? ""), avatar: u.avatar_url || null, banner: src.banner || null, visibility: src.visibility || null, decoration: u.avatar_decoration ?? src.avatar_decoration ?? null };
+		const draft = {}; // undefined = unchanged, null = remove, string = new picture (or decoration name)
 		const touched = {};
 		const $ban = el("div", { class: "am-ed-ban" });
 		const $av = el("div", { class: "am-ed-av" });
 		const $acts = el("div", { class: "am-acts" });
+		const $decos = el("div", { class: "am-decos" });
 		const $err = el("div", { class: "am-ferr" });
 		const $name = el("input", { class: "am-inp", placeholder: "Display name", maxlength: "32", autocapitalize: "off" });
 		const $about = el("textarea", { class: "am-inp", placeholder: "Tell people a little about yourself", maxlength: "190" });
@@ -82,24 +91,36 @@ export class EditProfileMethods {
 			$i.src = this.bannerSrc(url);
 			return $i;
 		};
-		const pick = (k, w, h, limit) => {
+		const pick = (k, w, h, limit, gifKind) => {
 			$err.textContent = "";
-			this.pickImage(w, h, limit, (d, e) => {
-				if (e) {
-					$err.textContent = e;
-					return;
-				}
-				draft[k] = d;
-				media();
-			});
+			this.pickImage(
+				w,
+				h,
+				limit,
+				(d, e) => {
+					if (e) {
+						$err.textContent = e;
+						return;
+					}
+					draft[k] = d;
+					media();
+				},
+				gifKind,
+			);
 		};
-		const pickAvatar = () => pick("avatar", 256, 256, 110000);
-		const pickBanner = () => pick("banner", 960, 320, 270000);
+		const pickAvatar = () => pick("avatar", 256, 256, 110000, "avatar");
+		const pickBanner = () => pick("banner", 960, 320, 270000, "banner");
 		const media = () => {
 			const banner = val("banner");
 			const avatar = draft.avatar === null ? acodeAvatar : val("avatar");
+			const deco = val("decoration");
+			const who = { name: $name.value.trim() || cur.name, avatar_url: avatar };
 			this.put($ban, banner ? img(banner) : null, el("div", { class: "am-ed-cam b" }, this.ico("image", 16)));
-			this.put($av, this.avatar({ name: $name.value.trim() || cur.name, avatar_url: avatar }, 90), el("div", { class: "am-ed-cam" }, this.ico("image", 16)));
+			this.put($av, this.avatar({ ...who, avatar_decoration: deco }, 90), el("div", { class: "am-ed-cam" }, this.ico("image", 16)));
+			this.put($decos, ...this.decoTiles(who, deco, (d) => {
+				draft.decoration = d;
+				media();
+			}));
 			const customAvatar = draft.avatar !== undefined ? !!draft.avatar : !!mine.avatar_url;
 			this.put(
 				$acts,
@@ -142,6 +163,7 @@ export class EditProfileMethods {
 			if (about !== cur.about.trim()) body.about = about;
 			if (draft.avatar !== undefined) body.avatar = draft.avatar;
 			if (draft.banner !== undefined) body.banner = draft.banner;
+			if (draft.decoration !== undefined && draft.decoration !== cur.decoration) body.decoration = draft.decoration;
 			if (draft.visibility && draft.visibility !== cur.visibility) body.visibility = draft.visibility;
 			if (!Object.keys(body).length) {
 				this.closeSheet();
@@ -166,10 +188,14 @@ export class EditProfileMethods {
 		media();
 		count();
 		paintVis();
+		const gifNote = `GIFs work too: up to ${Math.round(GIF_LIMITS.avatar.bytes / 1000)} KB for a picture, ${Math.round(GIF_LIMITS.banner.bytes / 1000)} KB for a banner, and ${GIF_LIMITS.maxMs / 1000} seconds long.`;
 		this.openSheet(true, "", [
 			$ban,
 			$av,
 			$acts,
+			el("div", { class: "am-sub", style: "margin:10px 18px 0", text: gifNote }),
+			el("div", { class: "am-fl", text: "Avatar decoration" }),
+			$decos,
 			el("div", { class: "am-fl", text: "Display name" }),
 			$name,
 			el("div", { class: "am-sub", style: "margin:4px 18px 0", text: "Leave empty to use your Acode account name." }),
@@ -194,10 +220,9 @@ export class EditProfileMethods {
 						$about.value = cur.about;
 						count();
 					}
-					if (draft.banner === undefined) {
-						cur.banner = d.user?.banner || null;
-						media();
-					}
+					if (draft.banner === undefined) cur.banner = d.user?.banner || null;
+					if (draft.decoration === undefined) cur.decoration = d.user?.avatar_decoration || null; // the server leaves it out when there is none
+					if (draft.banner === undefined || draft.decoration === undefined) media();
 				})
 				.catch(() => {});
 		}

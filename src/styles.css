@@ -27,6 +27,34 @@
 .am-av{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;overflow:hidden;position:relative}
 .am-av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .am-avw{position:relative;flex-shrink:0;display:flex}
+/* avatar decorations: avatar() sets data-deco, and these draw it. Sizes are in % so they follow the avatar's size. */
+.am-av[data-deco]{overflow:visible}
+.am-av[data-deco] img{border-radius:50%}
+.am-av[data-deco]::before,.am-av[data-deco]::after{content:"";position:absolute;pointer-events:none;z-index:1}
+.am-av[data-deco=neon]::before,.am-av[data-deco=gold]::before,.am-av[data-deco=rainbow]::before,.am-av[data-deco=fire]::before,.am-av[data-deco=frost]::before{inset:-4px;border-radius:50%}
+.am-av[data-deco=neon]::before{border:2px solid #39ff88;box-shadow:0 0 8px #39ff88,inset 0 0 6px #39ff88;animation:am-neon 1.6s ease-in-out infinite alternate}
+.am-av[data-deco=gold]::before{border:2px solid #f5c542;box-shadow:0 0 6px rgba(245,197,66,.75),inset 0 0 3px rgba(245,197,66,.6);animation:am-gold 2.4s ease-in-out infinite alternate}
+.am-av[data-deco=rainbow]::before,.am-av[data-deco=fire]::before,.am-av[data-deco=frost]::before{-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px));mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px))}
+.am-av[data-deco=rainbow]::before{background:conic-gradient(#ff3b3b,#ffb13b,#fff03b,#3bff6b,#3bd5ff,#6b3bff,#ff3bd5,#ff3b3b);animation:am-deco-spin 3s linear infinite}
+.am-av[data-deco=fire]::before{background:conic-gradient(#ff2d00,#ff9d00,#ffe14a,#ff9d00,#ff2d00);filter:drop-shadow(0 0 4px rgba(255,110,0,.85));animation:am-deco-spin 1.5s linear infinite}
+.am-av[data-deco=frost]::before{background:conic-gradient(#e8fbff,#7fd6ff,#ffffff,#7fd6ff,#e8fbff);filter:drop-shadow(0 0 4px rgba(127,214,255,.85));animation:am-deco-spin 6s linear infinite}
+.am-av[data-deco=halo]::before{left:22%;right:22%;top:-20%;height:20%;border:2px solid #ffe066;border-radius:50%;box-shadow:0 0 6px #ffe066,inset 0 0 4px #ffe066}
+.am-av[data-deco=crown]::before{left:20%;right:20%;top:-32%;height:36%;background:linear-gradient(#ffe27a,#f5a623);clip-path:polygon(0 100%,0 20%,25% 55%,50% 0,75% 55%,100% 20%,100% 100%)}
+.am-av[data-deco=ears]::before,.am-av[data-deco=ears]::after{top:-22%;width:36%;height:40%;background:#ff9ec4;clip-path:polygon(0 100%,18% 0,100% 100%)}
+.am-av[data-deco=ears]::before{left:4%}
+.am-av[data-deco=ears]::after{right:4%;transform:scaleX(-1)}
+.am-av[data-deco=horns]::before,.am-av[data-deco=horns]::after{top:-24%;width:30%;height:38%;background:#d3263f;clip-path:polygon(0 0,100% 100%,20% 100%)}
+.am-av[data-deco=horns]::before{left:0}
+.am-av[data-deco=horns]::after{right:0;transform:scaleX(-1)}
+@keyframes am-deco-spin{to{transform:rotate(360deg)}}
+@keyframes am-neon{to{box-shadow:0 0 14px #39ff88,inset 0 0 9px #39ff88;opacity:.8}}
+@keyframes am-gold{to{box-shadow:0 0 11px rgba(245,197,66,.95),inset 0 0 5px rgba(245,197,66,.8)}}
+@media (prefers-reduced-motion:reduce){.am-av[data-deco]::before,.am-av[data-deco]::after{animation:none!important}}
+/* decoration picker row in Edit profile */
+.am-decos{display:flex;gap:10px;overflow-x:auto;padding:20px 18px 6px;-webkit-overflow-scrolling:touch}
+.am-deco-t{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:8px;width:66px;padding:16px 0 8px;border:2px solid transparent;border-radius:12px;background:rgba(127,127,127,.14);color:inherit;font:inherit;font-size:11.5px}
+.am-deco-t.on{border-color:var(--active-color,#2f6fed)}
+.am-deco-t span{white-space:nowrap}
 .am-on{position:absolute;right:-2px;bottom:-2px;width:14px;height:14px;border-radius:50%;background:#3ba55d;border:3px solid var(--secondary-color)}
 .am-on.off{background:#80848e}
 .am-badge{font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;background:var(--active-color,#39f);color:#fff;margin-left:4px;vertical-align:middle;white-space:nowrap}
