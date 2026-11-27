@@ -2,6 +2,7 @@ import { ID, ICON_CLASS } from "../constants.js";
 import { ICON_URI } from "../icons.js";
 import { ls } from "../util.js";
 import CSS from "../styles.css";
+import DECORATION_CSS from "../avatar-decorations.css";
 
 export class LauncherMethods {
 	// Failures only, inline inside the chat UI. Nothing pops up for normal actions.
@@ -104,7 +105,7 @@ export class LauncherMethods {
 			acode.addIcon(ICON_CLASS, ICON_URI, { monochrome: true });
 		} catch {}
 		this.$style = document.createElement("style");
-		this.$style.textContent = CSS;
+		this.$style.textContent = `${CSS}\n${DECORATION_CSS}`;
 		document.head.append(this.$style);
 
 		// 1) Header button (needs the new acode.addHeaderButton from the Acode dev PR).
