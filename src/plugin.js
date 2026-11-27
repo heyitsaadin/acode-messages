@@ -79,6 +79,12 @@ export class AcodeMessages {
 					checkbox: this.settings.sendSound !== false,
 				},
 				{
+					key: "receiveSound",
+					text: "Receive sound",
+					info: "Play a soft sound when someone else's message arrives in the chat you have open.",
+					checkbox: this.settings.receiveSound !== false,
+				},
+				{
 					key: "apiUrl",
 					text: "Server URL",
 					info: "Advanced: only change this to use your own server.",
