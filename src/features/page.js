@@ -120,6 +120,9 @@ export class PageMethods {
 			this.$shield = null;
 		}, 700);
 		this.$root = el("div", { class: "am-root" }, home, chat, this.$scrim, this.$sheet, this.$err, this.$shield);
+		// Audio can only start after a tap, so any tap in the chat gets the sounds ready.
+		this.$root.addEventListener("touchend", () => this.primeSound(), { passive: true });
+		this.$root.addEventListener("click", () => this.primeSound(), { passive: true });
 
 		// Preferred: a tab in Acode's own tab bar, like the Welcome tab. Older Acode builds
 		// without custom tabs get the old full-screen page instead.
