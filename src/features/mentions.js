@@ -253,7 +253,7 @@ export class MentionsMethods {
 			this.msgBuf.push(m);
 			L.append(...this.rowNodes(m, animate));
 		}
-		if (heard && animate) this.playReceiveSound();
+		if (heard && animate && !forceStick) this.playReceiveSound(); // forceStick is set for the opening load and for my own sends
 		if (this.msgBuf.length > MSG_CACHE) this.msgBuf = this.msgBuf.slice(-MSG_CACHE);
 		this.saveMsgs();
 		if (stick) L.scrollTop = L.scrollHeight;
