@@ -35,6 +35,7 @@ export class OutboxMethods {
 			user_id: me.id,
 			name: me.name,
 			avatar_url: me.avatar_url,
+			avatar_decoration: me.avatar_decoration,
 			verified: me.verified ?? mine?.verified,
 			acode_pro: me.acode_pro ?? mine?.acode_pro,
 			is_admin: me.is_admin ?? mine?.is_admin,
