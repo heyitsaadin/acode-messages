@@ -229,9 +229,8 @@ export class EditProfileMethods {
 				$err.textContent = /HTTP 404/.test(e.message) ? "Your server doesn't support profile editing yet. Update acode-messages-server first." : e.message;
 				$save.disabled = false;
 				$save.textContent = "Save changes";
-			} finally {
 				saving = false;
-				if ($pill.isConnected) syncDirty();
+				syncDirty();
 			}
 		};
 		$save.onclick = save;
