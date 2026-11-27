@@ -39,7 +39,7 @@ export class ChannelsMethods {
 			this.el("div", { class: "am-fl", text: `Text channels · ${n}` }),
 			...g.channels.map((c) => this.item(c.private ? "lock" : "hash", c.name, () => this.channelSettings(g, c), "", [inCat(c), this.chanSub(c)].filter(Boolean).join(" · "))),
 			...(cats.length
-				? [this.el("div", { class: "am-fl", text: `Categories · ${cats.length}` }), ...cats.map((k) => this.item("folder", k.name, () => this.categorySettings(g, k, back), "", `${g.channels.filter((c) => c.category_id === k.id).length} channels`))]
+				? [this.el("div", { class: "am-fl", text: `Categories · ${cats.length}` }), ...cats.map((k) => this.item("folder", k.name, () => this.categorySettings(g, k, back), "", ((n) => `${n} channel${n === 1 ? "" : "s"}`)(g.channels.filter((c) => c.category_id === k.id).length)))]
 				: []),
 		);
 	}
