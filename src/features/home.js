@@ -23,7 +23,8 @@ export class HomeMethods {
 		const epoch = this.homeEpoch || 0;
 		this.homeBusy = (async () => {
 			try {
-				if (this.readP) await this.readP; // a read mark still on its way would make this answer stale
+				while (this.readPend?.size) await Promise.all([...this.readPend]); // read marks still on their way would make this answer stale
+				const since = Date.now();
 				const { me, ...next } = await this.api("home");
 				// Keep the official default community at the top of the server rail.
 				// The server marks it with is_default; other groups retain their relative order.
