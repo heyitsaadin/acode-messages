@@ -154,6 +154,11 @@ export class EncryptionMethods {
 			await this.e2eIdentity();
 		} catch {}
 		for (const m of list) {
+			// the message a reply points at comes back from the server still encrypted too
+			if (typeof m?.reply?.content === "string" && m.reply.content.startsWith(E2E_PREFIX)) {
+				const r = await this.e2eRead(pid, m.reply.content);
+				m.reply.content = r == null ? E2E_LOCKED : r;
+			}
 			if (typeof m?.content !== "string" || !m.content.startsWith(E2E_PREFIX)) continue;
 			const t = await this.e2eRead(pid, m.content);
 			m.enc = true;
