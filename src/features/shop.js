@@ -326,6 +326,51 @@ export class ShopMethods {
 			$err.textContent = "Couldn't load the template. Check your connection and try again.";
 		};
 		$img.src = SHOP_TEMPLATE;
+
+		// Native download: ask where to save (Acode's folder picker), fetch the PNG, write it with Acode's file system.
+		// Older Acode without those modules falls back to opening the link in the browser.
+		const saveName = "decoration-template.png";
+		let busy = false;
+		const $dl = this.pfsRow({ icon: "image", title: "Download template", sub: `Pick a folder and save ${saveName}`, onclick: () => save() });
+		const say = (t) => {
+			const $s = $dl.querySelector("small");
+			if ($s) $s.textContent = t;
+		};
+		const save = async () => {
+			if (busy) return;
+			let fileBrowser;
+			let fs;
+			try {
+				fileBrowser = acode.require("fileBrowser");
+				fs = acode.require("fs");
+			} catch {}
+			if (typeof fileBrowser !== "function" || typeof fs !== "function") {
+				window.open(SHOP_TEMPLATE, "_system");
+				return;
+			}
+			let dir;
+			try {
+				dir = await fileBrowser("folder", "Choose where to save the template");
+			} catch {
+				return; // cancelled
+			}
+			if (!dir?.url) return;
+			busy = true;
+			say("Saving\u2026");
+			try {
+				const r = await fetch(SHOP_TEMPLATE, { cache: "no-store" });
+				if (!r.ok) throw new Error(`HTTP ${r.status}`);
+				const buf = await r.arrayBuffer();
+				const url = await (await fs(dir.url)).createFile(saveName, "");
+				await (await fs(url)).writeFile(buf);
+				say(`Saved to ${dir.name || "that folder"} \u2713`);
+				this.flash(`Saved ${saveName}`);
+			} catch (e) {
+				say("Couldn't save it there. Try another folder, or use Open in browser");
+				this.flash(`Couldn't save: ${e?.message || e}`);
+			}
+			busy = false;
+		};
 		const $done = el("button", { class: "am-go", text: "Done" });
 		$done.onclick = () => this.pfsBack();
 		return [
