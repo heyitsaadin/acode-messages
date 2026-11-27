@@ -119,4 +119,5 @@ mixin(AcodeMessages, [
 	EncryptionMethods,
 	PrivacyMethods,
 	OnboardingMethods,
+	SoundMethods,
 ]);
