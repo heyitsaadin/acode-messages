@@ -526,3 +526,18 @@ textarea.am-inp{resize:none;height:96px;line-height:1.35}
 .am-catpick{margin:8px 16px 0}
 button.am-chip{border:0;color:inherit;font:inherit;font-size:13px}
 .am-chip.on{background:var(--active-color,#2f6fed);color:#fff}
+/* picture cropper: full screen, picture under a frame with the shape of the result */
+.am-crop{position:absolute;inset:0;z-index:70;display:flex;flex-direction:column;background:#000;color:#fff;animation:am-fade .2s ease both}
+.am-crop-top{display:flex;align-items:center;gap:6px;padding:8px 12px 8px 6px;flex-shrink:0}
+.am-crop-top .am-btn{color:#fff}
+.am-crop-top b{flex:1;text-align:center;font-size:17px}
+.am-crop-ok{border:0;border-radius:999px;padding:9px 20px;background:var(--active-color,#2f6fed);color:#fff;font:inherit;font-size:15px;font-weight:700}
+.am-crop-ok:active{filter:brightness(.88)}
+.am-crop-stage{position:relative;flex:1;min-height:0;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none}
+.am-crop-stage img{position:absolute;left:0;top:0;max-width:none;transform-origin:0 0;will-change:transform;pointer-events:none;-webkit-user-drag:none}
+.am-crop-frame{position:absolute;pointer-events:none;box-sizing:border-box;border:2px solid #fff;box-shadow:0 0 0 100vmax rgba(0,0,0,.66);background-image:linear-gradient(rgba(255,255,255,.35) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.35) 1px,transparent 1px);background-size:100% 33.3333%,33.3333% 100%}
+.am-crop-frame.round{border-radius:50%;background-image:none}
+.am-crop-hint{flex-shrink:0;text-align:center;font-size:13px;opacity:.65;padding:10px 0 0}
+.am-crop-bot{display:flex;align-items:center;gap:14px;padding:8px 22px 18px;flex-shrink:0}
+.am-crop-bot .z{font-size:22px;line-height:1;opacity:.75;width:16px;text-align:center}
+.am-crop-bot input{flex:1;min-width:0;accent-color:var(--active-color,#2f6fed)}

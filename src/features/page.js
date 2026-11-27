@@ -194,6 +194,12 @@ export class PageMethods {
 	}
 
 	onBack() {
+		// The picture cropper is on top of everything: back cancels it.
+		if (this.cropCancel) {
+			this.cropCancel();
+			if (this.$page) this.pushBack();
+			return;
+		}
 		// The setup screen sits on top of everything: back goes one step back inside it.
 		if (this.$ob) {
 			this.obBack();
