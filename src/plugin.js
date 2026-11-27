@@ -35,6 +35,7 @@ import { EmojiPickerMethods } from "./features/emoji-picker.js";
 import { CropperMethods } from "./features/cropper.js";
 import { ProfileSettingsMethods } from "./features/profile-settings.js";
 import { TypingMethods } from "./features/typing.js";
+import { UnreadMethods } from "./features/unread.js";
 
 // The class itself only holds the constructor and settings. Everything else lives in
 // features/*.js and is attached below, so `this` works the same across all files.
