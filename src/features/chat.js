@@ -104,7 +104,7 @@ export class ChatMethods {
 		const el = this.el.bind(this);
 		if (c.kind === "dm") {
 			const p = c.peer;
-			return el("div", { class: "am-intro" }, this.avatar(p), el("h2", {}, p.name, ...this.badges(p)), el("p", { class: "at", text: `@${p.name}` }), el("p", { text: `This is the beginning of your direct message history with @${p.name}.` }), el("p", { text: "🔒 Messages here are end-to-end encrypted." }));
+			return el("div", { class: "am-intro" }, this.avatar(p), el("h2", {}, p.name, ...this.badges(p)), el("p", { class: "at", text: `@${p.name}` }), el("p", { text: `This is the beginning of your direct message history with @${p.name}.` }), el("div", { class: "am-e2e" }, this.ico("lock", 14), el("span", { text: "End-to-end encrypted" })));
 		}
 		return el("div", { class: "am-intro" }, el("div", { class: "ic" }, this.ico("hash", 40)), el("h2", { text: `Welcome to #${c.name}!` }), el("p", { text: this.chanInfo()?.topic || `This is the start of the #${c.name} channel.` }));
 	}
