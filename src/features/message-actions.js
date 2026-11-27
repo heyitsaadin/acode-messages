@@ -295,6 +295,7 @@ export class MessageActionsMethods {
 		if (!ch) return;
 		if (this.sending) return this.flash("Still sending the last message…");
 		this.sending = true;
+		this.primeSound(); // audio can only start from a tap, so get it ready now and play when the server confirms
 		if (this.$send) this.$send.disabled = true;
 		this.$pend?.classList.add("busy");
 		const replied = this.replyTo;
