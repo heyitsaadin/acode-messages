@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.10.2
+
+- Typing indicator: when someone is typing in a DM or a group channel you have open, you see three dots bouncing in a wave with "Name is typing" above the message box. Only the fact that you are typing is sent, never what you type. Needs the matching server update (acode-messages-server, migration 015); without it nothing is shown and everything else works as before.
+- The Account page now says that only you can see your email.
+
 ## 1.10.1
 
 - Removed the server address setting everywhere (in-app Settings and the plugin's Acode settings page). The app always uses the default server, and any address saved by an older version is ignored.
