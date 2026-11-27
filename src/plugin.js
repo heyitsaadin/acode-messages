@@ -72,6 +72,12 @@ export class AcodeMessages {
 					info: "Change your picture, banner, name, about me and who can see your profile.",
 				},
 				{
+					key: "sendSound",
+					text: "Send sound",
+					info: "Play a short sound when a message is sent.",
+					checkbox: this.settings.sendSound !== false,
+				},
+				{
 					key: "apiUrl",
 					text: "Server URL",
 					info: "Advanced: only change this to use your own server.",
