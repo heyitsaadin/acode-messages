@@ -132,20 +132,27 @@ export class EditProfileMethods {
 			return $i;
 		};
 		const pick = (k, w, h, limit, gifKind) => {
+			if (busy[k]) return; // already working on one
 			$err.textContent = "";
 			this.pickImage(
 				w,
 				h,
 				limit,
 				(d, e) => {
+					busy[k] = false;
 					if (e) {
 						$err.textContent = e;
+						media();
 						return;
 					}
 					draft[k] = d;
 					media();
 				},
 				gifKind,
+				(on) => {
+					busy[k] = !!on;
+					media();
+				},
 			);
 		};
 		const pickAvatar = () => pick("avatar", 256, 256, 110000, "avatar");
