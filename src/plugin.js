@@ -88,14 +88,6 @@ export class AcodeMessages {
 					info: "Play a soft sound when someone else's message arrives in the chat you have open.",
 					checkbox: this.settings.receiveSound !== false,
 				},
-				{
-					key: "apiUrl",
-					text: "Server URL",
-					info: "Advanced: only change this to use your own server.",
-					value: this.settings.apiUrl || DEFAULT_API,
-					prompt: "Server URL",
-					promptType: "text",
-				},
 			],
 			cb: (key, value) => {
 				if (key === "editProfile") {
