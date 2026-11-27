@@ -287,6 +287,8 @@ export class MessageActionsMethods {
 		// "/share app.py" sends that open tab as a code card instead of the literal text
 		const cmd = !pend && /^\/share(?:\s+([\s\S]*))?$/i.exec(content);
 		if (cmd) return this.shareCommand(cmd[1]);
+		// Plain text goes on screen straight away (dimmed) and is sent in the background.
+		if (!pend) return this.outQueue(content);
 		await this.postMessage(content, pend ? { type: "image", data: pend.b64, w: pend.w, h: pend.h } : null);
 	}
 
