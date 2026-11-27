@@ -544,13 +544,13 @@ button.am-chip{border:0;color:inherit;font:inherit;font-size:13px}
 
 /* Your own profile: the Shop / Settings pill floats at the bottom of the sheet, like Discord's. */
 .am-pf{display:flex;flex-direction:column;min-height:100%}
-.am-dockw{position:sticky;bottom:0;margin-top:auto;padding:22px 0 14px;display:flex;justify-content:center;pointer-events:none;z-index:4}
-.am-dock{--am-dk:color-mix(in srgb,var(--primary-color) 90%,var(--primary-text-color) 10%);pointer-events:auto;display:flex;width:calc(100% - 56px);max-width:340px;padding:6px;border-radius:26px;background:var(--primary-color);background:var(--am-dk);box-shadow:0 6px 22px rgba(0,0,0,.35),0 0 0 1px rgba(127,127,127,.16)}
-.am-dk{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 4px 7px;border:0;border-radius:20px;background:transparent;color:inherit;font:inherit;font-size:12.5px;font-weight:600}
+.am-dockw{position:sticky;bottom:0;margin-top:auto;padding:16px 0 12px;display:flex;justify-content:center;pointer-events:none;z-index:4}
+.am-dock{--am-dk:color-mix(in srgb,var(--primary-color) 90%,var(--primary-text-color) 10%);pointer-events:auto;display:flex;gap:2px;padding:5px;border-radius:22px;background:var(--primary-color);background:var(--am-dk);box-shadow:0 6px 22px rgba(0,0,0,.35),0 0 0 1px rgba(127,127,127,.16)}
+.am-dk{flex:none;min-width:72px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:7px 16px 5px;border:0;border-radius:17px;background:transparent;color:inherit;font:inherit;font-size:12px;font-weight:600}
 .am-dk .am-i{opacity:.85}
 .am-dk:active{background:rgba(127,127,127,.26)}
 /* settings pages (they reuse the tall sheet) */
-.am-sth{display:flex;align-items:center;gap:4px;padding:14px 64px 4px 10px}
+.am-sth{display:flex;align-items:center;gap:4px;padding:14px 14px 4px 10px}
 .am-sheet .am-sth h3{margin:0;font-size:22px;font-weight:700;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .am-slbl{margin:20px 18px 8px;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;opacity:.6}
 .am-sgrp{margin:0 14px;border-radius:18px;background:var(--primary-color);overflow:hidden}
@@ -570,3 +570,13 @@ button.am-chip{border:0;color:inherit;font:inherit;font-size:13px}
 .am-sme .tx small{opacity:.6;font-size:14px}
 .am-sme>.am-i:last-child{opacity:.45}
 .am-sheet .am-go.alt{background:rgba(127,127,127,.22);color:inherit}
+/* moving between the profile and the settings pages: the old page slides out a little, the new one slides in */
+@keyframes am-sfwd{from{opacity:0;transform:translateX(36px)}to{opacity:1;transform:none}}
+@keyframes am-sback{from{opacity:0;transform:translateX(-36px)}to{opacity:1;transform:none}}
+@keyframes am-sout-l{to{opacity:0;transform:translateX(-26px)}}
+@keyframes am-sout-r{to{opacity:0;transform:translateX(26px)}}
+.am-sheet .am-spg.fwd{animation:am-sfwd .34s cubic-bezier(.22,.8,.2,1) backwards}
+.am-sheet .am-spg.back{animation:am-sback .34s cubic-bezier(.22,.8,.2,1) backwards}
+.am-sheet .out-l{animation:am-sout-l .11s ease-in forwards;pointer-events:none}
+.am-sheet .out-r{animation:am-sout-r .11s ease-in forwards;pointer-events:none}
+@media (prefers-reduced-motion:reduce){.am-sheet .am-spg,.am-sheet .out-l,.am-sheet .out-r{animation:none!important}}
