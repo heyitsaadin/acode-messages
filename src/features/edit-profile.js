@@ -23,6 +23,7 @@ export class EditProfileMethods {
 			try {
 				done(await this.prepImage(f, w, h, limit));
 			} catch (e) {
+				if (e.cancelled) return;
 				done(null, e.message);
 			}
 		};
