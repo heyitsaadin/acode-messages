@@ -58,7 +58,36 @@ export class UiHelpersMethods {
 			$a.append($i);
 		}
 		// A decoration is only a data attribute; styles.css draws it. Tiny avatars (reply previews) stay plain.
-		if (u.avatar_decoration && /^[a-z]{2,12}$/.test(u.avatar_decoration) && (!size || size >= 24)) $a.dataset.deco = u.avatar_decoration;
+		if (u.avatar_decoration && /^[a-z]{2,12}$/.test(u.avatar_decoration) && (!size || size >= 24)) {
+			$a.dataset.deco = u.avatar_decoration;
+			// Add small, independently timed particles to every cosmetic. The count is deliberately
+			// capped so chat lists stay light even when several decorated users are visible.
+			const particleCount = u.avatar_decoration === "sakura" ? 8 :
+				["aurora", "galaxy", "electric", "ember", "orbit", "fire", "frost", "rainbow"].includes(u.avatar_decoration) ? 6 : 4;
+			for (let n = 0; n < particleCount; n++) {
+				const $particle = this.el("i", { class: "am-deco-particle", "aria-hidden": "true" });
+				$particle.style.setProperty("--particle-index", n);
+				$particle.style.setProperty("--particle-angle", `${(360 / particleCount) * n + (n % 2 ? 12 : -8)}deg`);
+				const distance = size && size < 60 ? 8 : 13 + (n % 3) * 3;
+				$particle.style.setProperty("--particle-distance", `${distance}px`);
+				$particle.style.setProperty("--particle-rise", `-${distance}px`);
+				$particle.style.setProperty("--particle-fall-end", `-${Math.round(distance * 1.7)}px`);
+				$particle.style.setProperty("--particle-delay", `${-(n * 0.43)}s`);
+				$a.append($particle);
+			}
+			// Sakura uses real DOM petals (rather than static radial-gradient dots),
+			// so each petal can tumble independently around the avatar edge.
+			if (u.avatar_decoration === "sakura") {
+				const drift = [-15, -8, 8, 15, 12, -12, 5, -5];
+				for (let n = 0; n < drift.length; n++) {
+					const $petal = this.el("i", { class: "am-sakura-petal", "aria-hidden": "true" });
+					$petal.style.setProperty("--petal-index", n);
+					$petal.style.setProperty("--petal-x", `${drift[n]}px`);
+					$petal.style.setProperty("--petal-end-x", `${-drift[n]}px`);
+					$a.append($petal);
+				}
+			}
+		}
 		return $a;
 	}
 
