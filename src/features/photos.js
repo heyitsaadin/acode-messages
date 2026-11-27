@@ -109,6 +109,7 @@ export class PhotosMethods {
 			return el("div", { class: "am-mc" }, cap ? el("div", {}, this.richText(cap)) : null, el("div", { class: "am-imgw" }, $i));
 		}
 		if (kind === "voice" && m.media_url) return el("div", { class: "am-mc" }, this.voiceMsg(m));
+		if (kind === "file" && m.media_url) return el("div", { class: "am-mc" }, this.fileCard(m));
 		const $c = el("div", { class: "am-mc" }, this.richText(String(m.content || "")));
 		if (m.edited_at || m.edited) $c.append(el("span", { class: "am-ed", text: "(edited)" }));
 		return $c;
