@@ -329,6 +329,45 @@ export class ShopMethods {
 		this.refreshHome();
 	}
 
+	/* ---------- the template page (a settings page, so it has the back arrow) ---------- */
+
+	shopTemplate() {
+		const el = this.el.bind(this);
+		const L = DECO_LIMITS;
+		const svg = SHOP_TEMPLATE_SVG;
+		const $img = el("img", { alt: "Decoration template: 288 by 288 canvas with a 240 by 240 avatar circle in the middle" });
+		$img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+		$img.style.cssText = "display:block;width:min(100%,288px);aspect-ratio:1;margin:14px auto;background:#fff;border-radius:12px";
+		const openInEditor = () => {
+			try {
+				acode.newEditorFile("decoration-template.svg", { text: svg, render: true });
+				this.flash("Opened in a new tab. Save it from there");
+			} catch {
+				this.copy(svg);
+				this.flash("Couldn't open a tab, copied the SVG instead");
+			}
+		};
+		const $done = el("button", { class: "am-go", text: "Done" });
+		$done.onclick = () => this.pfsBack();
+		return [
+			this.pfsNote(`This is the guide for your ${L.side}\u00D7${L.side} picture. The pink circle is where your profile picture sits, so keep it clear. Draw around it, hide or delete the guide, then export a see-through PNG.`),
+			$img,
+			this.pfsGroup(
+				this.pfsRow({ icon: "file", title: "Open in editor", sub: "Opens decoration-template.svg in a new tab so you can save it", onclick: openInEditor }),
+				this.pfsRow({
+					icon: "file",
+					title: "Copy SVG code",
+					sub: "Paste it into any drawing app that can import SVG",
+					onclick: async () => {
+						await this.copy(svg);
+						this.flash("Copied the SVG");
+					},
+				}),
+			),
+			$done,
+		];
+	}
+
 	/* ---------- making one ---------- */
 
 	shopCreate() {
