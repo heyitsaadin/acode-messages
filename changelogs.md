@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.10.1
+
+- Removed the server address setting from Settings. Changing it is still possible from the plugin's own settings page in Acode.
+- The Shop / Settings pill is smaller, with the two buttons close together.
+- Moving between the profile, Settings and its pages now slides smoothly, forward and back.
+- Settings pages only have the back arrow now. The extra round X is gone (the profile keeps its X).
+
 ## 1.10.0
 
 - Your own profile now has a floating Shop and Settings pill at the bottom, like Discord's.
