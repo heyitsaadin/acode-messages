@@ -130,7 +130,7 @@ export class PermissionsMethods {
 				cur.description = r.description || "";
 				if (this.disc) this.disc.at = 0; // refresh the public list next time it opens
 				this.refreshHome();
-				this.groupMenu(cur);
+				this.serverSettings(cur);
 			} catch (e) {
 				$e.textContent = e.message;
 				$save.disabled = false;
