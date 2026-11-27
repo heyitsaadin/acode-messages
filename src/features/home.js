@@ -221,10 +221,11 @@ export class HomeMethods {
 		}
 		return this.el(
 			"div",
-			{ class: "am-dm", onclick: () => this.openChannel({ slug: d.slug, name: d.name, kind: "dm", peer: peerOf(d) }) },
+			{ class: `am-dm${d.unread > 0 ? " unread" : ""}`, "data-slug": d.slug, onclick: () => this.openChannel({ slug: d.slug, name: d.name, kind: "dm", peer: peerOf(d) }) },
 			this.avw(d, 46, !!d.online),
 			this.el("div", { class: "bd" }, this.el("b", { text: d.name }), $sm),
 			t ? this.el("time", { text: this.shortTime(t) }) : null,
+			this.unreadBadge(d.unread),
 		);
 	}
 
