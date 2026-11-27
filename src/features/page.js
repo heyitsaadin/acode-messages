@@ -310,5 +310,6 @@ export class PageMethods {
 			this.loadHome(true);
 			this.refreshOnline();
 		}, HOME_MS);
+		this.alertStart();
 	}
 }
