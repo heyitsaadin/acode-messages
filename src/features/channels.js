@@ -29,17 +29,26 @@ export class ChannelsMethods {
 	channelsAdmin(g) {
 		g = this.fresh(g);
 		const n = g.channels.length;
+		const cats = g.categories || [];
+		const back = () => this.channelsAdmin(g);
+		const inCat = (c) => cats.find((k) => k.id === c.category_id)?.name;
 		this.sheet(
 			"Channels",
 			this.item("plus", "Create channel", () => this.channelForm(g)),
+			this.item("folder", "Create category", () => this.categoryForm(g, back)),
 			this.el("div", { class: "am-fl", text: `Text channels · ${n}` }),
-			...g.channels.map((c) => this.item(c.private ? "lock" : "hash", c.name, () => this.channelSettings(g, c), "", this.chanSub(c))),
+			...g.channels.map((c) => this.item(c.private ? "lock" : "hash", c.name, () => this.channelSettings(g, c), "", [inCat(c), this.chanSub(c)].filter(Boolean).join(" · "))),
+			...(cats.length
+				? [this.el("div", { class: "am-fl", text: `Categories · ${cats.length}` }), ...cats.map((k) => this.item("folder", k.name, () => this.categorySettings(g, k, back), "", ((n) => `${n} channel${n === 1 ? "" : "s"}`)(g.channels.filter((c) => c.category_id === k.id).length)))]
+				: []),
 		);
 	}
 
-	channelForm(g) {
+	// catId pre-selects a category; back is where Cancel and a finished create go (default: the Channels list).
+	channelForm(g, catId = null, back = null) {
 		g = this.fresh(g);
 		let priv = false;
+		let cat = catId;
 		const $name = this.el("input", { class: "am-inp", placeholder: "channel-name", maxlength: "32", autocapitalize: "off" });
 		const $topic = this.el("input", { class: "am-inp", placeholder: "Topic (optional)", maxlength: "1024" });
 		const $sw = this.el("div", { class: "am-sw" });
@@ -58,12 +67,14 @@ export class ChannelsMethods {
 			$go.disabled = true;
 			$e.textContent = "";
 			try {
-				const { channel } = await this.chanPost({ action: "channel_create", group_id: g.id, name, topic: $topic.value.trim(), private: priv });
+				const { channel } = await this.chanPost({ action: "channel_create", group_id: g.id, name, topic: $topic.value.trim(), private: priv, ...(cat != null ? { category_id: cat } : {}) });
 				await this.refreshHome();
 				const fresh = this.fresh(g);
 				const c = fresh.channels.find((x) => x.slug === channel.slug) || channel;
 				// A private channel is useless until someone can get in, so go straight to its access list.
-				priv ? this.channelPerms(fresh, c) : this.channelsAdmin(fresh);
+				if (priv) this.channelPerms(fresh, c);
+				else if (back) back();
+				else this.channelsAdmin(fresh);
 			} catch (e) {
 				$e.textContent = e.message;
 				$go.disabled = false;
@@ -71,7 +82,7 @@ export class ChannelsMethods {
 		};
 		$go.onclick = go;
 		$name.addEventListener("keydown", (e) => e.key === "Enter" && go());
-		this.sheet("Create channel", $name, $topic, $priv, $e, $go, this.item("close", "Cancel", () => this.channelsAdmin(g)));
+		this.sheet("Create channel", $name, $topic, ...this.catChips(g, cat, (id) => (cat = id)), $priv, $e, $go, this.item("close", "Cancel", () => (back ? back() : this.channelsAdmin(g))));
 		setTimeout(() => $name.focus(), 250);
 	}
 
@@ -84,13 +95,16 @@ export class ChannelsMethods {
 		$topic.value = c.topic || "";
 		const $e = this.el("div", { class: "am-ferr" });
 		const $go = this.el("button", { class: "am-go", text: "Save changes" });
+		let cat = c.category_id ?? null;
 		$go.onclick = async () => {
 			const name = $name.value.trim();
 			if (!name) return;
 			$go.disabled = true;
 			$e.textContent = "";
 			try {
-				await this.chanPost({ action: "channel_update", slug: c.slug, name, topic: $topic.value.trim() });
+				const body = { action: "channel_update", slug: c.slug, name, topic: $topic.value.trim() };
+				if (cat !== (c.category_id ?? null)) body.category_id = cat;
+				await this.chanPost(body);
 				await this.refreshHome();
 				$go.textContent = "Saved ✓";
 				setTimeout(() => {
@@ -108,6 +122,7 @@ export class ChannelsMethods {
 			$name,
 			this.el("div", { class: "am-fl", text: "Topic" }),
 			$topic,
+			...this.catChips(g, cat, (id) => (cat = id)),
 			$e,
 			$go,
 			this.el("div", { class: "am-fl", text: "Who can use it" }),

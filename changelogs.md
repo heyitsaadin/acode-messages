@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.8.0
+
+- Groups are laid out like Discord. Tap the banner or the group name to open the group sheet: picture, name, description, online and member counts, Invite and Members buttons, Create Channel, Create Category, and Leave group.
+- Settings moved to their own page. A Settings button on the group sheet (only shown to the owner and people with permissions) opens Group settings: channels, appearance, roles, discovery and delete. The three-dot and Members buttons on the banner are gone, and the channel menu inside a chat now has a single Group settings entry instead of every option.
+- Channel categories. Create a category from the group sheet or the Channels list, then collapse or expand it in the channel list. Each category has a + to add a channel to it and a settings button to rename, move up/down or delete it (its channels are kept). Pick a category when you create a channel or edit one.
+- Needs the matching server update (migration 014, api/groups.js, api/home.js). Without it everything still works but categories stay unavailable.
+
 ## 1.7.0
 
 - Group owners can make their group public from the group menu (Discovery > Public group). Public groups show up under Public groups on the + page and anyone can join without an invite code. Needs a short description.

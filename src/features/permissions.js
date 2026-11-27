@@ -130,33 +130,14 @@ export class PermissionsMethods {
 				cur.description = r.description || "";
 				if (this.disc) this.disc.at = 0; // refresh the public list next time it opens
 				this.refreshHome();
-				this.groupMenu(cur);
+				this.serverSettings(cur);
 			} catch (e) {
 				$e.textContent = e.message;
 				$save.disabled = false;
 			}
 		};
 		sync();
-		this.sheet("Public group", row, $more, $e, $save, this.item("close", "Back", () => this.groupMenu(g)));
-	}
-
-	dangerItems(g) {
-		g = this.fresh(g);
-		const list = [this.can(g, "delete_group") ? this.item("trash", "Delete group", () => this.confirmDelete(g), "danger") : null, this.isOwner(g) ? null : this.item("leave", "Leave group", () => this.confirmLeave(g), "danger")].filter(Boolean);
-		return list.length ? [this.el("div", { class: "am-fl", text: "Danger zone" }), ...list] : [];
-	}
-
-	groupMenu(g) {
-		g = this.fresh(g);
-		this.sheet(
-			g.name,
-			this.roleLine(g),
-			this.el("div", { class: "am-fl", text: "Community" }),
-			this.copyItem("link", `Invite code: ${g.invite_code}`, g.invite_code),
-			this.item("users", "Members", () => this.showMembers(g), "", g.member_count ? `${g.member_count} member${g.member_count === 1 ? "" : "s"}` : ""),
-			...this.manageItems(g),
-			...this.dangerItems(g),
-		);
+		this.sheet("Public group", row, $more, $e, $save, this.item("close", "Back", () => this.serverSettings(g)));
 	}
 
 	// Generic "are you sure" sheet. onYes may throw; the message shows under the button.
@@ -223,7 +204,7 @@ export class PermissionsMethods {
 				this.paintHome();
 				this.refreshHome();
 			},
-			() => this.groupMenu(g),
+			() => this.serverSettings(g),
 		);
 	}
 

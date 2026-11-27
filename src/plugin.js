@@ -9,6 +9,7 @@ import { HomeMethods } from "./features/home.js";
 import { SheetsMethods } from "./features/sheets.js";
 import { DiscoverMethods } from "./features/discover.js";
 import { PermissionsMethods } from "./features/permissions.js";
+import { ServerPanelMethods } from "./features/server-panel.js";
 import { BannerMethods } from "./features/banner.js";
 import { GroupIconMethods } from "./features/group-icon.js";
 import { MembersMethods } from "./features/members.js";
@@ -99,6 +100,7 @@ mixin(AcodeMessages, [
 	SheetsMethods,
 	DiscoverMethods,
 	PermissionsMethods,
+	ServerPanelMethods,
 	BannerMethods,
 	GroupIconMethods,
 	MembersMethods,
