@@ -27,6 +27,7 @@ import { CodeShareMethods } from "./features/code-share.js";
 import { EncryptionMethods } from "./features/encryption.js";
 import { PrivacyMethods } from "./features/privacy.js";
 import { OnboardingMethods } from "./features/onboarding.js";
+import { SoundMethods } from "./features/sounds.js";
 
 // The class itself only holds the constructor and settings. Everything else lives in
 // features/*.js and is attached below, so `this` works the same across all files.
@@ -71,6 +72,12 @@ export class AcodeMessages {
 					info: "Change your picture, banner, name, about me and who can see your profile.",
 				},
 				{
+					key: "sendSound",
+					text: "Send sound",
+					info: "Play a short sound when a message is sent.",
+					checkbox: this.settings.sendSound !== false,
+				},
+				{
 					key: "apiUrl",
 					text: "Server URL",
 					info: "Advanced: only change this to use your own server.",
@@ -82,6 +89,12 @@ export class AcodeMessages {
 			cb: (key, value) => {
 				if (key === "editProfile") {
 					this.openEditProfile();
+					return;
+				}
+				if (key === "sendSound") {
+					this.settings.sendSound = !!value;
+					this.appSettings.update();
+					if (value) this.playSendSound();
 					return;
 				}
 				this.settings[key] = String(value || "").trim() || DEFAULT_API;
@@ -118,4 +131,5 @@ mixin(AcodeMessages, [
 	EncryptionMethods,
 	PrivacyMethods,
 	OnboardingMethods,
+	SoundMethods,
 ]);

@@ -295,6 +295,7 @@ export class MessageActionsMethods {
 		if (!ch) return;
 		if (this.sending) return this.flash("Still sending the last message…");
 		this.sending = true;
+		this.primeSound(); // audio can only start from a tap, so get it ready now and play when the server confirms
 		if (this.$send) this.$send.disabled = true;
 		this.$pend?.classList.add("busy");
 		const replied = this.replyTo;
@@ -315,6 +316,7 @@ export class MessageActionsMethods {
 				if (replied && message.reply_to == null && !message.reply && message.reply_to_id == null) message.reply_to = replied.id;
 				this.append([message], true);
 			}
+			this.playSendSound();
 			return true;
 		} catch (e) {
 			this.flash(`${attachment ? "Not sent" : "Message not sent"} (${e.message})`);

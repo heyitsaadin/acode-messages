@@ -62,7 +62,14 @@ export class NetworkMethods {
 
 	// One shared token request, so ten parallel calls don't make ten logins.
 	getToken() {
-		if (this.token && Date.now() - this.tokenAt < TOKEN_MS) return Promise.resolve(this.token);
+		const age = Date.now() - this.tokenAt;
+		const fresh = !!this.token && age < TOKEN_MS;
+		// Past 60% of its life, renew it quietly so a send never has to wait for a new login.
+		if (fresh && age > TOKEN_MS * 0.6) this.renewToken().catch(() => {});
+		return fresh ? Promise.resolve(this.token) : this.renewToken();
+	}
+
+	renewToken() {
 		if (!this.tokenP) {
 			this.tokenP = (async () => {
 				let t = null;
@@ -70,11 +77,16 @@ export class NetworkMethods {
 					const r = await this.authFetch("chat-token");
 					t = r ? (await r.json()).token || null : null;
 				} catch {}
-				this.token = t;
-				// On failure, try again in 30s rather than 5 minutes.
-				this.tokenAt = t ? Date.now() : Date.now() - TOKEN_MS + 30000;
-				if (t) ls.set("am-token", { t, at: Date.now() });
-				return t;
+				if (t) {
+					this.token = t;
+					this.tokenAt = Date.now();
+					ls.set("am-token", { t, at: Date.now() });
+				} else if (!this.token || Date.now() - this.tokenAt >= TOKEN_MS) {
+					// Nothing usable left: try again in 30s rather than 5 minutes.
+					this.token = null;
+					this.tokenAt = Date.now() - TOKEN_MS + 30000;
+				}
+				return this.token;
 			})().finally(() => {
 				this.tokenP = null;
 			});

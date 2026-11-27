@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.9.3
+
+- A short sound plays when a message is sent. You can turn it off under Settings > Send sound.
+- Sending is quicker after a pause. While you type, the plugin now gets ready in the background (renews your login and, in a DM, refreshes the other person's key) instead of doing it after you tap send.
+- Fixed the verified badge image not showing (it is now included in the package).
+
 ## 1.9.0
 
 - New /share command: type /share and a file name to send a file that is open in an Acode tab. Only open tabs can be shared, and the message box suggests matching tab names as you type.
