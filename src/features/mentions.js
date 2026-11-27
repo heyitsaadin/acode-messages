@@ -239,6 +239,32 @@ export class MentionsMethods {
 		}
 	}
 
+	// fresh: the newest messages straight from the server. Copies each author's current picture, name and decoration
+	// onto the messages already on screen (and in the saved list), and redraws those avatars.
+	refreshAuthors(fresh) {
+		const by = new Map();
+		for (const f of fresh) by.set(String(f.user_id), f);
+		if (!by.size) return;
+		const apply = (m) => {
+			const f = by.get(String(m.user_id));
+			if (!f) return false;
+			m.name = f.name;
+			m.avatar_url = f.avatar_url;
+			m.avatar_decoration = f.avatar_decoration || null;
+			return true;
+		};
+		for (const m of this.msgBuf) apply(m);
+		this.$list?.querySelectorAll(".am-row").forEach(($r) => {
+			const m = $r._m;
+			const $old = $r.querySelector(".am-mr > .am-av");
+			if (!m || !$old || !apply(m)) return;
+			const $new = this.avatar(m, 40);
+			$new.onclick = $old.onclick;
+			$old.replaceWith($new);
+		});
+		this.saveMsgs();
+	}
+
 	saveMsgs() {
 		const ch = this.state.channel;
 		if (!ch || ch.kind === "dm") return; // decrypted DMs are never written to storage
