@@ -148,6 +148,11 @@ export class HomeMethods {
 					$i.src = this.bannerSrc(g.icon);
 					$s.append($i);
 				}
+				// Discord style: a small pill on the left edge, and a red count on the icon that stops at 99+.
+				if (g.unread > 0) {
+					$s.classList.add("unread");
+					$s.append(this.unreadBadge(g.unread, "rail"));
+				}
 				return $s;
 			}),
 			this.el("div", { class: `am-srv add${t === "add" ? " on" : ""}`, "data-t": "add", onclick: () => this.setTab("add") }, this.ico("plus", 26)),
