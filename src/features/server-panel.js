@@ -81,6 +81,7 @@ export class ServerPanelMethods {
 					{ class: "am-cat", onclick: () => this.toggleCat(g, k) },
 					this.ico(shown ? "down" : "chev", 14),
 					el("span", { class: "nm", text: k.name }),
+					!shown && mine.some((c) => c.unread > 0 || c.mentions > 0) ? el("span", { class: "am-ud", "aria-label": "Unread messages inside" }) : null,
 					manage ? el("button", { class: "am-btn", "aria-label": `Add a channel to ${k.name}`, onclick: (e) => (e.stopPropagation(), this.channelForm(g, k.id, () => this.closeSheet())) }, this.ico("plus", 16)) : null,
 					manage ? el("button", { class: "am-btn", "aria-label": `${k.name} settings`, onclick: (e) => (e.stopPropagation(), this.categorySettings(g, k)) }, this.ico("sliders", 16)) : null,
 				),
