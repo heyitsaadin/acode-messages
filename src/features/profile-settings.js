@@ -40,7 +40,8 @@ export class ProfileSettingsMethods {
 			name: () => this.pfsName(),
 			appearance: () => this.pfsAppearance(),
 			sounds: () => this.pfsSounds(),
-			shop: () => this.pfsShop(),
+			shop: () => this.shopPage(),
+			shopnew: () => this.shopCreate(),
 		};
 		const key = pages[page] ? page : "main";
 		const $pg = this.el("div", { class: `am-spg ${dir}` }, this.pfsHead(key), ...pages[key]());
