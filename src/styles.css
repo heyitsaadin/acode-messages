@@ -209,7 +209,6 @@
 .am-emo-s{display:flex;align-items:center;gap:10px;margin:10px 0 0;padding:0 14px;height:46px;border-radius:14px;border:1px solid rgba(127,127,127,.4);flex-shrink:0}
 .am-emo-s .ic{display:flex;opacity:.6}
 .am-emo-s input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:inherit;font:inherit;font-size:16px;-webkit-user-select:text;user-select:text}
-.am-emo.ph .am-emo-s,.am-emo.ph .am-emo-t{display:none}
 .am-emo-g{position:relative;flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;margin:0 -10px;padding:0 10px 8px}
 .am-eh{padding:14px 2px 6px;font-size:16px;font-weight:700;opacity:.7}
 .am-eg{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr))}
