@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.9.0
+
+- New /share command: type /share and a file name to send a file that is open in an Acode tab. Only open tabs can be shared, and the message box suggests matching tab names as you type.
+- Small files arrive as a text code card. Bigger files (up to 1 MB) arrive as a file you can Copy or Open in the editor. Files shared in direct messages are end-to-end encrypted like the messages themselves.
+- Code in chat is now syntax highlighted: comments, strings, numbers, keywords, functions and more, for JavaScript/TypeScript, Python, Java, Kotlin, C/C++, C#, Go, Rust, Swift, PHP, shell, JSON, SQL, YAML, CSS and HTML.
+- Needs the matching server update (migration 009_file_messages.sql, api/messages.js, lib/attach.js) to send big files. Without it small files and highlighting still work.
+
 ## 1.8.0
 
 - Groups are laid out like Discord. Tap the banner or the group name to open the group sheet: picture, name, description, online and member counts, Invite and Members buttons, Create Channel, Create Category, and Leave group.
