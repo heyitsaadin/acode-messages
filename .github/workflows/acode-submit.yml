@@ -36,7 +36,9 @@ jobs:
         run: node build.js
 
       - name: Zip plugin files
-        run: zip -j acode-messages.zip main.js plugin.json readme.md changelogs.md icon.png
+        run: |
+          zip -j acode-messages.zip main.js plugin.json readme.md changelogs.md icon.png
+          zip -r acode-messages.zip project/
 
       - name: Submit to acode.app
         run: |
