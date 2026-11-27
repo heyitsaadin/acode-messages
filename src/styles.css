@@ -147,6 +147,11 @@
 .am-row.new{animation:am-pop .2s cubic-bezier(.2,.8,.2,1) both}
 .am-row.gone{animation:am-gone .22s ease both}
 @keyframes am-gone{to{opacity:0;transform:translateX(-14px);max-height:0}}
+/* a message that is still on its way to the server: dim, then fade to full colour once it lands */
+.am-row .am-mc{transition:opacity .3s ease,color .3s ease}
+.am-row.sending .am-mc{opacity:.45}
+.am-row.failed .am-mc{opacity:.9;color:#f23f43}
+.am-fail{display:block;margin:2px 0 0;padding:2px 0;border:0;background:none;font:inherit;font-size:12.5px;font-weight:600;color:#f23f43;text-align:left}
 .am-mr{display:flex;align-items:flex-start;gap:10px}
 .am-row .am-av{width:40px;height:40px;font-size:17px}
 .am-sp{width:40px;flex-shrink:0}
