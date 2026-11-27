@@ -195,13 +195,15 @@ export class EditProfileMethods {
 						})
 					: null,
 			);
+			syncDirty();
 		};
 		$ban.onclick = pickBanner;
 		$av.onclick = pickAvatar;
-		$name.addEventListener("input", () => !val("avatar") && media());
+		$name.addEventListener("input", () => (!val("avatar") ? media() : syncDirty()));
 		$about.addEventListener("input", () => {
 			touched.about = true;
 			count();
+			syncDirty();
 		});
 		$save.onclick = async () => {
 			const body = {};
