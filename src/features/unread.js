@@ -1,6 +1,6 @@
 // Unread badges, Discord style. The server counts them (api/home.js): every DM, channel and group in the home data
 // carries `unread`, and groups and their channels also carry `mentions` (messages that @mention you or reply to you).
-// Opening a chat clears its badges at once; markRead() then tells the server so they stay cleared on every device.
+// Opening a chat clears its badges at once and tells the server right away; markRead() keeps it up to date while the chat is open.
 export class UnreadMethods {
 	/* ---------- unread badges ---------- */
 
@@ -45,24 +45,56 @@ export class UnreadMethods {
 		return true;
 	}
 
-	// Called as a chat opens: its badges go away straight away, without waiting for the server.
-	// The rail is redrawn; the row in the list is only touched up, so nothing flickers or re-decrypts.
+	// Clears one chat's badges on screen. The rail is redrawn; the row in the list is only touched up,
+	// so nothing flickers or re-decrypts. True if there was anything to clear.
 	clearUnread(c) {
-		if (!this.dropUnread(this.state.home, c)) return;
+		if (!this.dropUnread(this.state.home, c)) return false;
 		this.paintRail();
 		const $row = [...(this.$plist?.querySelectorAll("[data-slug]") || [])].find((n) => n.dataset.slug === c.slug);
-		if (!$row) return;
-		$row.classList.remove("unread", "ment");
-		$row.querySelectorAll(".am-ub,.am-ud,.am-um").forEach((n) => n.remove());
+		if ($row) {
+			$row.classList.remove("unread", "ment");
+			$row.querySelectorAll(".am-ub,.am-ud,.am-um").forEach((n) => n.remove());
+		}
+		return true;
 	}
 
-	// Whatever the server counted for the chat that is open and in front has been read by definition.
-	settleUnread(home) {
+	// A chat was just opened. If it had anything unread, say so to the server straight away: waiting for the messages
+	// to load first meant that opening and leaving quickly left the badge on the server, and it came back.
+	openRead(c) {
+		if (this.clearUnread(c)) this.sendRead(c, 0);
+	}
+
+	// Tells the server a chat is read, up to message `upTo` or (0) up to the newest one. Resolves true or false, never fails.
+	// Remembers when, so a home answer that was already on its way (and so counted the chat as unread) can be corrected.
+	sendRead(c, upTo) {
+		this.readAt = this.readAt || {};
+		this.readAt[c.slug] = { t: Date.now(), c: { slug: c.slug, kind: c.kind, group_id: c.group_id } };
+		const body = { read: true, channel: c.slug };
+		if (upTo) body.up_to = upTo;
+		const pend = (this.readPend = this.readPend || new Set());
+		const p = this.api("messages", { method: "POST", body: JSON.stringify(body) })
+			.then(() => true, () => false)
+			.then((ok) => {
+				pend.delete(p);
+				return ok;
+			});
+		pend.add(p);
+		return p;
+	}
+
+	// Fixes a freshly loaded home answer: the chat that is open and in front is read by definition, and so is every chat
+	// that was marked read after this answer was requested (`since`), because the server may not have known yet.
+	settleUnread(home, since = 0) {
 		if (this.watching()) this.dropUnread(home, this.state.channel);
+		for (const k of Object.keys(this.readAt || {})) {
+			const r = this.readAt[k];
+			if (r.t >= since) this.dropUnread(home, r.c);
+			else if (Date.now() - r.t > 120000) delete this.readAt[k];
+		}
 	}
 
-	// Tells the server the open chat is read up to the newest message on screen, so the badges clear everywhere.
-	// Called after every poll; it does nothing unless there is something new to report.
+	// While a chat is open and in front: report it as read up to the newest message on screen, so the badges stay cleared
+	// everywhere. Called after every poll; it does nothing unless there is something new to report.
 	markRead() {
 		const ch = this.state.channel;
 		if (!ch || !this.lastId || !this.watching()) return;
@@ -72,19 +104,15 @@ export class UnreadMethods {
 		if (this.readSent[slug] >= upTo) return;
 		this.readSent[slug] = upTo;
 		this.clearUnread(ch);
-		const p = this.api("messages", { method: "POST", body: JSON.stringify({ read: true, channel: slug, up_to: upTo }) })
-			.then(() => {
+		this.sendRead(ch, upTo).then((ok) => {
+			if (ok) {
 				this.readFails = 0;
-			})
-			.catch(() => {
-				// Try again on the next poll, but give up after a few failures (an old server would refuse this every time).
-				if (this.readSent[slug] !== upTo) return;
-				this.readFails = (this.readFails || 0) + 1;
-				if (this.readFails <= 3) delete this.readSent[slug];
-			})
-			.then(() => {
-				if (this.readP === p) this.readP = null;
-			});
-		this.readP = p;
+				return;
+			}
+			// Try again on the next poll, but give up after a few failures (an old server would refuse this every time).
+			if (this.readSent[slug] !== upTo) return;
+			this.readFails = (this.readFails || 0) + 1;
+			if (this.readFails <= 3) delete this.readSent[slug];
+		});
 	}
 }
