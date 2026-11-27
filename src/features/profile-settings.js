@@ -148,6 +148,7 @@ export class ProfileSettingsMethods {
 				this.pfsRow({ title: "Picture and banner", onclick: edit }),
 				email ? this.pfsRow({ title: "Email", value: email }) : null,
 			),
+			email ? this.pfsNote("Only you can see your email. It's never shown to anyone else on Acode Messages.") : null,
 			this.pfsLabel("How you sign in"),
 			this.pfsGroup(this.pfsRow({ title: "Acode account", value: "Connected" })),
 			this.pfsNote("You sign in with your Acode account, so your password and login are managed in Acode (Profile → Login)."),
