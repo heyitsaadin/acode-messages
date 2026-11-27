@@ -204,7 +204,7 @@ export class PermissionsMethods {
 				this.paintHome();
 				this.refreshHome();
 			},
-			() => this.groupMenu(g),
+			() => this.serverSettings(g),
 		);
 	}
 
