@@ -188,7 +188,7 @@ export class MentionsMethods {
 				this.closeSheet();
 				this.showHome();
 			}),
-			...(g ? this.dangerItems(g) : []),
+			g && !this.isOwner(g) ? this.item("leave", "Leave group", () => this.confirmLeave(g), "danger") : null,
 		);
 	}
 
