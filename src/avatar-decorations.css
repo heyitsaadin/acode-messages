@@ -66,22 +66,3 @@
 .am-av[data-deco=galaxy]::after{background:radial-gradient(circle at 14% 24%,#fff 0 1.3px,transparent 2.5px),radial-gradient(circle at 76% 12%,#fff 0 1.2px,transparent 2.5px),radial-gradient(circle at 92% 65%,#bdeaff 0 1.3px,transparent 2.5px),radial-gradient(circle at 28% 88%,#fff 0 1.2px,transparent 2.5px),radial-gradient(circle at 52% 2%,#f4c9ff 0 1.5px,transparent 2.5px),radial-gradient(circle at 4% 72%,#bda6ff 0 1px,transparent 2.5px),radial-gradient(circle at 66% 96%,#fff 0 1px,transparent 2.5px);animation:am-star-twinkle 1.45s ease-in-out infinite alternate}
 .am-av[data-deco=ember]::after{background:radial-gradient(circle at 18% 82%,#fff4b0 0 1.5px,transparent 3px),radial-gradient(circle at 72% 88%,#ffcf63 0 1.5px,transparent 3px),radial-gradient(circle at 91% 61%,#ff6a20 0 2px,transparent 4px),radial-gradient(circle at 42% 95%,#fff 0 1px,transparent 3px),radial-gradient(circle at 8% 58%,#ffb14a 0 1.5px,transparent 3px),radial-gradient(circle at 61% 8%,#ffe28b 0 1px,transparent 3px);animation:am-ember-rise 1.55s ease-out infinite}
 @media(prefers-reduced-motion:reduce){.am-sakura-petal{display:none!important}}
-
-
-/* Per-avatar particle layer inspired by natural particle systems and CSS motion studies.
-   Only decorated avatars receive these nodes; all motion is transform/opacity based. */
-.am-deco-particle{position:absolute;z-index:4;width:3px;height:3px;border-radius:50%;pointer-events:none;opacity:0;background:var(--particle-color,#fff);box-shadow:0 0 5px 1px var(--particle-glow,rgba(255,255,255,.7));transform:translate(-50%,-50%);animation:am-deco-particle-flight 3.6s ease-in-out var(--particle-delay,0s) infinite}
-.am-deco-particle:nth-of-type(2n){width:2px;height:2px;animation-duration:4.3s}
-.am-deco-particle:nth-of-type(3n){width:4px;height:4px;animation-duration:3.1s}
-.am-av[data-deco=neon]{--particle-color:#72ffb2;--particle-glow:rgba(57,255,136,.95)}
-.am-av[data-deco=gold],.am-av[data-deco=crown],.am-av[data-deco=halo]{--particle-color:#ffe89a;--particle-glow:rgba(255,205,70,.95)}
-.am-av[data-deco=rainbow]{--particle-color:#fff;--particle-glow:rgba(183,115,255,.95)}
-.am-av[data-deco=fire],.am-av[data-deco=ember],.am-av[data-deco=horns]{--particle-color:#ffc15b;--particle-glow:rgba(255,83,25,.95)}
-.am-av[data-deco=frost]{--particle-color:#d9fbff;--particle-glow:rgba(100,215,255,.95)}
-.am-av[data-deco=aurora]{--particle-color:#a4ffe9;--particle-glow:rgba(79,238,211,.95)}
-.am-av[data-deco=galaxy]{--particle-color:#e9d6ff;--particle-glow:rgba(155,117,255,.95)}
-.am-av[data-deco=electric]{--particle-color:#bafaff;--particle-glow:rgba(48,199,255,1)}
-.am-av[data-deco=sakura],.am-av[data-deco=ears]{--particle-color:#ffe3f0;--particle-glow:rgba(255,130,185,.95)}
-.am-av[data-deco=sakura] .am-deco-particle{border-radius:70% 15% 70% 15%;width:4px;height:6px;background:linear-gradient(145deg,#fff9fc,#ffacd0);box-shadow:0 0 6px rgba(255,137,190,.9)}
-@keyframes am-deco-particle-flight{0%{opacity:0;transform:translate(-50%,-50%) scale(.45)}14%{opacity:1}68%{opacity:.95;transform:translate(calc(-50% + var(--particle-drift)),calc(-50% - 5px)) scale(1)}100%{opacity:0;transform:translate(calc(-50% + var(--particle-drift)),calc(-50% - 10px)) scale(.35)}}
-@media(prefers-reduced-motion:reduce){.am-deco-particle{display:none!important}}
