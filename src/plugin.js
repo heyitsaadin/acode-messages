@@ -24,6 +24,7 @@ import { PhotosMethods } from "./features/photos.js";
 import { VoiceMessagesMethods } from "./features/voice-messages.js";
 import { VoiceChatMethods } from "./features/voice-chat.js";
 import { CodeShareMethods } from "./features/code-share.js";
+import { InvitesMethods } from "./features/invites.js";
 import { EncryptionMethods } from "./features/encryption.js";
 import { PrivacyMethods } from "./features/privacy.js";
 import { OnboardingMethods } from "./features/onboarding.js";
@@ -139,6 +140,7 @@ mixin(AcodeMessages, [
 	VoiceMessagesMethods,
 	VoiceChatMethods,
 	CodeShareMethods,
+	InvitesMethods,
 	EncryptionMethods,
 	PrivacyMethods,
 	OnboardingMethods,

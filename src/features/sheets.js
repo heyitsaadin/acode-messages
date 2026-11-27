@@ -124,7 +124,7 @@ export class SheetsMethods {
 
 	groupForm(kind) {
 		const create = kind === "create";
-		const $in = this.el("input", { class: "am-inp", placeholder: create ? "Group name" : "Invite code", maxlength: create ? "40" : "20", autocapitalize: "off" });
+		const $in = this.el("input", { class: "am-inp", placeholder: create ? "Group name" : "Invite link or code", maxlength: create ? "40" : "200", autocapitalize: "off" });
 		const who = this.state.user?.name;
 		if (create && who) $in.value = `${who}'s group`.slice(0, 40);
 		const $go = this.el("button", { class: "am-go", text: create ? "Create group" : "Join group" });
@@ -135,7 +135,7 @@ export class SheetsMethods {
 			$go.disabled = true;
 			$e.textContent = "";
 			try {
-				await this.joinAndOpen(create ? { action: "create", name: v } : { action: "join", code: v });
+				await this.joinAndOpen(create ? { action: "create", name: v } : { action: "join", code: this.inviteCodeFrom(v) });
 			} catch (e) {
 				$e.textContent = e.message;
 				$go.disabled = false;
