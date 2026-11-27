@@ -145,6 +145,8 @@
 .am-dm.unread small{opacity:.95;font-weight:600}
 .am-dm.unread time{opacity:.9}
 .am-dm>.am-ub{align-self:center}
+.am-ch>.am-ub{margin-left:auto}
+.am-ub.men::before{content:"@";margin-right:1px;font-weight:800}
 .am-dm{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:14px}
 .am-dm .bd{flex:1;min-width:0}
 .am-dm b{display:block;font-size:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
