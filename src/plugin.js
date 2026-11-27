@@ -158,4 +158,5 @@ mixin(AcodeMessages, [
 	ShopMethods,
 	TypingMethods,
 	UnreadMethods,
+	AlertMethods,
 ]);
