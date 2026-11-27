@@ -1,6 +1,7 @@
 import { peerOf } from "../util.js";
+import { highlight } from "./highlight.js";
 
-const SHARE_MAX_PARTS = 10; // /share sends at most this many messages for one file
+const FILE_MAX_BYTES = 1_000_000; // biggest file /share uploads (the server enforces the same limit)
 
 const CODE_MAX = 1800; // the server accepts 2000 characters per message, the fences and file name take the rest
 
