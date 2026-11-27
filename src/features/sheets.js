@@ -133,7 +133,7 @@ export class SheetsMethods {
 			$go.disabled = true;
 			$e.textContent = "";
 			try {
-				await this.joinAndOpen(create ? { action: "create", name: v } : { action: "join", code: v });
+				await this.joinAndOpen(create ? { action: "create", name: v } : { action: "join", code: this.inviteCodeFrom(v) });
 			} catch (e) {
 				$e.textContent = e.message;
 				$go.disabled = false;
