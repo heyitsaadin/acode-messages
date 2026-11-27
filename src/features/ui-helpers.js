@@ -57,9 +57,12 @@ export class UiHelpersMethods {
 			$i.src = this.bannerSrc(u.avatar_url);
 			$a.append($i);
 		}
-		// A decoration is only a data attribute; styles.css draws it. Tiny avatars (reply previews) stay plain.
-		if (u.avatar_decoration && /^[a-z]{2,12}$/.test(u.avatar_decoration) && (!size || size >= 24)) {
-			$a.dataset.deco = u.avatar_decoration;
+		// A built-in decoration is only a data attribute; styles.css draws it. A shop one ("d12") is a community
+		// picture laid over the avatar (see features/shop.js). Tiny avatars (reply previews) stay plain.
+		const deco = u.avatar_decoration;
+		if (deco && /^(?:[a-z]{2,12}|d[1-9]\d{0,8})$/.test(deco) && (!size || size >= 24)) {
+			$a.dataset.deco = deco;
+			if (/^d\d/.test(deco)) $a.append(this.decoLayer(`/api/shop?deco=${deco.slice(1)}`));
 			// Keep motion restrained: only Sakura gets a few petals, outside the portrait.
 			if (u.avatar_decoration === "sakura") {
 				const avatarRadius = (size || 40) / 2;

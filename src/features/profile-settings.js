@@ -1,8 +1,8 @@
 import { ls } from "../util.js";
 
 // Where "back" goes from each page. "profile" is the profile sheet the pill lives on.
-const UP = { main: "profile", shop: "profile", account: "main", name: "account", appearance: "main", sounds: "main" };
-const TITLE = { main: "Settings", shop: "Shop", account: "Account", name: "Display name", appearance: "Appearance", sounds: "Sounds" };
+const UP = { main: "profile", shop: "profile", shopnew: "shop", account: "main", name: "account", appearance: "main", sounds: "main" };
+const TITLE = { main: "Settings", shop: "Shop", shopnew: "New decoration", account: "Account", name: "Display name", appearance: "Appearance", sounds: "Sounds" };
 
 export class ProfileSettingsMethods {
 	/* ---------- Shop / Settings pill and the settings pages ---------- */
@@ -40,7 +40,8 @@ export class ProfileSettingsMethods {
 			name: () => this.pfsName(),
 			appearance: () => this.pfsAppearance(),
 			sounds: () => this.pfsSounds(),
-			shop: () => this.pfsShop(),
+			shop: () => this.shopPage(),
+			shopnew: () => this.shopCreate(),
 		};
 		const key = pages[page] ? page : "main";
 		const $pg = this.el("div", { class: `am-spg ${dir}` }, this.pfsHead(key), ...pages[key]());
@@ -248,11 +249,5 @@ export class ProfileSettingsMethods {
 				}),
 			),
 		];
-	}
-
-	// Placeholder until shops exist.
-	pfsShop() {
-		const el = this.el.bind(this);
-		return [el("div", { class: "am-empty" }, el("span", { class: "ring" }, this.ico("shop", 40)), el("b", { text: "Shop" }), el("span", { class: "t", text: "The shop isn't open yet. Check back soon." }))];
 	}
 }
