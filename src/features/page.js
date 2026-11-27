@@ -237,6 +237,7 @@ export class PageMethods {
 		clearTimeout(this.shieldT);
 		clearInterval(this.homeTimer);
 		this.pollTimer = this.homeTimer = null;
+		this.alertStop();
 		const $page = this.$page;
 		const tab = this.tab;
 		this.$page = null;
@@ -310,5 +311,6 @@ export class PageMethods {
 			this.loadHome(true);
 			this.refreshOnline();
 		}, HOME_MS);
+		this.alertStart();
 	}
 }
