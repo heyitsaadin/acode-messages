@@ -1,6 +1,7 @@
 import { ID, HOME_MS, ICON_CLASS } from "../constants.js";
 import { ls } from "../util.js";
 import CSS from "../styles.css";
+import DECORATION_CSS from "../avatar-decorations.css";
 
 export class PageMethods {
 	/* ---------- page lifecycle ---------- */
@@ -149,7 +150,7 @@ export class PageMethods {
 				type: "page",
 				content: this.$root,
 				tabIcon: `icon ${ICON_CLASS}`,
-				stylesheets: [`\n${CSS}`],
+				stylesheets: [`\n${CSS}\n${DECORATION_CSS}`],
 				hideQuickTools: true,
 				persistInSession: false,
 				render: true,
