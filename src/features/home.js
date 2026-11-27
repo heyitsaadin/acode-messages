@@ -136,7 +136,7 @@ export class HomeMethods {
 		const t = this.state.tab;
 		this.put(
 			this.$rail,
-			this.el("div", { class: `am-srv${t === "dm" ? " on" : ""}`, "data-t": "dm", onclick: () => this.setTab("dm") }, this.ico("chat", 26)),
+			this.el("div", { class: `am-srv${t === "dm" ? " on" : ""}${this.dmUnread() > 0 ? " unread" : ""}`, "data-t": "dm", onclick: () => this.setTab("dm") }, this.ico("chat", 26), this.unreadBadge(this.dmUnread(), "rail")),
 			groups.length ? this.el("div", { class: "am-sep" }) : null,
 			...groups.map((g) => {
 				const $s = this.el("div", { class: `am-srv${g.id === t ? " on" : ""}`, text: this.initial(g.name), "data-t": String(g.id), "data-g": "1", "data-h": String(this.hue(g.name)), onclick: () => this.setTab(g.id) });
