@@ -1,5 +1,4 @@
 import { ID, HOME_MS, ICON_CLASS } from "../constants.js";
-import { EMOJI } from "../icons.js";
 import { ls } from "../util.js";
 import CSS from "../styles.css";
 
@@ -43,7 +42,8 @@ export class PageMethods {
 		// chat
 		this.$chead = el("div", { class: "am-chead" });
 		this.$list = el("div", { class: "am-list" });
-		this.$emo = el("div", { class: "am-emo" }, ...EMOJI.map((e) => el("button", { text: e, onclick: () => this.addEmoji(e) })));
+		this.$emo = el("div", { class: "am-emo" });
+		this.emoBuild();
 		this.$ta = el("textarea", { rows: "1", placeholder: "Message" });
 		this.$ta.addEventListener("input", () => {
 			this.$ta.style.height = "48px";
@@ -62,7 +62,7 @@ export class PageMethods {
 			}
 		});
 		this.bindRows();
-		this.$emoBtn = el("button", { class: "am-btn", onclick: () => this.$emo.classList.toggle("show") }, this.ico("smile", 24));
+		this.$emoBtn = el("button", { class: "am-btn", onclick: () => this.emoToggle() }, this.ico("smile", 24));
 		this.$plus = el("button", { class: "am-btn am-plus", onclick: () => this.plusMenu() }, this.ico("plus", 26));
 		this.$send = el("button", { class: "am-send", onclick: () => this.send() }, this.ico("send", 20));
 		// Tapping the button would take focus from the message box and close the keyboard. Stop that at the
@@ -99,7 +99,7 @@ export class PageMethods {
 		this.$vbar = el("div", { class: "am-vbar", onclick: () => this.voicePanel() }, el("span", { class: "am-pdot" }), el("b", { text: "" }), this.ico("chev", 18));
 		this.syncFab();
 		this.$sug = el("div", { class: "am-sug" });
-		const chat = el("div", { class: "am-chat" }, this.$chead, this.$vbar, this.$list, this.$emo, this.$pend, this.$ctx, this.$sug, this.$bar);
+		const chat = el("div", { class: "am-chat" }, this.$chead, this.$vbar, this.$list, this.$pend, this.$ctx, this.$sug, this.$bar, this.$emo);
 
 		// overlay sheet + inline error strip
 		// A sheet ignores taps on its backdrop for a moment, so the tap that opened it can't close it again.
