@@ -135,6 +135,7 @@ mixin(AcodeMessages, [
 	FriendsMethods,
 	ProfileMethods,
 	EditProfileMethods,
+	AvatarDecorationMethods,
 	ChatMethods,
 	MentionsMethods,
 	MessageActionsMethods,
