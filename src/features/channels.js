@@ -29,11 +29,18 @@ export class ChannelsMethods {
 	channelsAdmin(g) {
 		g = this.fresh(g);
 		const n = g.channels.length;
+		const cats = g.categories || [];
+		const back = () => this.channelsAdmin(g);
+		const inCat = (c) => cats.find((k) => k.id === c.category_id)?.name;
 		this.sheet(
 			"Channels",
 			this.item("plus", "Create channel", () => this.channelForm(g)),
+			this.item("folder", "Create category", () => this.categoryForm(g, back)),
 			this.el("div", { class: "am-fl", text: `Text channels · ${n}` }),
-			...g.channels.map((c) => this.item(c.private ? "lock" : "hash", c.name, () => this.channelSettings(g, c), "", this.chanSub(c))),
+			...g.channels.map((c) => this.item(c.private ? "lock" : "hash", c.name, () => this.channelSettings(g, c), "", [inCat(c), this.chanSub(c)].filter(Boolean).join(" · "))),
+			...(cats.length
+				? [this.el("div", { class: "am-fl", text: `Categories · ${cats.length}` }), ...cats.map((k) => this.item("folder", k.name, () => this.categorySettings(g, k, back), "", `${g.channels.filter((c) => c.category_id === k.id).length} channels`))]
+				: []),
 		);
 	}
 
