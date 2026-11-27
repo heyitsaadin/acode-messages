@@ -58,7 +58,19 @@ export class UiHelpersMethods {
 			$a.append($i);
 		}
 		// A decoration is only a data attribute; styles.css draws it. Tiny avatars (reply previews) stay plain.
-		if (u.avatar_decoration && /^[a-z]{2,12}$/.test(u.avatar_decoration) && (!size || size >= 24)) $a.dataset.deco = u.avatar_decoration;
+		if (u.avatar_decoration && /^[a-z]{2,12}$/.test(u.avatar_decoration) && (!size || size >= 24)) {
+			$a.dataset.deco = u.avatar_decoration;
+			// Sakura uses real DOM particles (rather than a few static radial-gradient dots),
+			// so each petal can tumble independently around the avatar edge.
+			if (u.avatar_decoration === "sakura") {
+				const petals = 8;
+				for (let n = 0; n < petals; n++) {
+					const $petal = this.el("i", { class: "am-sakura-petal", "aria-hidden": "true" });
+					$petal.style.setProperty("--petal-index", n);
+					$a.append($petal);
+				}
+			}
+		}
 		return $a;
 	}
 
