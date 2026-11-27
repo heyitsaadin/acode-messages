@@ -1,7 +1,7 @@
-// Avatar decorations: a ring or a small accessory drawn around a profile picture.
-// The look of each one is CSS (styles.css, ".am-av[data-deco=...]"); the server only stores the name.
+// Avatar decorations: animated rings and accessories drawn around profile pictures.
+// The look of each one is CSS (avatar-decorations.css); the server only stores the name.
 // Keep this list in step with DECORATIONS in the server (lib/deco.js).
-// This file also holds the GIF picking helpers used by Edit profile (see ../gif.js for the limits).
+// This file also holds the GIF picking helpers used by Edit profile.
 import { GIF_LIMITS, gifInfo, gifProblem, isGifBytes } from "../gif.js";
 
 export const DECORATIONS = [
@@ -14,6 +14,12 @@ export const DECORATIONS = [
 	{ id: "crown", name: "Crown" },
 	{ id: "ears", name: "Cat ears" },
 	{ id: "horns", name: "Horns" },
+	{ id: "aurora", name: "Aurora" },
+	{ id: "galaxy", name: "Galaxy" },
+	{ id: "electric", name: "Electric" },
+	{ id: "sakura", name: "Sakura" },
+	{ id: "ember", name: "Ember" },
+	{ id: "orbit", name: "Orbit" },
 ];
 
 const readBytes = (file) =>
@@ -42,7 +48,6 @@ export class AvatarDecorationMethods {
 
 	/* ---------- GIF pictures ---------- */
 
-	// True when the picked file is a GIF (by its type, or by its first bytes when the phone gives no type).
 	async looksLikeGif(file) {
 		if (file.type === "image/gif") return true;
 		if (file.type && file.type !== "application/octet-stream") return false;
@@ -53,11 +58,9 @@ export class AvatarDecorationMethods {
 		}
 	}
 
-	// Checks a GIF against the limits and returns it as a data URL, untouched (so it keeps moving).
-	// kind is "avatar" or "banner". Throws an Error with a plain message if the GIF can't be used.
 	async prepGif(file, kind) {
 		const tooBig = gifProblem(null, file.size, kind);
-		if (file.size > GIF_LIMITS[kind].bytes) throw new Error(tooBig); // refused before it is even read
+		if (file.size > GIF_LIMITS[kind].bytes) throw new Error(tooBig);
 		const b = await readBytes(file);
 		const why = gifProblem(gifInfo(b), file.size, kind);
 		if (why) throw new Error(why);
