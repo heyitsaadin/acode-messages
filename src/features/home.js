@@ -197,53 +197,7 @@ export class HomeMethods {
 			this.state.tab = "dm";
 			return this.paintPanelNow();
 		}
-		const sub = `${g.member_count} member${g.member_count === 1 ? "" : "s"}`;
-		if (g.banner) {
-			const h = this.hue(g.name);
-			const $hero = el("div", { class: "am-hero" });
-			$hero.style.background = `linear-gradient(135deg,hsl(${h} 45% 36%),hsl(${(h + 50) % 360} 50% 24%))`;
-			const $img = document.createElement("img");
-			$img.alt = "";
-			$img.onerror = () => $img.remove();
-			$img.src = this.bannerSrc(g.banner);
-			$hero.append(
-				$img,
-				el("div", { class: "tt" }, el("b", { text: g.name }), el("small", { text: sub })),
-				el(
-					"div",
-					{ class: "acts" },
-					el("button", { class: "am-btn", onclick: () => this.showMembers(g) }, this.ico("users", 20)),
-					el("button", { class: "am-btn", onclick: () => this.groupMenu(g) }, this.ico("more", 20)),
-					el("button", { class: "am-btn", onclick: () => this.close() }, this.ico("close", 20)),
-				),
-			);
-			this.put(this.$ph, $hero);
-		} else {
-			this.put(
-				this.$ph,
-				el(
-					"div",
-					{ class: "am-phead" },
-					el("div", { class: "tt" }, el("b", { text: g.name }), el("small", { text: sub })),
-					el("button", { class: "am-btn", onclick: () => this.showMembers(g) }, this.ico("users", 22)),
-					el("button", { class: "am-btn", onclick: () => this.groupMenu(g) }, this.ico("more", 22)),
-					close,
-				),
-			);
-		}
-		this.put(
-			this.$plist,
-			el("div", { class: "am-lbl", style: "display:flex;align-items:center;justify-content:space-between;padding-right:2px" }, el("span", { text: "Text channels" }), this.can(g, "manage_channels") ? el("button", { class: "am-btn", style: "width:30px;height:30px", onclick: () => this.channelForm(g) }, this.ico("plus", 18)) : null),
-			...g.channels.map((c) =>
-				el(
-					"div",
-					{ class: "am-ch", onclick: () => this.openChannel({ slug: c.slug, name: c.name, kind: "text", group_id: g.id }) },
-					this.ico(c.private ? "lock" : "hash", 20),
-					el("span", { text: c.name }),
-					this.can(g, "manage_channels") ? el("button", { class: "am-btn", style: "margin-left:auto;width:32px;height:32px", onclick: (e) => (e.stopPropagation(), this.channelSettings(g, c)) }, this.ico("sliders", 18)) : null,
-				),
-			),
-		);
+		this.paintGroup(g);
 	}
 
 	dmRow(d) {
