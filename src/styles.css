@@ -570,3 +570,13 @@ button.am-chip{border:0;color:inherit;font:inherit;font-size:13px}
 .am-sme .tx small{opacity:.6;font-size:14px}
 .am-sme>.am-i:last-child{opacity:.45}
 .am-sheet .am-go.alt{background:rgba(127,127,127,.22);color:inherit}
+/* moving between the profile and the settings pages: the old page slides out a little, the new one slides in */
+@keyframes am-sfwd{from{opacity:0;transform:translateX(36px)}to{opacity:1;transform:none}}
+@keyframes am-sback{from{opacity:0;transform:translateX(-36px)}to{opacity:1;transform:none}}
+@keyframes am-sout-l{to{opacity:0;transform:translateX(-26px)}}
+@keyframes am-sout-r{to{opacity:0;transform:translateX(26px)}}
+.am-sheet .am-spg.fwd{animation:am-sfwd .34s cubic-bezier(.22,.8,.2,1) backwards}
+.am-sheet .am-spg.back{animation:am-sback .34s cubic-bezier(.22,.8,.2,1) backwards}
+.am-sheet .out-l{animation:am-sout-l .11s ease-in forwards;pointer-events:none}
+.am-sheet .out-r{animation:am-sout-r .11s ease-in forwards;pointer-events:none}
+@media (prefers-reduced-motion:reduce){.am-sheet .am-spg,.am-sheet .out-l,.am-sheet .out-r{animation:none!important}}
