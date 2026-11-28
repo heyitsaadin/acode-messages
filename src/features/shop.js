@@ -480,7 +480,6 @@ export class ShopMethods {
 			$err,
 			$go,
 			this.pfsNote("Everyone can use it once it is approved. Only upload art that is yours and suitable for everyone."),
-			...importUi,
 		];
 	}
 }
