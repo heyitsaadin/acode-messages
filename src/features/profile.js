@@ -198,6 +198,11 @@ export class ProfileMethods {
 
 		// "Who can see your profile" now lives in Settings → Appearance. The Shop / Settings pill floats at the bottom.
 		if (self) out.push(this.shareCard(ctx), this.pfsDock());
+
+		// Profile effect: a picture laid over the whole card (shop item "e12"). Last on purpose, so it does not
+		// shift the opening animation of the other parts; it never takes taps (styles.css: .am-fx).
+		const fx = data?.user ? data.user.profile_effect : u.profile_effect;
+		if (typeof fx === "string" && /^e[1-9]\d{0,8}$/.test(fx)) out.push(this.fxLayer(`/api/shop?deco=${fx.slice(1)}`));
 		return out;
 	}
 
