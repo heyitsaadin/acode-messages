@@ -467,7 +467,11 @@ export class ShopMethods {
 			this.pfsLabel("How to make one"),
 			this.pfsNote(`Draw it on a see-through ${L.side}\u00D7${L.side} picture. Your profile picture sits in the middle (240\u00D7240), so keep that area clear. Save it as a PNG, or as an animated PNG (APNG) or WebP to make it move.`),
 			this.pfsGroup(this.pfsRow({ icon: "image", title: "Open the template", sub: "A guide with the avatar circle marked", onclick: () => this.pfsOpen("shoptemplate") })),
-			this.pfsNote(`Limits: ${L.side}\u00D7${L.side}, at most ${Math.round(L.bytes / 1000)} KB. Animations can run ${L.maxMs / 1000} seconds with up to ${L.maxFrames} frames. GIF isn't supported.`),
+			this.pfsNote(
+				this.shopAdmin
+					? "No limits for you as plugin admin: any size, shape or length, as long as it is a PNG, APNG or WebP the server can receive (about 3 MB at most). Pictures that are not 288\u00D7288 may not line up with the avatar."
+					: `Limits: ${L.side}\u00D7${L.side}, at most ${Math.round(L.bytes / 1000)} KB. Animations can run ${L.maxMs / 1000} seconds with up to ${L.maxFrames} frames. GIF isn't supported.`,
+			),
 			this.pfsLabel("Your decoration"),
 			$pv,
 			el("div", { class: "am-shop-top" }, $pick),
