@@ -462,6 +462,54 @@ export class ShopMethods {
 			}
 		};
 		paint();
+
+		// Plugin admin only: paste links (one per line, optionally "link | Name"). The server downloads each one, checks it
+		// like an upload and adds it to the shop. It only fetches from the hosts in its SHOP_IMPORT_HOSTS setting.
+		const importUi = [];
+		if (this.shopAdmin) {
+			const $links = el("textarea", { class: "am-inp", rows: "4", placeholder: "One link per line. Add \" | Name\" after a link to name it.", autocapitalize: "off", spellcheck: "false" });
+			$links.style.cssText = "width:100%;resize:vertical";
+			const $ie = el("div", { class: "am-ferr" });
+			const $imp = el("button", { class: "am-go", text: "Import from links" });
+			$imp.onclick = async () => {
+				const lines = $links.value.split("\n").map((s) => s.trim()).filter(Boolean).slice(0, 500);
+				$ie.className = "am-ferr";
+				$ie.textContent = "";
+				if (!lines.length) {
+					$ie.textContent = "Paste at least one link.";
+					return;
+				}
+				$imp.disabled = true;
+				let ok = 0;
+				const failed = [];
+				const why = [];
+				for (let i = 0; i < lines.length; i++) {
+					const [link, ...rest] = lines[i].split("|");
+					const name = rest.join("|").trim();
+					$imp.textContent = `Importing ${i + 1} of ${lines.length}\u2026`;
+					try {
+						await this.api("shop", { method: "POST", body: JSON.stringify({ action: "import", url: link.trim(), name: name || undefined }) });
+						ok++;
+					} catch (e) {
+						failed.push(lines[i]);
+						why.push(`${link.trim().split("/").pop() || link.trim()}: ${e.message}`);
+					}
+				}
+				this.shopCache = {};
+				if (!failed.length) {
+					this.shopTab = "mine";
+					this.shopNote = `Imported ${ok} decoration${ok === 1 ? "" : "s"}. They are live in the shop.`;
+					this.pfsOpen("shop", "back");
+					return;
+				}
+				$links.value = failed.join("\n"); // keep only the ones that did not work, so you can fix and retry
+				$ie.textContent = `Imported ${ok}, skipped ${failed.length}. ${why.slice(0, 3).join(" \u00B7 ")}${why.length > 3 ? ` \u00B7 and ${why.length - 3} more` : ""}`;
+				$imp.disabled = false;
+				$imp.textContent = "Import from links";
+			};
+			importUi.push(this.pfsLabel("Import from links (admin)"), $links, $ie, $imp, this.pfsNote("The server checks each picture like an upload and only downloads from the sites it is set up for. Only import art you own or have permission to use."));
+		}
+
 		return [
 			this.pfsLabel("How to make one"),
 			this.pfsNote(`Draw it on a see-through ${L.side}\u00D7${L.side} picture. Your profile picture sits in the middle (240\u00D7240), so keep that area clear. Save it as a PNG, or as an animated PNG (APNG) or WebP to make it move.`),
