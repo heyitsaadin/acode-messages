@@ -1,5 +1,4 @@
 import { DECO_LIMITS, cleanDecoName, decoInfo, decoProblem } from "../deco-image.js";
-import { ls } from "../util.js";
 
 // The shop: community-made avatar decorations, free for now.
 //   decorations     a 288x288 picture that frames a profile picture (equipped as "d12")
