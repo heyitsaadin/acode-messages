@@ -420,11 +420,12 @@ export class ShopMethods {
 				$f.remove();
 				if (!f) return;
 				try {
-					if (f.size > L.bytes) throw new Error(decoProblem(null, f.size));
+					const admin = !!this.shopAdmin; // the plugin admin has no size, shape or length limits (the server agrees)
+					if (!admin && f.size > L.bytes) throw new Error(decoProblem(null, f.size));
 					if (/gif/i.test(f.type) || /\.gif$/i.test(f.name)) throw new Error("GIF can't be used here, its edges are not smooth. Save the animation as an APNG or WebP instead.");
 					const bytes = await shopReadBytes(f);
 					const info = decoInfo(bytes);
-					const why = decoProblem(info, bytes.length);
+					const why = admin ? (info ? null : "That file could not be read. Use a PNG, an animated PNG (APNG) or a WebP picture.") : decoProblem(info, bytes.length);
 					if (why) throw new Error(why);
 					picked = { image: `data:${info.mime};base64,${shopBase64(bytes)}`, info };
 				} catch (e) {
