@@ -65,7 +65,7 @@ export class ProfileSettingsMethods {
 	}
 
 	pfsHead(page) {
-		return this.el("div", { class: "am-sth" }, this.el("button", { class: "am-btn", "aria-label": "Back", onclick: () => this.pfsBack() }, this.ico("back", 24)), this.el("h3", { text: TITLE[page] || "Settings" }));
+		return this.el("div", { class: "am-sth" }, this.el("button", { class: "am-btn", "aria-label": "Back", onclick: () => this.pfsBack() }, this.ico("back", 24)), this.el("h3", { text: page === "shopnew" && this.shopNewKind === "effect" ? "New profile effect" : TITLE[page] || "Settings" }));
 	}
 
 	pfsLabel(text) {

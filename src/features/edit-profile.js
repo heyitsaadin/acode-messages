@@ -53,10 +53,11 @@ export class EditProfileMethods {
 		if (nu.custom_name) m.name = nu.name;
 		if (nu.custom_avatar) m.avatar_url = nu.avatar_url;
 		ls.set("am-me", m);
-		this.state.user = { ...this.state.user, name: nu.name, avatar_url: nu.avatar_url, avatar_decoration: deco };
+		const fx = nu.profile_effect || null;
+		this.state.user = { ...this.state.user, name: nu.name, avatar_url: nu.avatar_url, avatar_decoration: deco, profile_effect: fx };
 		const c = ls.get(`am-prof:${id}`);
 		if (c) {
-			c.user = { ...c.user, name: nu.name, avatar_url: nu.avatar_url, avatar_decoration: deco, banner: nu.banner || null, about: nu.about || "", ...(nu.visibility ? { visibility: nu.visibility, onboarded: nu.onboarded } : {}) };
+			c.user = { ...c.user, name: nu.name, avatar_url: nu.avatar_url, avatar_decoration: deco, profile_effect: fx, banner: nu.banner || null, about: nu.about || "", ...(nu.visibility ? { visibility: nu.visibility, onboarded: nu.onboarded } : {}) };
 			ls.set(`am-prof:${id}`, c);
 		}
 	}

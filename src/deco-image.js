@@ -148,6 +148,23 @@ export function decoProblem(info, size) {
   return null;
 }
 
+// Profile effects: a see-through picture laid over a whole profile card, exactly 360x640 (portrait, 9:16).
+// Same file types and animation limits as decorations. Keep in step with EFFECT_LIMITS in the server (lib/decoimg.js).
+export const EFFECT_LIMITS = { w: 360, h: 640, bytes: 2_500_000, maxMs: 10000, maxFrames: 100, minName: 2, maxName: 24 };
+
+// Why this picture can't be used as a profile effect, or null when it is fine.
+export function effectProblem(info, size) {
+  const L = EFFECT_LIMITS;
+  if (size > L.bytes) return `That file is too big. A profile effect can be at most ${Math.round(L.bytes / 1000)} KB.`;
+  if (!info) return "That file could not be read. Use a PNG, an animated PNG (APNG) or a WebP picture.";
+  if (info.w !== L.w || info.h !== L.h) return `That picture is ${info.w}x${info.h}. A profile effect must be exactly ${L.w}x${L.h}.`;
+  if (info.outside) return `A frame of that animation reaches outside the ${L.w}x${L.h} picture.`;
+  if (!info.alpha) return "That picture has no see-through background. A profile effect needs a transparent one so the profile shows through.";
+  if (info.animated && info.ms > L.maxMs) return `That animation is too long. It can run for at most ${L.maxMs / 1000} seconds.`;
+  if (info.animated && info.frames > L.maxFrames) return `That animation has too many frames (the limit is ${L.maxFrames}).`;
+  return null;
+}
+
 // A tidy name, or null when it is too short, too long or has odd characters.
 export function cleanDecoName(v) {
   const n = String(v ?? "").trim().replace(/\s+/g, " ");
