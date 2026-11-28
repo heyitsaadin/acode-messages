@@ -4,7 +4,7 @@
 // The server runs the same checks (lib/decoimg.js in acode-messages-server) because it can't trust the plugin;
 // running them here too gives a quick, friendly message before anything is uploaded. Keep the two in step.
 // Every file in src/ is bundled into one scope, so the helper names below start with "deco" to stay unique.
-export const DECO_LIMITS = { side: 288, bytes: 400_000, maxMs: 5000, maxFrames: 100, minName: 2, maxName: 24 };
+export const DECO_LIMITS = { side: 288, bytes: 700_000, maxMs: 10000, maxFrames: 100, minName: 2, maxName: 24 };
 
 const decoBe32 = (b, i) => ((b[i] << 24) | (b[i + 1] << 16) | (b[i + 2] << 8) | b[i + 3]) >>> 0;
 const decoBe16 = (b, i) => (b[i] << 8) | b[i + 1];
