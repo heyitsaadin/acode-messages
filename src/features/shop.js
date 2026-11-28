@@ -1,11 +1,15 @@
-import { DECO_LIMITS, cleanDecoName, decoInfo, decoProblem } from "../deco-image.js";
+import { DECO_LIMITS, EFFECT_LIMITS, cleanDecoName, decoInfo, decoProblem, effectProblem } from "../deco-image.js";
+import { ls } from "../util.js";
 
-// The decoration shop: community-made pictures that frame a profile picture, free for now.
+// The shop: community-made pictures, free for now. Two categories share one shop:
+//   decorations     a 288x288 picture that frames a profile picture (equipped as "d12")
+//   profile effects a 360x640 picture laid over your whole profile card (equipped as "e12")
 // The server side is lib/shop.js in acode-messages-server (reached as /api/shop). Equipping one goes through POST /api/me.
 // Every file in src/ is bundled into one scope, so the top-level names here start with "shop".
 
-// The template picture (transparent 288x288 PNG) lives in the repo at project/decoration-template.png.
+// The template pictures (transparent PNGs) live in the repo in project/.
 const SHOP_TEMPLATE = "https://raw.githubusercontent.com/heyitsaadin/acode-messages/main/project/decoration-template.png";
+const SHOP_FX_TEMPLATE = "https://raw.githubusercontent.com/heyitsaadin/acode-messages/main/project/effect-template.png";
 const SHOP_STILLS = 120; // first frames kept in memory
 
 const shopReadBytes = (file) =>
@@ -23,11 +27,18 @@ const shopBase64 = (b) => {
 };
 
 export class ShopMethods {
-	/* ---------- decoration pictures ---------- */
+	/* ---------- pictures ---------- */
 
 	// The picture laid over an avatar. styles.css sizes it at 120% of the avatar: the 288px picture has the 240px circle in the middle.
 	decoLayer(src) {
 		const $d = this.el("span", { class: "am-deco-img" });
+		$d.style.backgroundImage = `url("${this.bannerSrc(src)}")`;
+		return $d;
+	}
+
+	// The picture laid over a whole profile card (styles.css: .am-fx covers the card from the top at 9:16).
+	fxLayer(src) {
+		const $d = this.el("span", { class: "am-fx" });
 		$d.style.backgroundImage = `url("${this.bannerSrc(src)}")`;
 		return $d;
 	}
@@ -38,7 +49,7 @@ export class ShopMethods {
 		return `/api/shop?deco=${Number(item.id)}`;
 	}
 
-	// The first frame of a picture as a still image, so a grid of animated decorations stays calm and light.
+	// The first frame of a picture as a still image, so a grid of animated items stays calm and light.
 	// Calls done(dataUrl), or done(null) when it can't be made (the caller then just shows the live picture).
 	shopStill(src, done) {
 		const keep = src.startsWith("/");
@@ -65,15 +76,10 @@ export class ShopMethods {
 		im.src = this.bannerSrc(src);
 	}
 
-	// Your own avatar with a decoration picture on it. Animated ones show their first frame until you tap the little play button.
-	shopPreview(src, animated, size, key) {
-		const el = this.el.bind(this);
-		const $a = this.avatar({ name: this.me.name, avatar_url: this.me.avatar_url }, size);
-		$a.dataset.deco = key; // only so the picture may stick out past the avatar's circle
-		const $layer = this.decoLayer(src);
-		$a.append($layer);
-		const $pv = el("div", { class: "am-shop-pv" }, $a);
-		if (!animated) return $pv;
+	// Animated pictures show their first frame until you tap the little play button. $layer is the element that has the
+	// picture as its background, $host is where the button goes.
+	shopAnimate($host, $layer, src, animated) {
+		if (!animated) return;
 		const live = $layer.style.backgroundImage;
 		let playing = false;
 		const still = () =>
@@ -82,29 +88,94 @@ export class ShopMethods {
 			});
 		$layer.style.backgroundImage = "none";
 		still();
-		const $btn = el("button", { class: "am-shop-an", type: "button", "aria-label": "Play or pause the animation", text: "\u25B6" });
+		const $btn = this.el("button", { class: "am-shop-an", type: "button", "aria-label": "Play or pause the animation", text: "\u25B6" });
 		$btn.onclick = () => {
 			playing = !playing;
 			$btn.textContent = playing ? "\u25A0" : "\u25B6";
 			if (playing) $layer.style.backgroundImage = live;
 			else still();
 		};
-		$pv.append($btn);
+		$host.append($btn);
+	}
+
+	// Your own avatar with a decoration picture on it.
+	shopPreview(src, animated, size, key) {
+		const el = this.el.bind(this);
+		const $a = this.avatar({ name: this.me.name, avatar_url: this.me.avatar_url }, size);
+		$a.dataset.deco = key; // only so the picture may stick out past the avatar's circle
+		const $layer = this.decoLayer(src);
+		$a.append($layer);
+		const $pv = el("div", { class: "am-shop-pv" }, $a);
+		this.shopAnimate($pv, $layer, src, animated);
 		return $pv;
+	}
+
+	// A small copy of your profile card (your banner, picture and a few lines for the rest) with the effect laid over it,
+	// so you can see how it will look. big = the larger one used while creating.
+	shopFxPreview(src, animated, big) {
+		const el = this.el.bind(this);
+		const me = this.me;
+		const $bn = el("div", { class: "bn" });
+		const banner = ls.get(`am-prof:${Number(me.id)}`)?.user?.banner;
+		if (banner) {
+			const $i = document.createElement("img");
+			$i.alt = "";
+			$i.onerror = () => $i.remove();
+			$i.src = this.bannerSrc(banner);
+			$bn.append($i);
+		}
+		const $av = el("div", { class: "av" }, this.avatar({ name: me.name, avatar_url: me.avatar_url }, big ? 40 : 26));
+		const $layer = this.fxLayer(src);
+		const $pv = el("div", { class: `am-fx-pv${big ? " lg" : ""}` }, $bn, $av, el("i", { class: "ln a" }), el("i", { class: "ln b" }), el("i", { class: "cd" }), $layer);
+		this.shopAnimate($pv, $layer, src, animated);
+		return el("div", { class: "am-shop-pv" }, $pv);
+	}
+
+	/* ---------- what is equipped ---------- */
+
+	// The key ("d12" / "e12") of what you have on right now for that kind, or null.
+	shopEquippedKey(kind) {
+		if (kind === "effect") return (this.shopFxNow !== undefined ? this.shopFxNow : this.me.profile_effect) || null;
+		return this.me.avatar_decoration || null;
+	}
+
+	// Your own profile says which effect you have on (the home data does not carry it), so read it when the shop opens.
+	shopLoadFx() {
+		const id = Number(this.me.id);
+		this.api(`profile?user=${id}`, { cache: "no-store" })
+			.then((d) => {
+				this.shopFxNow = d?.user?.profile_effect || null;
+				if (this.shopUi) this.shopRender();
+			})
+			.catch(() => {});
+	}
+
+	shopKey(tab) {
+		return tab === "review" ? "review" : `${tab}:${this.shopKind}`;
+	}
+
+	// Forget the cached lists of that tab, for both kinds.
+	shopDrop(tab) {
+		if (!this.shopCache) return;
+		delete this.shopCache[`${tab}:decoration`];
+		delete this.shopCache[`${tab}:effect`];
 	}
 
 	/* ---------- the shop page (Shop button on your profile) ---------- */
 
 	shopPage() {
 		const el = this.el.bind(this);
-		const ui = (this.shopUi = { $tabs: el("div", { class: "am-shop-tabs" }), $msg: el("div"), $body: el("div") });
+		const ui = (this.shopUi = { $tabs: el("div", { class: "am-shop-tabs" }), $cats: el("div", { class: "am-shop-tabs" }), $msg: el("div"), $body: el("div") });
 		if (this.shopTab !== "mine" && !(this.shopTab === "review" && this.shopAdmin)) this.shopTab = "browse";
+		if (this.shopKind !== "effect") this.shopKind = "decoration";
+		this.shopFxNow = undefined;
+		this.shopLoadFx();
 		const note = this.shopNote;
 		this.shopNote = "";
 		this.shopPaintTabs();
 		if (note) this.shopSay(note, true);
 		this.shopShow(this.shopTab);
-		return [ui.$tabs, ui.$msg, ui.$body];
+		return [ui.$tabs, ui.$cats, ui.$msg, ui.$body];
 	}
 
 	shopPaintTabs() {
@@ -115,6 +186,25 @@ export class ShopMethods {
 		this.put(
 			ui.$tabs,
 			...tabs.map(([k, label]) => this.el("button", { class: `am-shop-tab${this.shopTab === k ? " on" : ""}`, type: "button", text: label, onclick: () => this.shopShow(k) })),
+		);
+		// The category: decorations or profile effects. The review queue holds both, so it has no switch.
+		const kinds = [["decoration", "Decorations"], ["effect", "Profile effects"]];
+		this.put(
+			ui.$cats,
+			...(this.shopTab === "review"
+				? []
+				: kinds.map(([k, label]) =>
+						this.el("button", {
+							class: `am-shop-tab cat${this.shopKind === k ? " on" : ""}`,
+							type: "button",
+							text: label,
+							onclick: () => {
+								if (this.shopKind === k) return;
+								this.shopKind = k;
+								this.shopShow(this.shopTab);
+							},
+						}),
+					)),
 		);
 	}
 
@@ -132,24 +222,26 @@ export class ShopMethods {
 		this.shopTab = tab;
 		this.shopPaintTabs();
 		this.shopSay("");
-		if (this.shopCache?.[tab]) this.shopRender();
+		const kind = this.shopKind;
+		const key = this.shopKey(tab);
+		if (this.shopCache?.[key]) this.shopRender();
 		else {
 			const card = () => this.el("div", { class: "am-shop-card" }, this.sk(64, 64, 32), this.sk("70%", 12, 6), this.sk("50%", 10, 6));
 			this.put(ui.$body, this.el("div", { class: "am-shop-grid" }, card(), card(), card(), card()));
 		}
-		const path = tab === "mine" ? "shop?view=mine" : tab === "review" ? "shop?view=pending" : "shop?sort=new&limit=60";
+		const path = tab === "mine" ? `shop?view=mine&kind=${kind}` : tab === "review" ? "shop?view=pending" : `shop?sort=new&limit=60&kind=${kind}`;
 		try {
 			const data = await this.api(path, { cache: "no-store" });
-			if (this.shopUi !== ui || this.shopTab !== tab) return;
-			this.shopCache = { ...(this.shopCache || {}), [tab]: data };
+			if (this.shopUi !== ui || this.shopTab !== tab || this.shopKind !== kind) return;
+			this.shopCache = { ...(this.shopCache || {}), [key]: data };
 			if (typeof data.admin === "boolean" && data.admin !== this.shopAdmin) {
 				this.shopAdmin = data.admin;
 				this.shopPaintTabs();
 			}
 			this.shopRender();
 		} catch (e) {
-			if (this.shopUi !== ui || this.shopTab !== tab) return;
-			if (!this.shopCache?.[tab]) this.put(ui.$body);
+			if (this.shopUi !== ui || this.shopTab !== tab || this.shopKind !== kind) return;
+			if (!this.shopCache?.[key]) this.put(ui.$body);
 			this.shopSay(/HTTP 404/.test(e.message) ? "Your server doesn't have the shop yet. Update acode-messages-server first." : e.message);
 		}
 	}
@@ -167,12 +259,28 @@ export class ShopMethods {
 
 	shopRender() {
 		const ui = this.shopUi;
-		const data = this.shopCache?.[this.shopTab];
+		const data = this.shopCache?.[this.shopKey(this.shopTab)];
 		if (!ui || !data) return;
 		const el = this.el.bind(this);
+		const kind = this.shopKind;
+		const fx = kind === "effect";
+		const noun = fx ? "profile effect" : "decoration";
 		const grid = (items, make) => el("div", { class: "am-shop-grid" }, ...items.map(make));
 		const empty = (title, text) => el("div", { class: "am-empty" }, el("span", { class: "ring" }, this.ico("shop", 40)), el("b", { text: title }), el("span", { class: "t", text }));
-		const create = () => el("div", { class: "am-shop-top" }, el("button", { class: "am-pillb", type: "button", text: "+ Create a decoration", onclick: () => this.pfsOpen("shopnew") }));
+		const create = () =>
+			el(
+				"div",
+				{ class: "am-shop-top" },
+				el("button", {
+					class: "am-pillb",
+					type: "button",
+					text: `+ Create a ${noun}`,
+					onclick: () => {
+						this.shopNewKind = kind;
+						this.pfsOpen("shopnew");
+					},
+				}),
+			);
 		const api = (body) => this.api("shop", { method: "POST", body: JSON.stringify(body) });
 
 		if (this.shopTab === "browse") {
@@ -182,7 +290,7 @@ export class ShopMethods {
 					data.items = data.items.filter((x) => x.id !== it.id);
 				});
 			const out = [create()];
-			if (!data.items.length) out.push(empty("Nothing here yet", "Be the first to make a decoration for everyone to use."));
+			if (!data.items.length) out.push(empty("Nothing here yet", `Be the first to make a ${noun} for everyone to use.`));
 			else out.push(grid(data.items, (it) => this.shopCardEl(it, this.shopUseBtn(it), this.shopAdmin ? this.shopSureBtn("Take down", "Tap again to confirm", () => takeDown(it)) : null)));
 			if (data.more) {
 				out.push(
@@ -192,7 +300,7 @@ export class ShopMethods {
 						text: "Show more",
 						onclick: () =>
 							this.shopDo(async () => {
-								const d = await this.api(`shop?sort=new&limit=60&offset=${data.items.length}`, { cache: "no-store" });
+								const d = await this.api(`shop?sort=new&limit=60&kind=${kind}&offset=${data.items.length}`, { cache: "no-store" });
 								data.items.push(...d.items);
 								data.more = !!d.more;
 							}),
@@ -209,15 +317,20 @@ export class ShopMethods {
 					await api({ action: "remove", id: it.id });
 					data.created = data.created.filter((x) => x.id !== it.id);
 					data.owned = data.owned.filter((x) => x.id !== it.id);
-					if (this.shopCache) delete this.shopCache.browse;
-					if (this.me.avatar_decoration === it.key) this.state.user = { ...this.state.user, avatar_decoration: null };
+					this.shopDrop("browse");
+					if (it.kind === "effect") {
+						if (this.shopEquippedKey("effect") === it.key) {
+							this.shopFxNow = null;
+							this.state.user = { ...this.state.user, profile_effect: null };
+						}
+					} else if (this.me.avatar_decoration === it.key) this.state.user = { ...this.state.user, avatar_decoration: null };
 				});
 			const out = [create(), this.pfsLabel("Your collection")];
-			if (this.me.avatar_decoration) {
-				out.push(el("div", { class: "am-shop-top" }, el("button", { class: "am-pillb danger", type: "button", text: "Remove current decoration", onclick: () => this.shopDo(() => this.shopEquip(null)) })));
+			if (this.shopEquippedKey(kind)) {
+				out.push(el("div", { class: "am-shop-top" }, el("button", { class: "am-pillb danger", type: "button", text: `Remove current ${fx ? "effect" : "decoration"}`, onclick: () => this.shopDo(() => this.shopEquip(null, kind)) })));
 			}
 			if (data.owned.length) out.push(grid(data.owned, (it) => this.shopCardEl(it, this.shopUseBtn(it))));
-			else out.push(this.pfsNote("Decorations you get from the shop show up here."));
+			else out.push(this.pfsNote(`${fx ? "Profile effects" : "Decorations"} you get from the shop show up here.`));
 			if (data.created.length) {
 				const status = (it) => (it.status === "approved" ? "Live in the shop" : it.status === "pending" ? "Waiting for review" : `Rejected${it.reason ? `: ${it.reason}` : ""}`);
 				out.push(
@@ -231,14 +344,14 @@ export class ShopMethods {
 			return;
 		}
 
-		// Review queue (plugin admin only).
+		// Review queue (plugin admin only). It holds decorations and profile effects together.
 		const review = (it, approve, reason) =>
 			this.shopDo(async () => {
 				await api({ action: "review", id: it.id, approve, reason });
 				data.items = data.items.filter((x) => x.id !== it.id);
-				if (this.shopCache) delete this.shopCache.browse;
+				this.shopDrop("browse");
 			});
-		if (!data.items.length) return this.put(ui.$body, empty("Nothing waiting", "New decorations show up here to be approved."));
+		if (!data.items.length) return this.put(ui.$body, empty("Nothing waiting", "New decorations and profile effects show up here to be approved."));
 		this.put(
 			ui.$body,
 			grid(data.items, (it) => {
@@ -254,20 +367,26 @@ export class ShopMethods {
 
 	shopCardEl(item, ...kids) {
 		const el = this.el.bind(this);
+		const fx = item.kind === "effect";
 		const by = `by ${item.creator?.name || "someone"}`;
+		const bits = [by];
+		if (this.shopTab === "review") bits.push(fx ? "profile effect" : "decoration");
+		if (item.animated) bits.push("animated");
+		const on = this.shopEquippedKey(item.kind) === item.key;
 		return el(
 			"div",
-			{ class: `am-shop-card${this.me.avatar_decoration === item.key ? " on" : ""}` },
-			this.shopPreview(this.shopImg(item), item.animated, 64, item.key),
+			{ class: `am-shop-card${fx ? " fx" : ""}${on ? " on" : ""}` },
+			fx ? this.shopFxPreview(this.shopImg(item), item.animated, false) : this.shopPreview(this.shopImg(item), item.animated, 64, item.key),
 			el("b", { text: item.name }),
-			el("small", { text: item.animated ? `${by} \u00B7 animated` : by }),
+			el("small", { text: bits.join(" \u00B7 ") }),
 			...kids,
 		);
 	}
 
 	// Get it (free) -> Equip -> Unequip.
 	shopUseBtn(item) {
-		const on = this.me.avatar_decoration === item.key;
+		const kind = item.kind === "effect" ? "effect" : "decoration";
+		const on = this.shopEquippedKey(kind) === item.key;
 		const free = !(item.price > 0);
 		const $b = this.el("button", { class: `am-pillb${on ? " danger" : ""}`, type: "button", text: !item.owned ? (free ? "Get it free" : "Not available") : on ? "Unequip" : "Equip" });
 		if (!item.owned && !free) $b.disabled = true;
@@ -277,8 +396,8 @@ export class ShopMethods {
 					await this.api("shop", { method: "POST", body: JSON.stringify({ action: "claim", id: item.id }) });
 					item.owned = true;
 					item.claims = (item.claims || 0) + 1;
-					if (this.shopCache) delete this.shopCache.mine; // reload your collection next time
-				} else await this.shopEquip(on ? null : item.key);
+					this.shopDrop("mine"); // reload your collection next time
+				} else await this.shopEquip(on ? null : item.key, kind);
 			});
 		return $b;
 	}
@@ -305,10 +424,12 @@ export class ShopMethods {
 		return $b;
 	}
 
-	// Put a decoration on (key like "d12") or take it off (null). The server checks you own it.
-	async shopEquip(key) {
-		const { user: nu } = await this.api("me", { method: "POST", body: JSON.stringify({ decoration: key }) });
+	// Put an item on (key like "d12" or "e12") or take it off (null). The server checks you own it.
+	async shopEquip(key, kind) {
+		const fx = kind === "effect";
+		const { user: nu } = await this.api("me", { method: "POST", body: JSON.stringify(fx ? { effect: key } : { decoration: key }) });
 		this.applyMe(nu);
+		if (fx) this.shopFxNow = nu.profile_effect || null;
 		this.paintHome();
 		this.refreshHome();
 	}
@@ -317,19 +438,23 @@ export class ShopMethods {
 
 	shopTemplate() {
 		const el = this.el.bind(this);
-		const L = DECO_LIMITS;
+		const fx = this.shopNewKind === "effect";
+		const L = fx ? EFFECT_LIMITS : DECO_LIMITS;
+		const W = fx ? L.w : L.side;
+		const H = fx ? L.h : L.side;
+		const tpl = fx ? SHOP_FX_TEMPLATE : SHOP_TEMPLATE;
 		const $err = el("div", { class: "am-ferr" });
-		const $img = el("img", { alt: "Decoration template: 288 by 288 canvas with a 240 by 240 avatar circle in the middle" });
-		$img.style.cssText = "display:block;width:min(100%,288px);aspect-ratio:1;margin:14px auto;background:#fff;border-radius:12px";
+		const $img = el("img", { alt: fx ? `Profile effect template: ${W} by ${H} canvas with the banner area and the profile picture circle marked` : `Decoration template: ${W} by ${H} canvas with a 240 by 240 avatar circle in the middle` });
+		$img.style.cssText = fx ? "display:block;width:min(100%,216px);aspect-ratio:9/16;margin:14px auto;background:#fff;border-radius:12px" : "display:block;width:min(100%,288px);aspect-ratio:1;margin:14px auto;background:#fff;border-radius:12px";
 		$img.onerror = () => {
 			$img.style.display = "none";
 			$err.textContent = "Couldn't load the template. Check your connection and try again.";
 		};
-		$img.src = SHOP_TEMPLATE;
+		$img.src = tpl;
 
 		// Native download: ask where to save (Acode's folder picker), fetch the PNG, write it with Acode's file system.
 		// Older Acode without those modules falls back to opening the link in the browser.
-		const saveName = "decoration-template.png";
+		const saveName = fx ? "profile-effect-template.png" : "decoration-template.png";
 		let busy = false;
 		const $dl = this.pfsRow({ icon: "image", title: "Download template", sub: `Pick a folder and save ${saveName}`, onclick: () => save() });
 		const say = (t) => {
@@ -345,7 +470,7 @@ export class ShopMethods {
 				fs = acode.require("fs");
 			} catch {}
 			if (typeof fileBrowser !== "function" || typeof fs !== "function") {
-				window.open(SHOP_TEMPLATE, "_system");
+				window.open(tpl, "_system");
 				return;
 			}
 			let dir;
@@ -358,7 +483,7 @@ export class ShopMethods {
 			busy = true;
 			say("Saving\u2026");
 			try {
-				const r = await fetch(SHOP_TEMPLATE, { cache: "no-store" });
+				const r = await fetch(tpl, { cache: "no-store" });
 				if (!r.ok) throw new Error(`HTTP ${r.status}`);
 				const buf = await r.arrayBuffer();
 				const url = await (await fs(dir.url)).createFile(saveName, "");
@@ -374,18 +499,22 @@ export class ShopMethods {
 		const $done = el("button", { class: "am-go", text: "Done" });
 		$done.onclick = () => this.pfsBack();
 		return [
-			this.pfsNote(`This is the guide for your ${L.side}\u00D7${L.side} picture. The pink circle is where your profile picture sits, so keep it clear. Draw around it, hide or delete the guide, then export a see-through PNG.`),
+			this.pfsNote(
+				fx
+					? `This is the guide for your ${W}\u00D7${H} picture. The top box is the banner and the pink circle is where your profile picture sits, so keep the picture and your name readable. Draw over the card, hide or delete the guide, then export a see-through PNG.`
+					: `This is the guide for your ${W}\u00D7${H} picture. The pink circle is where your profile picture sits, so keep it clear. Draw around it, hide or delete the guide, then export a see-through PNG.`,
+			),
 			$img,
 			$err,
 			this.pfsGroup(
 				$dl,
-				this.pfsRow({ icon: "image", title: "Open in browser", sub: "Backup: press and hold the picture there to save it", onclick: () => window.open(SHOP_TEMPLATE, "_system") }),
+				this.pfsRow({ icon: "image", title: "Open in browser", sub: "Backup: press and hold the picture there to save it", onclick: () => window.open(tpl, "_system") }),
 				this.pfsRow({
 					icon: "file",
 					title: "Copy link",
 					sub: "Link to the template PNG",
 					onclick: async () => {
-						await this.copy(SHOP_TEMPLATE);
+						await this.copy(tpl);
 						this.flash("Link copied");
 					},
 				}),
@@ -398,15 +527,20 @@ export class ShopMethods {
 
 	shopCreate() {
 		const el = this.el.bind(this);
-		const L = DECO_LIMITS;
+		const kind = this.shopNewKind === "effect" ? "effect" : "decoration";
+		const fx = kind === "effect";
+		const L = fx ? EFFECT_LIMITS : DECO_LIMITS;
+		const problem = fx ? effectProblem : decoProblem;
+		const W = fx ? L.w : L.side;
+		const H = fx ? L.h : L.side;
 		let picked = null; // { image (data URL), info }
 		const $pv = el("div", { class: "am-shop-new" });
 		const $pick = el("button", { class: "am-pillb", type: "button" });
-		const $name = el("input", { class: "am-inp", placeholder: "Name, for example Dark Moon", maxlength: String(L.maxName), autocapitalize: "off" });
+		const $name = el("input", { class: "am-inp", placeholder: fx ? "Name, for example Trapped Souls" : "Name, for example Dark Moon", maxlength: String(L.maxName), autocapitalize: "off" });
 		const $err = el("div", { class: "am-ferr" });
 		const $go = el("button", { class: "am-go", text: "Submit for review" });
 		const paint = () => {
-			this.put($pv, picked ? this.shopPreview(picked.image, picked.info.animated, 96, "d0") : el("div", { class: "am-shop-ph", text: "Your picture shows here" }));
+			this.put($pv, picked ? (fx ? this.shopFxPreview(picked.image, picked.info.animated, true) : this.shopPreview(picked.image, picked.info.animated, 96, "d0")) : el("div", { class: "am-shop-ph", text: "Your picture shows here" }));
 			$pick.textContent = picked ? "Choose a different picture" : "Choose picture";
 		};
 		$pick.onclick = () => {
@@ -421,11 +555,11 @@ export class ShopMethods {
 				if (!f) return;
 				try {
 					const admin = !!this.shopAdmin; // the plugin admin has no size, shape or length limits (the server agrees)
-					if (!admin && f.size > L.bytes) throw new Error(decoProblem(null, f.size));
+					if (!admin && f.size > L.bytes) throw new Error(problem(null, f.size));
 					if (/gif/i.test(f.type) || /\.gif$/i.test(f.name)) throw new Error("GIF can't be used here, its edges are not smooth. Save the animation as an APNG or WebP instead.");
 					const bytes = await shopReadBytes(f);
 					const info = decoInfo(bytes);
-					const why = admin ? (info ? null : "That file could not be read. Use a PNG, an animated PNG (APNG) or a WebP picture.") : decoProblem(info, bytes.length);
+					const why = admin ? (info ? null : "That file could not be read. Use a PNG, an animated PNG (APNG) or a WebP picture.") : problem(info, bytes.length);
 					if (why) throw new Error(why);
 					picked = { image: `data:${info.mime};base64,${shopBase64(bytes)}`, info };
 				} catch (e) {
@@ -451,10 +585,11 @@ export class ShopMethods {
 			$go.textContent = "Submitting\u2026";
 			$err.textContent = "";
 			try {
-				const r = await this.api("shop", { method: "POST", body: JSON.stringify({ action: "create", name, image: picked.image }) });
+				const r = await this.api("shop", { method: "POST", body: JSON.stringify({ action: "create", kind, name, image: picked.image }) });
 				this.shopCache = {};
 				this.shopTab = "mine";
-				this.shopNote = r.item?.status === "approved" ? "Your decoration is live in the shop." : "Submitted! It shows up in the shop once it is approved.";
+				this.shopKind = kind;
+				this.shopNote = r.item?.status === "approved" ? `Your ${fx ? "profile effect" : "decoration"} is live in the shop.` : "Submitted! It shows up in the shop once it is approved.";
 				this.pfsOpen("shop", "back");
 			} catch (e) {
 				$err.textContent = /HTTP 404/.test(e.message) ? "Your server doesn't have the shop yet. Update acode-messages-server first." : e.message;
@@ -463,16 +598,23 @@ export class ShopMethods {
 			}
 		};
 		paint();
+		const limits = fx
+			? `Limits: ${W}\u00D7${H}, at most ${Math.round(L.bytes / 1000)} KB. Animations can run ${L.maxMs / 1000} seconds with up to ${L.maxFrames} frames. GIF isn't supported.`
+			: `Limits: ${W}\u00D7${H}, at most ${Math.round(L.bytes / 1000)} KB. Animations can run ${L.maxMs / 1000} seconds with up to ${L.maxFrames} frames. GIF isn't supported.`;
 		return [
 			this.pfsLabel("How to make one"),
-			this.pfsNote(`Draw it on a see-through ${L.side}\u00D7${L.side} picture. Your profile picture sits in the middle (240\u00D7240), so keep that area clear. Save it as a PNG, or as an animated PNG (APNG) or WebP to make it move.`),
-			this.pfsGroup(this.pfsRow({ icon: "image", title: "Open the template", sub: "A guide with the avatar circle marked", onclick: () => this.pfsOpen("shoptemplate") })),
+			this.pfsNote(
+				fx
+					? `Draw it on a see-through ${W}\u00D7${H} picture (portrait). It is laid over your whole profile card, with the banner at the top and your profile picture just under it, so keep those readable. Save it as a PNG, or as an animated PNG (APNG) or WebP to make it move.`
+					: `Draw it on a see-through ${W}\u00D7${H} picture. Your profile picture sits in the middle (240\u00D7240), so keep that area clear. Save it as a PNG, or as an animated PNG (APNG) or WebP to make it move.`,
+			),
+			this.pfsGroup(this.pfsRow({ icon: "image", title: "Open the template", sub: fx ? "A guide with the banner and avatar circle marked" : "A guide with the avatar circle marked", onclick: () => this.pfsOpen("shoptemplate") })),
 			this.pfsNote(
 				this.shopAdmin
-					? "No limits for you as plugin admin: any size, shape or length, as long as it is a PNG, APNG or WebP the server can receive (about 3 MB at most). Pictures that are not 288\u00D7288 may not line up with the avatar."
-					: `Limits: ${L.side}\u00D7${L.side}, at most ${Math.round(L.bytes / 1000)} KB. Animations can run ${L.maxMs / 1000} seconds with up to ${L.maxFrames} frames. GIF isn't supported.`,
+					? `No limits for you as plugin admin: any size, shape or length, as long as it is a PNG, APNG or WebP the server can receive (about 3 MB at most). Pictures that are not ${W}\u00D7${H} may not line up with the ${fx ? "profile card" : "avatar"}.`
+					: limits,
 			),
-			this.pfsLabel("Your decoration"),
+			this.pfsLabel(fx ? "Your profile effect" : "Your decoration"),
 			$pv,
 			el("div", { class: "am-shop-top" }, $pick),
 			el("div", { class: "am-fl", text: "Name" }),
